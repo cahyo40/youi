@@ -350,18 +350,18 @@ class YoButton extends StatelessWidget {
     }
   }
 
-  Color _getForegroundColor(BuildContext context) {
-    if (textColor != null) return textColor!;
+  // Color _getForegroundColor(BuildContext context) {
+  //   if (textColor != null) return textColor!;
 
-    final theme = Theme.of(context);
-    switch (variant) {
-      case YoButtonVariant.outline:
-      case YoButtonVariant.ghost:
-        return theme.colorScheme.primary;
-      default:
-        return theme.colorScheme.onPrimary;
-    }
-  }
+  //   final theme = Theme.of(context);
+  //   switch (variant) {
+  //     case YoButtonVariant.outline:
+  //     case YoButtonVariant.ghost:
+  //       return theme.colorScheme.primary;
+  //     default:
+  //       return theme.colorScheme.onPrimary;
+  //   }
+  // }
 
   Color _getCustomTextColor(BuildContext context, Color bgColor) {
     if (textColor != null) return textColor!;
