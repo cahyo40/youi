@@ -1,50 +1,113 @@
+// [file name]: yo_skeleton.dart
 import 'package:flutter/material.dart';
 
 import '../../../yo_ui_base.dart';
 
-class YoSkeleton extends StatelessWidget {
-  final double width;
-  final double height;
+class YoSkeleton extends StatefulWidget {
+  final double? width;
+  final double? height;
   final BorderRadius borderRadius;
   final YoSkeletonType type;
+  final Color? baseColor;
+  final Color? highlightColor;
+  final bool enabled;
 
   const YoSkeleton({
     super.key,
-    this.width = double.infinity,
+    this.width,
     this.height = 20,
     this.borderRadius = const BorderRadius.all(Radius.circular(4)),
     this.type = YoSkeletonType.shimmer,
+    this.baseColor,
+    this.highlightColor,
+    this.enabled = true,
   });
 
-  const YoSkeleton.circle({super.key, required double size})
-    : width = size,
-      height = size,
-      borderRadius = const BorderRadius.all(Radius.circular(100)),
-      type = YoSkeletonType.shimmer;
+  const YoSkeleton.circle({
+    super.key,
+    required double size,
+    this.type = YoSkeletonType.shimmer,
+    this.baseColor,
+    this.highlightColor,
+    this.enabled = true,
+  }) : width = size,
+       height = size,
+       borderRadius = const BorderRadius.all(Radius.circular(100));
 
   const YoSkeleton.line({
     super.key,
-    this.width = double.infinity,
+    this.width,
     this.height = 16,
-  }) : borderRadius = const BorderRadius.all(Radius.circular(4)),
-       type = YoSkeletonType.shimmer;
+    this.type = YoSkeletonType.shimmer,
+    this.baseColor,
+    this.highlightColor,
+    this.enabled = true,
+  }) : borderRadius = const BorderRadius.all(Radius.circular(4));
+
+  const YoSkeleton.rounded({
+    super.key,
+    this.width,
+    this.height = 20,
+    this.type = YoSkeletonType.shimmer,
+    this.baseColor,
+    this.highlightColor,
+    this.enabled = true,
+  }) : borderRadius = const BorderRadius.all(Radius.circular(8));
+
+  const YoSkeleton.square({
+    super.key,
+    required double size,
+    this.type = YoSkeletonType.shimmer,
+    this.baseColor,
+    this.highlightColor,
+    this.enabled = true,
+  }) : width = size,
+       height = size,
+       borderRadius = const BorderRadius.all(Radius.circular(0));
 
   @override
+  State<YoSkeleton> createState() => _YoSkeletonState();
+}
+
+class _YoSkeletonState extends State<YoSkeleton> {
+  @override
   Widget build(BuildContext context) {
+    if (!widget.enabled) {
+      return const SizedBox.shrink();
+    }
+
+    final effectiveBaseColor = widget.baseColor ?? YoColors.gray300(context);
+    final effectiveHighlightColor =
+        widget.highlightColor ?? YoColors.gray100(context);
+
     return Container(
-      width: width,
-      height: height,
+      width: widget.width,
+      height: widget.height,
       decoration: BoxDecoration(
-        borderRadius: borderRadius,
-        color: YoColors.gray300(context),
+        borderRadius: widget.borderRadius,
+        color: effectiveBaseColor,
       ),
-      child: type == YoSkeletonType.shimmer ? const _ShimmerEffect() : null,
+      child: widget.type == YoSkeletonType.shimmer
+          ? _ShimmerEffect(
+              baseColor: effectiveBaseColor,
+              highlightColor: effectiveHighlightColor,
+              borderRadius: widget.borderRadius,
+            )
+          : null,
     );
   }
 }
 
 class _ShimmerEffect extends StatefulWidget {
-  const _ShimmerEffect();
+  final Color baseColor;
+  final Color highlightColor;
+  final BorderRadius borderRadius;
+
+  const _ShimmerEffect({
+    required this.baseColor,
+    required this.highlightColor,
+    required this.borderRadius,
+  });
 
   @override
   State<_ShimmerEffect> createState() => _ShimmerEffectState();
@@ -74,20 +137,24 @@ class _ShimmerEffectState extends State<_ShimmerEffect>
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {
-        return ClipRect(
+        return ClipRRect(
+          borderRadius: widget.borderRadius,
           child: ShaderMask(
             shaderCallback: (bounds) {
               return LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.topRight,
                 colors: [
-                  YoColors.gray300(context),
-                  YoColors.gray100(context),
-                  YoColors.gray300(context),
+                  widget.baseColor,
+                  widget.highlightColor,
+                  widget.baseColor,
                 ],
                 stops: const [0.0, 0.5, 1.0],
                 transform: _SlidingGradientTransform(_controller.value),
               ).createShader(bounds);
             },
-            child: Container(color: YoColors.gray300(context)),
+            blendMode: BlendMode.srcIn,
+            child: Container(color: widget.baseColor),
           ),
         );
       },

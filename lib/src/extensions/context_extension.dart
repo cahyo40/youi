@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../text_themes/yo_text_theme.dart';
+import '../themes/yo_text_theme.dart';
 
 extension YoContextExtensions on BuildContext {
   // === COLOR EXTENSIONS ===

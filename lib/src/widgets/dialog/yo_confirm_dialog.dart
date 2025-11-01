@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../yo_ui_base.dart';
+import '../../../yo_ui_base.dart';
 
 class YoConfirmDialog extends StatelessWidget {
   final String title;
