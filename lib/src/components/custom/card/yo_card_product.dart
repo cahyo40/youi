@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:yo_ui/yo_ui.dart';
 
-import '../yo_badge.dart';
+import '../../display/yo_badge.dart';
 
 enum ProductCardVariant { default_, compact, detailed, wishlist }
 

@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:yo_ui/yo_ui.dart';
 
-import '../yo_avatar.dart';
+import '../../display/yo_avatar.dart';
 
 enum NotificationType { message, system, alert, promotion, reminder }
 

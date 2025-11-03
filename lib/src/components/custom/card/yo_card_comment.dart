@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:yo_ui/yo_ui.dart';
 
-import '../yo_avatar.dart';
+import '../../display/yo_avatar.dart';
 
 enum CommentCardVariant { default_, compact, detailed }
 

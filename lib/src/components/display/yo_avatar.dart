@@ -1,7 +1,7 @@
 // [file name]: yo_avatar.dart
 import 'package:flutter/material.dart';
 
-import '../../yo_ui.dart';
+import '../../../yo_ui.dart';
 
 enum YoAvatarSize { xs, sm, md, lg, xl }
 

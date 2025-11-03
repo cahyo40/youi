@@ -1,7 +1,7 @@
 // [file name]: yo_badge.dart
 import 'package:flutter/material.dart';
 
-import '../../yo_ui.dart';
+import '../../../yo_ui.dart';
 
 enum YoBadgeVariant { primary, secondary, success, warning, error, outline }
 
@@ -199,7 +199,7 @@ class YoBadge extends StatelessWidget {
     // Add text
     if (text.isNotEmpty) {
       children.add(
-        Text(
+        YoText(
           text,
           style: textStyle,
           maxLines: 1,

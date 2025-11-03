@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../../../yo_ui_base.dart';
-import '../yo_avatar.dart';
+import '../../../../yo_ui_base.dart';
+import '../../display/yo_avatar.dart';
 
 enum BookingStatus { pending, confirmed, cancelled, completed, inProgress }
 

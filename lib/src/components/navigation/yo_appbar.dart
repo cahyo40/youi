@@ -1,7 +1,7 @@
 // [file name]: yo_appbar.dart
 import 'package:flutter/material.dart';
 
-import '../../yo_ui.dart';
+import '../../../yo_ui.dart';
 
 enum YoAppBarVariant { primary, surface, transparent, elevated }
 
