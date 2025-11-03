@@ -92,8 +92,6 @@ class YoAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final brightness = theme.brightness;
 
     final Color effectiveBackgroundColor =
         backgroundColor ?? _getBackgroundColor(context);

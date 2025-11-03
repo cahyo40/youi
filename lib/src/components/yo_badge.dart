@@ -128,9 +128,6 @@ class YoBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
     final Color effectiveBackgroundColor =
         backgroundColor ?? _getBackgroundColor(context);
     final Color effectiveTextColor = textColor ?? _getTextColor(context);
