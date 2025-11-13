@@ -1,5 +1,6 @@
 // File: yo_date_picker.dart
 import 'package:flutter/material.dart';
+import 'package:yo_ui/src/components/feedback/dialog/yo_dialog_picker.dart';
 import 'package:yo_ui/yo_ui.dart';
 
 class YoDatePicker extends StatelessWidget {
@@ -35,25 +36,11 @@ class YoDatePicker extends StatelessWidget {
   Future<void> _selectDate(BuildContext context) async {
     if (!enabled) return;
 
-    final DateTime? picked = await showDatePicker(
+    final DateTime? picked = await YoDialogPicker.date(
       context: context,
-      initialDate: selectedDate ?? DateTime.now(),
-      firstDate: firstDate ?? DateTime(1900),
-      lastDate: lastDate ?? DateTime(2100),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: context.primaryColor,
-              onPrimary: context.onPrimaryColor,
-              surface: context.backgroundColor,
-              onSurface: context.textColor,
-            ),
-            dialogBackgroundColor: context.backgroundColor,
-          ),
-          child: child!,
-        );
-      },
+      initialDate: selectedDate,
+      firstDate: firstDate,
+      lastDate: lastDate,
     );
 
     if (picked != null && picked != selectedDate) {

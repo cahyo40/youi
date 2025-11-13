@@ -156,7 +156,7 @@ class YoAppBar extends StatelessWidget implements PreferredSizeWidget {
 
     switch (variant) {
       case YoAppBarVariant.primary:
-        return colorScheme.onPrimary;
+        return context.onPrimaryColor;
       case YoAppBarVariant.surface:
       case YoAppBarVariant.elevated:
         return colorScheme.onSurface;

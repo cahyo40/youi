@@ -1,4 +1,3 @@
-// File: yo_switch.dart
 import 'package:flutter/material.dart';
 import 'package:yo_ui/yo_ui.dart';
 

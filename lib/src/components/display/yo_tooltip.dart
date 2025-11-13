@@ -34,7 +34,7 @@ class YoTooltip extends StatelessWidget {
         borderRadius: BorderRadius.circular(borderRadius),
       ),
       textStyle: context.yoBodySmall.copyWith(
-        color: textColor ?? context.onBackgroundBW,
+        color: textColor ?? context.onBackgroundColor,
       ),
       waitDuration: waitDuration,
       preferBelow: preferBelow,

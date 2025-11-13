@@ -2,6 +2,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:yo_ui/src/components/feedback/dialog/yo_dialog_picker.dart';
 import 'package:yo_ui/yo_ui.dart';
 
 class YoDateTimePicker extends StatelessWidget {
@@ -35,61 +36,15 @@ class YoDateTimePicker extends StatelessWidget {
   Future<void> _selectDateTime(BuildContext context) async {
     if (!enabled) return;
 
-    // First select date
-    final DateTime? pickedDate = await showDatePicker(
+    final DateTime? picked = await YoDialogPicker.dateTime(
       context: context,
-      initialDate: selectedDateTime ?? DateTime.now(),
-      firstDate: firstDate ?? DateTime(1900),
-      lastDate: lastDate ?? DateTime(2100),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: context.primaryColor,
-              onPrimary: context.onPrimaryColor,
-              surface: context.backgroundColor,
-              onSurface: context.textColor,
-            ),
-            dialogBackgroundColor: context.backgroundColor,
-          ),
-          child: child!,
-        );
-      },
+      initialDateTime: selectedDateTime,
+      firstDate: firstDate,
+      lastDate: lastDate,
     );
 
-    if (pickedDate != null) {
-      // Then select time
-      final TimeOfDay? pickedTime = await showTimePicker(
-        context: context,
-        initialTime: selectedDateTime != null
-            ? TimeOfDay.fromDateTime(selectedDateTime!)
-            : TimeOfDay.now(),
-        builder: (context, child) {
-          return Theme(
-            data: Theme.of(context).copyWith(
-              colorScheme: ColorScheme.light(
-                primary: context.primaryColor,
-                onPrimary: context.onPrimaryColor,
-                surface: context.backgroundColor,
-                onSurface: context.textColor,
-              ),
-              dialogBackgroundColor: context.backgroundColor,
-            ),
-            child: child!,
-          );
-        },
-      );
-
-      if (pickedTime != null) {
-        final DateTime finalDateTime = DateTime(
-          pickedDate.year,
-          pickedDate.month,
-          pickedDate.day,
-          pickedTime.hour,
-          pickedTime.minute,
-        );
-        onDateTimeChanged(finalDateTime);
-      }
+    if (picked != null && picked != selectedDateTime) {
+      onDateTimeChanged(picked);
     }
   }
 

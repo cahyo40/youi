@@ -1,4 +1,3 @@
-// File: yo_slider.dart
 import 'package:flutter/material.dart';
 import 'package:yo_ui/yo_ui.dart';
 

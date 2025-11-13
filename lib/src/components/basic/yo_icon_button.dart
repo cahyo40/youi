@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:yo_ui/yo_ui.dart';
 
-enum YoIconButtonVariant { primary, secondary, outline, ghost, custom }
+enum YoIconButtonVariant {
+  primary,
+  secondary,
+  outline,
+  ghost,
+  custom,
+  neumorphism,
+}
+
 enum YoIconButtonShape { circle, rounded }
+
 enum YoIconButtonSize { small, medium, large }
 
 class YoButtonIcon extends StatelessWidget {
@@ -28,7 +38,6 @@ class YoButtonIcon extends StatelessWidget {
     this.tooltip,
   });
 
-  // Named constructors
   const YoButtonIcon.primary({
     super.key,
     required this.icon,
@@ -89,42 +98,83 @@ class YoButtonIcon extends StatelessWidget {
     this.tooltip,
   }) : variant = YoIconButtonVariant.custom;
 
+  const YoButtonIcon.neumorphism({
+    super.key,
+    required this.icon,
+    required this.onPressed,
+    this.shape = YoIconButtonShape.circle,
+    this.size = YoIconButtonSize.medium,
+    this.iconColor,
+    this.isLoading = false,
+    this.tooltip,
+  }) : variant = YoIconButtonVariant.neumorphism,
+       backgroundColor = null;
+
   @override
   Widget build(BuildContext context) {
-    final buttonStyle = _getButtonStyle(context);
     final buttonSize = _getButtonSize();
 
     Widget button = Container(
       width: buttonSize,
       height: buttonSize,
-      child: ElevatedButton(
-        onPressed: isLoading ? null : onPressed,
-        style: buttonStyle,
-        child: isLoading
-            ? SizedBox(
-                width: _getLoaderSize(),
-                height: _getLoaderSize(),
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: _getProgressIndicatorColor(context),
-                ),
-              )
-            : IconTheme(
+      decoration: variant == YoIconButtonVariant.neumorphism
+          ? BoxDecoration(
+              color: context.backgroundColor,
+              shape: shape == YoIconButtonShape.circle
+                  ? BoxShape.circle
+                  : BoxShape.rectangle,
+              borderRadius: shape == YoIconButtonShape.rounded
+                  ? BorderRadius.circular(8)
+                  : null,
+              boxShadow: YoBoxShadow.neuRaisedYo(context),
+            )
+          : null,
+      child: variant == YoIconButtonVariant.neumorphism
+          ? GestureDetector(
+              onTap: isLoading ? null : onPressed,
+              child: IconTheme(
                 data: IconThemeData(
                   size: _getIconSize(),
                   color: _getIconColor(context),
                 ),
-                child: icon,
+                child: isLoading
+                    ? Center(
+                        child: SizedBox(
+                          width: _getLoaderSize(),
+                          height: _getLoaderSize(),
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: _getProgressIndicatorColor(context),
+                          ),
+                        ),
+                      )
+                    : icon,
               ),
-      ),
+            )
+          : ElevatedButton(
+              onPressed: isLoading ? null : onPressed,
+              style: _getButtonStyle(context),
+              child: isLoading
+                  ? SizedBox(
+                      width: _getLoaderSize(),
+                      height: _getLoaderSize(),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: _getProgressIndicatorColor(context),
+                      ),
+                    )
+                  : IconTheme(
+                      data: IconThemeData(
+                        size: _getIconSize(),
+                        color: _getIconColor(context),
+                      ),
+                      child: icon,
+                    ),
+            ),
     );
 
-    // Add tooltip if provided
     if (tooltip != null) {
-      button = Tooltip(
-        message: tooltip!,
-        child: button,
-      );
+      button = Tooltip(message: tooltip!, child: button);
     }
 
     return button;
@@ -281,14 +331,17 @@ class YoButtonIcon extends StatelessWidget {
             if (states.contains(WidgetState.disabled)) {
               return bgColor.withOpacity(0.32);
             }
-            if (states.contains(WidgetState.pressed)) {
+            if (states.contains(WidgetState.pressed))
               return bgColor.withOpacity(0.8);
-            }
-            if (states.contains(WidgetState.hovered)) {
+            if (states.contains(WidgetState.hovered))
               return bgColor.withOpacity(0.9);
-            }
             return bgColor;
           }),
+        );
+
+      case YoIconButtonVariant.neumorphism:
+        throw UnsupportedError(
+          "Neumorphism uses GestureDetector, not ElevatedButton",
         );
     }
   }
@@ -337,7 +390,6 @@ class YoButtonIcon extends StatelessWidget {
 
   Color _getIconColor(BuildContext context) {
     if (iconColor != null) return iconColor!;
-
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -348,14 +400,13 @@ class YoButtonIcon extends StatelessWidget {
         return colorScheme.onPrimary;
       case YoIconButtonVariant.outline:
       case YoIconButtonVariant.ghost:
+      case YoIconButtonVariant.neumorphism:
         return colorScheme.primary;
     }
   }
 
   Color _getCustomIconColor(BuildContext context, Color bgColor) {
     if (iconColor != null) return iconColor!;
-
-    // Calculate luminance to determine if icon should be light or dark
     final luminance = bgColor.computeLuminance();
     return luminance > 0.5 ? Colors.black : Colors.white;
   }
@@ -368,6 +419,7 @@ class YoButtonIcon extends StatelessWidget {
         return Theme.of(context).colorScheme.onPrimary;
       case YoIconButtonVariant.outline:
       case YoIconButtonVariant.ghost:
+      case YoIconButtonVariant.neumorphism:
         return Theme.of(context).colorScheme.primary;
     }
   }

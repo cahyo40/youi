@@ -1,4 +1,3 @@
-// File: yo_checkbox.dart
 import 'package:flutter/material.dart';
 import 'package:yo_ui/yo_ui.dart';
 
@@ -85,10 +84,12 @@ class YoCheckboxListTile extends StatelessWidget {
         title,
         color: enabled ? context.textColor : context.gray400,
       ),
-      subtitle: subtitle != null ? YoText.bodySmall(
-        subtitle!,
-        color: enabled ? context.gray600 : context.gray400,
-      ) : null,
+      subtitle: subtitle != null
+          ? YoText.bodySmall(
+              subtitle!,
+              color: enabled ? context.gray600 : context.gray400,
+            )
+          : null,
       secondary: secondary,
       activeColor: activeColor ?? context.primaryColor,
       controlAffinity: ListTileControlAffinity.leading,

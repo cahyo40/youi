@@ -329,6 +329,81 @@ class YoText extends StatelessWidget {
     );
   }
 
+  static Widget labelSmall(
+    String text, {
+    Key? key,
+    TextAlign? align,
+    int? maxLines,
+    TextOverflow? overflow,
+    bool? softWrap = true,
+    Color? color,
+    FontWeight? fontWeight,
+    double? fontSize,
+  }) {
+    return _YoTextWithBuilder(
+      text: text,
+      styleBuilder: YoTextTheme.labelSmall,
+      key: key,
+      align: align,
+      maxLines: maxLines,
+      overflow: overflow,
+      softWrap: softWrap,
+      color: color,
+      fontWeight: fontWeight,
+      fontSize: fontSize,
+    );
+  }
+
+  static Widget labelMedium(
+    String text, {
+    Key? key,
+    TextAlign? align,
+    int? maxLines,
+    TextOverflow? overflow,
+    bool? softWrap = true,
+    Color? color,
+    FontWeight? fontWeight,
+    double? fontSize,
+  }) {
+    return _YoTextWithBuilder(
+      text: text,
+      styleBuilder: YoTextTheme.labelMedium,
+      key: key,
+      align: align,
+      maxLines: maxLines,
+      overflow: overflow,
+      softWrap: softWrap,
+      color: color,
+      fontWeight: fontWeight,
+      fontSize: fontSize,
+    );
+  }
+
+  static Widget labelLarge(
+    String text, {
+    Key? key,
+    TextAlign? align,
+    int? maxLines,
+    TextOverflow? overflow,
+    bool? softWrap = true,
+    Color? color,
+    FontWeight? fontWeight,
+    double? fontSize,
+  }) {
+    return _YoTextWithBuilder(
+      text: text,
+      styleBuilder: YoTextTheme.labelLarge,
+      key: key,
+      align: align,
+      maxLines: maxLines,
+      overflow: overflow,
+      softWrap: softWrap,
+      color: color,
+      fontWeight: fontWeight,
+      fontSize: fontSize,
+    );
+  }
+
   static Widget monoLarge(
     String text, {
     Key? key,

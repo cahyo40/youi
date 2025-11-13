@@ -1,5 +1,5 @@
-// File: yo_time_picker.dart
 import 'package:flutter/material.dart';
+import 'package:yo_ui/src/components/feedback/dialog/yo_dialog_picker.dart';
 import 'package:yo_ui/yo_ui.dart';
 
 class YoTimePicker extends StatelessWidget {
@@ -31,23 +31,9 @@ class YoTimePicker extends StatelessWidget {
   Future<void> _selectTime(BuildContext context) async {
     if (!enabled) return;
 
-    final TimeOfDay? picked = await showTimePicker(
+    final TimeOfDay? picked = await YoDialogPicker.time(
       context: context,
-      initialTime: selectedTime ?? TimeOfDay.now(),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: context.primaryColor,
-              onPrimary: context.onPrimaryColor,
-              surface: context.backgroundColor,
-              onSurface: context.textColor,
-            ),
-            dialogBackgroundColor: context.backgroundColor,
-          ),
-          child: child!,
-        );
-      },
+      initialTime: selectedTime,
     );
 
     if (picked != null && picked != selectedTime) {

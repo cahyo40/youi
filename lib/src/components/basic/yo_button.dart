@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:yo_ui/yo_ui.dart';
 
-enum YoButtonVariant { primary, secondary, outline, ghost, custom }
+enum YoButtonVariant { primary, secondary, outline, ghost, custom, neumorphism }
 
 enum YoButtonSize { small, medium, large }
 
@@ -19,6 +20,7 @@ class YoButton extends StatelessWidget {
   final bool expanded;
   final double? width;
   final double? height;
+  final double? borderRadius;
 
   const YoButton({
     super.key,
@@ -34,9 +36,9 @@ class YoButton extends StatelessWidget {
     this.expanded = false,
     this.width,
     this.height,
+    this.borderRadius,
   });
 
-  // Named constructors
   const YoButton.primary({
     super.key,
     required this.text,
@@ -49,6 +51,7 @@ class YoButton extends StatelessWidget {
     this.expanded = false,
     this.width,
     this.height,
+    this.borderRadius,
   }) : variant = YoButtonVariant.primary,
        backgroundColor = null;
 
@@ -64,6 +67,7 @@ class YoButton extends StatelessWidget {
     this.expanded = false,
     this.width,
     this.height,
+    this.borderRadius,
   }) : variant = YoButtonVariant.secondary,
        backgroundColor = null;
 
@@ -79,6 +83,7 @@ class YoButton extends StatelessWidget {
     this.expanded = false,
     this.width,
     this.height,
+    this.borderRadius,
   }) : variant = YoButtonVariant.outline,
        backgroundColor = null;
 
@@ -94,6 +99,7 @@ class YoButton extends StatelessWidget {
     this.expanded = false,
     this.width,
     this.height,
+    this.borderRadius,
   }) : variant = YoButtonVariant.ghost,
        backgroundColor = null;
 
@@ -110,7 +116,24 @@ class YoButton extends StatelessWidget {
     this.expanded = false,
     this.width,
     this.height,
+    this.borderRadius,
   }) : variant = YoButtonVariant.custom;
+
+  const YoButton.neumorphism({
+    super.key,
+    required this.text,
+    required this.onPressed,
+    this.size = YoButtonSize.medium,
+    this.icon,
+    this.iconPosition = IconPosition.left,
+    this.textColor,
+    this.isLoading = false,
+    this.expanded = false,
+    this.width,
+    this.height,
+    this.borderRadius,
+  }) : variant = YoButtonVariant.neumorphism,
+       backgroundColor = null;
 
   @override
   Widget build(BuildContext context) {
@@ -140,18 +163,27 @@ class YoButton extends StatelessWidget {
       child: child,
     );
 
-    return elevatedButton(context, buttonStyle, buttonChild);
-  }
+    if (variant == YoButtonVariant.neumorphism) {
+      return GestureDetector(
+        onTap: isLoading ? null : onPressed,
+        child: Container(
+          width: width,
+          height: height,
+          padding: padding,
+          decoration: BoxDecoration(
+            color: context.backgroundColor,
+            borderRadius: BorderRadius.circular(borderRadius ?? 6),
+            boxShadow: YoBoxShadow.neuRaisedYo(context),
+          ),
+          child: child,
+        ),
+      );
+    }
 
-  Widget elevatedButton(
-    BuildContext context,
-    ButtonStyle buttonStyle,
-    Widget child,
-  ) {
     return ElevatedButton(
       onPressed: isLoading ? null : onPressed,
       style: buttonStyle,
-      child: child,
+      child: buttonChild,
     );
   }
 
@@ -333,11 +365,17 @@ class YoButton extends StatelessWidget {
             return bgColor;
           }),
         );
+
+      case YoButtonVariant.neumorphism:
+        throw UnsupportedError(
+          "Neumorphism uses GestureDetector, not ElevatedButton",
+        );
     }
   }
 
-  OutlinedBorder _getShape() =>
-      RoundedRectangleBorder(borderRadius: BorderRadius.circular(6));
+  OutlinedBorder _getShape() => RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(borderRadius ?? 6),
+  );
 
   EdgeInsets _getPadding() {
     switch (size) {
@@ -350,23 +388,8 @@ class YoButton extends StatelessWidget {
     }
   }
 
-  // Color _getForegroundColor(BuildContext context) {
-  //   if (textColor != null) return textColor!;
-
-  //   final theme = Theme.of(context);
-  //   switch (variant) {
-  //     case YoButtonVariant.outline:
-  //     case YoButtonVariant.ghost:
-  //       return theme.colorScheme.primary;
-  //     default:
-  //       return theme.colorScheme.onPrimary;
-  //   }
-  // }
-
   Color _getCustomTextColor(BuildContext context, Color bgColor) {
     if (textColor != null) return textColor!;
-
-    // Calculate luminance to determine if text should be light or dark
     final luminance = bgColor.computeLuminance();
     return luminance > 0.5 ? Colors.black : Colors.white;
   }
@@ -379,6 +402,7 @@ class YoButton extends StatelessWidget {
         return Theme.of(context).colorScheme.onPrimary;
       case YoButtonVariant.outline:
       case YoButtonVariant.ghost:
+      case YoButtonVariant.neumorphism:
         return Theme.of(context).colorScheme.primary;
     }
   }
@@ -391,11 +415,14 @@ class YoButton extends StatelessWidget {
     switch (variant) {
       case YoButtonVariant.primary:
       case YoButtonVariant.secondary:
+        textColor = this.textColor ?? context.onPrimaryColor;
+        break;
       case YoButtonVariant.custom:
         textColor = this.textColor ?? theme.colorScheme.onPrimary;
         break;
       case YoButtonVariant.outline:
       case YoButtonVariant.ghost:
+      case YoButtonVariant.neumorphism:
         textColor = this.textColor ?? theme.colorScheme.primary;
         break;
     }

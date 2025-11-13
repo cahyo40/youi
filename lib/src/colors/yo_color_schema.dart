@@ -36,6 +36,19 @@ enum YoColorScheme {
   outdoorCalm, // Outdoor - Natural
   scienceLab, // Science - Precise
   communityWarm, // Community - Warm
+
+  custom,
+}
+
+YoCorePalette? _customLight;
+YoCorePalette? _customDark;
+
+void setCustomPalette({
+  required YoCorePalette light,
+  required YoCorePalette dark,
+}) {
+  _customLight = light;
+  _customDark = dark;
 }
 
 final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
@@ -577,5 +590,26 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
       secondary: Color(0xFFD97706),
       accent: Color(0xFF10B981),
     ),
+  },
+
+  YoColorScheme.custom: {
+    Brightness.light:
+        _customLight ??
+        const YoCorePalette(
+          text: Color(0xFF000000),
+          background: Color(0xFFFFFFFF),
+          primary: Color(0xFF6200EE),
+          secondary: Color(0xFF03DAC6),
+          accent: Color(0xFF018786),
+        ),
+    Brightness.dark:
+        _customDark ??
+        const YoCorePalette(
+          text: Color(0xFFFFFFFF),
+          background: Color(0xFF121212),
+          primary: Color(0xFFBB86FC),
+          secondary: Color(0xFF03DAC6),
+          accent: Color(0xFF03DAC6),
+        ),
   },
 };
