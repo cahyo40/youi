@@ -36,6 +36,13 @@ enum YoColorScheme {
   outdoorCalm, // Outdoor - Natural
   scienceLab, // Science - Precise
   communityWarm, // Community - Warm
+  // NEW CATEGORIES
+  amoledBlack, // Pure Black AMOLED - Battery Saving
+  midnightBlue, // Midnight Blue - Dark Professional
+  carbonDark, // Carbon Dark - Sleek & Modern
+  neonCyberpunk, // Cyberpunk Neon - Futuristic
+  minimalMono, // Minimal Mono - Ultra Clean
+  posRetail, // POS & Retail - Business Focused
 
   custom,
 }
@@ -51,6 +58,11 @@ void setCustomPalette({
   _customDark = dark;
 }
 
+// Pure black for AMOLED dark mode
+const Color _pureBlack = Color(0xFF000000);
+
+const Color _deepBlack = Color(0xFF0A0A0A);
+
 final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
   // 1. DEFAULT - Finance & Banking (Trust & Stability)
   YoColorScheme.defaultScheme: {
@@ -63,7 +75,7 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
     ),
     Brightness.dark: const YoCorePalette(
       text: Color(0xFFF7FAFC),
-      background: Color(0xFF1A202C),
+      background: _deepBlack,
       primary: Color(0xFFE2E8F0),
       secondary: Color(0xFFCBD5E0),
       accent: Color(0xFF63B3ED),
@@ -81,7 +93,7 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
     ),
     Brightness.dark: const YoCorePalette(
       text: Color(0xFFE6E6FA),
-      background: Color(0xFF0A0A1A),
+      background: _pureBlack,
       primary: Color(0xFF7C6FFF),
       secondary: Color(0xFFA49BFF),
       accent: Color(0xFF1FF8DF),
@@ -99,7 +111,7 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
     ),
     Brightness.dark: const YoCorePalette(
       text: Color(0xFFE6FFFE),
-      background: Color(0xFF001515),
+      background: _pureBlack,
       primary: Color(0xFF00A3A3),
       secondary: Color(0xFF5DE5DC),
       accent: Color(0xFFFF8A7A),
@@ -117,7 +129,7 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
     ),
     Brightness.dark: const YoCorePalette(
       text: Color(0xFFFFE6EB),
-      background: Color(0xFF1A0004),
+      background: _pureBlack,
       primary: Color(0xFFFF1A47),
       secondary: Color(0xFFFF8FB0),
       accent: Color(0xFF00E5FF),
@@ -135,7 +147,7 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
     ),
     Brightness.dark: const YoCorePalette(
       text: Color(0xFFF0F2FF),
-      background: Color(0xFF080A11),
+      background: _pureBlack,
       primary: Color(0xFF5A6ABF),
       secondary: Color(0xFF8A94E4),
       accent: Color(0xFFFFD166),
@@ -153,7 +165,7 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
     ),
     Brightness.dark: const YoCorePalette(
       text: Color(0xFFF7FEE7),
-      background: Color(0xFF1A2E05),
+      background: _pureBlack,
       primary: Color(0xFF84CC16),
       secondary: Color(0xFFA3E635),
       accent: Color(0xFFFF8555),
@@ -171,7 +183,7 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
     ),
     Brightness.dark: const YoCorePalette(
       text: Color(0xFFF0F0FF),
-      background: Color(0xFF050516),
+      background: _pureBlack,
       primary: Color(0xFFFF0984),
       secondary: Color(0xFFA855F7),
       accent: Color(0xFF1FF8DF),
@@ -189,7 +201,7 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
     ),
     Brightness.dark: const YoCorePalette(
       text: Color(0xFFE6FFF7),
-      background: Color(0xFF00140E),
+      background: _pureBlack,
       primary: Color(0xFF00D9A0),
       secondary: Color(0xFF73FFD2),
       accent: Color(0xFFFF9BC0),
@@ -207,7 +219,7 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
     ),
     Brightness.dark: const YoCorePalette(
       text: Color(0xFFFDF2E6),
-      background: Color(0xFF140E08),
+      background: _deepBlack,
       primary: Color(0xFFC0875C),
       secondary: Color(0xFFE8B880),
       accent: Color(0xFF7BC097),
@@ -225,7 +237,7 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
     ),
     Brightness.dark: const YoCorePalette(
       text: Color(0xFFE6F2FF),
-      background: Color(0xFF001225),
+      background: _pureBlack,
       primary: Color(0xFFFF8A7A),
       secondary: Color(0xFF004C8C),
       accent: Color(0xFFFFE18A),
@@ -243,7 +255,7 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
     ),
     Brightness.dark: const YoCorePalette(
       text: Color(0xFFFEF3C7),
-      background: Color(0xFF451A03),
+      background: _deepBlack,
       primary: Color(0xFFF59E0B),
       secondary: Color(0xFFFBBF24),
       accent: Color(0xFFEF4444),
@@ -261,7 +273,7 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
     ),
     Brightness.dark: const YoCorePalette(
       text: Color(0xFFFAE8FF),
-      background: Color(0xFF4A044E),
+      background: _pureBlack,
       primary: Color(0xFFF472B6),
       secondary: Color(0xFFF0ABFF),
       accent: Color(0xFFFBBF24),
@@ -279,7 +291,7 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
     ),
     Brightness.dark: const YoCorePalette(
       text: Color(0xFFECFDF5),
-      background: Color(0xFF022C22),
+      background: _pureBlack,
       primary: Color(0xFF10B981),
       secondary: Color(0xFF34D399),
       accent: Color(0xFFF59E0B),
@@ -297,7 +309,7 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
     ),
     Brightness.dark: const YoCorePalette(
       text: Color(0xFFF9FAFB),
-      background: Color(0xFF111827),
+      background: _deepBlack,
       primary: Color(0xFFD1D5DB),
       secondary: Color(0xFF9CA3AF),
       accent: Color(0xFF10B981),
@@ -315,7 +327,7 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
     ),
     Brightness.dark: const YoCorePalette(
       text: Color(0xFFFAF5FF),
-      background: Color(0xFF1A0B2E),
+      background: _pureBlack,
       primary: Color(0xFFA855F7),
       secondary: Color(0xFFF472B6),
       accent: Color(0xFF22D3EE),
@@ -333,7 +345,7 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
     ),
     Brightness.dark: const YoCorePalette(
       text: Color(0xFFFFFFFF),
-      background: Color(0xFF000000),
+      background: _pureBlack,
       primary: Color(0xFFFFFFFF),
       secondary: Color(0xFFCCCCCC),
       accent: Color(0xFFEAB308),
@@ -351,7 +363,7 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
     ),
     Brightness.dark: const YoCorePalette(
       text: Color(0xFFFECACA),
-      background: Color(0xFF450A0A),
+      background: _pureBlack,
       primary: Color(0xFFEF4444),
       secondary: Color(0xFFF97316),
       accent: Color(0xFF10B981),
@@ -369,7 +381,7 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
     ),
     Brightness.dark: const YoCorePalette(
       text: Color(0xFFFFFFFF),
-      background: Color(0xFF0A0A14),
+      background: _pureBlack,
       primary: Color(0xFFFF1A7A),
       secondary: Color(0xFF1FF8DF),
       accent: Color(0xFF00F5FF),
@@ -387,7 +399,7 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
     ),
     Brightness.dark: const YoCorePalette(
       text: Color(0xFFF5D0FE),
-      background: Color(0xFF2D0F44),
+      background: _pureBlack,
       primary: Color(0xFFC084FC),
       secondary: Color(0xFFF472B6),
       accent: Color(0xFF22D3EE),
@@ -405,7 +417,7 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
     ),
     Brightness.dark: const YoCorePalette(
       text: Color(0xFFFEF3C7),
-      background: Color(0xFF292524),
+      background: _deepBlack,
       primary: Color(0xFFF59E0B),
       secondary: Color(0xFFA8A29E),
       accent: Color(0xFF10B981),
@@ -423,7 +435,7 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
     ),
     Brightness.dark: const YoCorePalette(
       text: Color(0xFFF3F4F6),
-      background: Color(0xFF0D121F),
+      background: _pureBlack,
       primary: Color(0xFF3B82F6),
       secondary: Color(0xFF4B5563),
       accent: Color(0xFF10B981),
@@ -441,7 +453,7 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
     ),
     Brightness.dark: const YoCorePalette(
       text: Color(0xFFFAE8FF),
-      background: Color(0xFF4A044E),
+      background: _pureBlack,
       primary: Color(0xFFE879F9),
       secondary: Color(0xFFF472B6),
       accent: Color(0xFFFBBF24),
@@ -459,7 +471,7 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
     ),
     Brightness.dark: const YoCorePalette(
       text: Color(0xFFFAF5FF),
-      background: Color(0xFF4A044E),
+      background: _deepBlack,
       primary: Color(0xFFF472B6),
       secondary: Color(0xFFA855F7),
       accent: Color(0xFF22D3EE),
@@ -477,7 +489,7 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
     ),
     Brightness.dark: const YoCorePalette(
       text: Color(0xFFF9FAFB),
-      background: Color(0xFF0C1A2D),
+      background: _pureBlack,
       primary: Color(0xFF0EA5E9),
       secondary: Color(0xFF10B981),
       accent: Color(0xFFF59E0B),
@@ -495,7 +507,7 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
     ),
     Brightness.dark: const YoCorePalette(
       text: Color(0xFFFEF3C7),
-      background: Color(0xFF451A03),
+      background: _pureBlack,
       primary: Color(0xFFFBBF24),
       secondary: Color(0xFFF87171),
       accent: Color(0xFF34D399),
@@ -513,7 +525,7 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
     ),
     Brightness.dark: const YoCorePalette(
       text: Color(0xFFF9FAFB),
-      background: Color(0xFF052E16),
+      background: _pureBlack,
       primary: Color(0xFF10B981),
       secondary: Color(0xFF60A5FA),
       accent: Color(0xFFF87171),
@@ -531,7 +543,7 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
     ),
     Brightness.dark: const YoCorePalette(
       text: Color(0xFFF9FAFB),
-      background: Color(0xFF111827),
+      background: _pureBlack,
       primary: Color(0xFFFFFFFF),
       secondary: Color(0xFF9CA3AF),
       accent: Color(0xFFEF4444),
@@ -549,7 +561,7 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
     ),
     Brightness.dark: const YoCorePalette(
       text: Color(0xFFECFDF5),
-      background: Color(0xFF022C22),
+      background: _pureBlack,
       primary: Color(0xFF10B981),
       secondary: Color(0xFF84CC16),
       accent: Color(0xFFF59E0B),
@@ -567,7 +579,7 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
     ),
     Brightness.dark: const YoCorePalette(
       text: Color(0xFFF9FAFB),
-      background: Color(0xFF1F1A2D),
+      background: _pureBlack,
       primary: Color(0xFF8B5CF6),
       secondary: Color(0xFF22D3EE),
       accent: Color(0xFFF472B6),
@@ -585,16 +597,126 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
     ),
     Brightness.dark: const YoCorePalette(
       text: Color(0xFFFEF3C7),
-      background: Color(0xFF451A03),
+      background: _deepBlack,
       primary: Color(0xFFF59E0B),
       secondary: Color(0xFFD97706),
       accent: Color(0xFF10B981),
     ),
   },
 
+  // ============ NEW COLOR SCHEMES ============
+
+  // 31. AMOLED BLACK - Pure Black for AMOLED displays (Battery Saving)
+  YoColorScheme.amoledBlack: {
+    Brightness.light: const YoCorePalette(
+      text: Color(0xFF1F2937),
+      background: Color(0xFFF9FAFB),
+      primary: Color(0xFF6366F1),
+      secondary: Color(0xFF8B5CF6),
+      accent: Color(0xFF06B6D4),
+    ),
+    Brightness.dark: const YoCorePalette(
+      text: Color(0xFFFFFFFF),
+      background: _pureBlack,
+      primary: Color(0xFF818CF8),
+      secondary: Color(0xFFA78BFA),
+      accent: Color(0xFF22D3EE),
+    ),
+  },
+
+  // 32. MIDNIGHT BLUE - Dark Professional (Enterprise Apps)
+  YoColorScheme.midnightBlue: {
+    Brightness.light: const YoCorePalette(
+      text: Color(0xFF1E3A5F),
+      background: Color(0xFFF0F4F8),
+      primary: Color(0xFF1E40AF),
+      secondary: Color(0xFF3B82F6),
+      accent: Color(0xFF10B981),
+    ),
+    Brightness.dark: const YoCorePalette(
+      text: Color(0xFFE0E7FF),
+      background: _pureBlack,
+      primary: Color(0xFF3B82F6),
+      secondary: Color(0xFF60A5FA),
+      accent: Color(0xFF34D399),
+    ),
+  },
+
+  // 33. CARBON DARK - Sleek Carbon (Modern Dashboard)
+  YoColorScheme.carbonDark: {
+    Brightness.light: const YoCorePalette(
+      text: Color(0xFF18181B),
+      background: Color(0xFFFAFAFA),
+      primary: Color(0xFF27272A),
+      secondary: Color(0xFF52525B),
+      accent: Color(0xFFF97316),
+    ),
+    Brightness.dark: const YoCorePalette(
+      text: Color(0xFFFAFAFA),
+      background: _pureBlack,
+      primary: Color(0xFFE4E4E7),
+      secondary: Color(0xFFA1A1AA),
+      accent: Color(0xFFFB923C),
+    ),
+  },
+
+  // 34. NEON CYBERPUNK - Futuristic Cyberpunk (Gaming/Tech)
+  YoColorScheme.neonCyberpunk: {
+    Brightness.light: const YoCorePalette(
+      text: Color(0xFF0F0F23),
+      background: Color(0xFFE8E8F0),
+      primary: Color(0xFFFF00FF),
+      secondary: Color(0xFF00FFFF),
+      accent: Color(0xFFFFFF00),
+    ),
+    Brightness.dark: const YoCorePalette(
+      text: Color(0xFFE8E8F0),
+      background: _pureBlack,
+      primary: Color(0xFFFF00FF),
+      secondary: Color(0xFF00FFFF),
+      accent: Color(0xFF39FF14),
+    ),
+  },
+
+  // 35. MINIMAL MONO - Ultra Minimal Monochrome (Focus Apps)
+  YoColorScheme.minimalMono: {
+    Brightness.light: const YoCorePalette(
+      text: Color(0xFF171717),
+      background: Color(0xFFFFFFFF),
+      primary: Color(0xFF262626),
+      secondary: Color(0xFF737373),
+      accent: Color(0xFF171717),
+    ),
+    Brightness.dark: const YoCorePalette(
+      text: Color(0xFFF5F5F5),
+      background: _pureBlack,
+      primary: Color(0xFFE5E5E5),
+      secondary: Color(0xFFA3A3A3),
+      accent: Color(0xFFFFFFFF),
+    ),
+  },
+
+  // 36. POS RETAIL - Business POS System (Retail Focus)
+  YoColorScheme.posRetail: {
+    Brightness.light: const YoCorePalette(
+      text: Color(0xFF1F2937),
+      background: Color(0xFFF3F4F6),
+      primary: Color(0xFF4F46E5),
+      secondary: Color(0xFF059669),
+      accent: Color(0xFFDC2626),
+    ),
+    Brightness.dark: const YoCorePalette(
+      text: Color(0xFFF9FAFB),
+      background: _pureBlack,
+      primary: Color(0xFF6366F1),
+      secondary: Color(0xFF10B981),
+      accent: Color(0xFFEF4444),
+    ),
+  },
+
+  // CUSTOM
   YoColorScheme.custom: {
-    Brightness.light:
-        _customLight ??
+    Brightness.light: _customLight ??
         const YoCorePalette(
           text: Color(0xFF000000),
           background: Color(0xFFFFFFFF),
@@ -602,11 +724,10 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
           secondary: Color(0xFF03DAC6),
           accent: Color(0xFF018786),
         ),
-    Brightness.dark:
-        _customDark ??
+    Brightness.dark: _customDark ??
         const YoCorePalette(
           text: Color(0xFFFFFFFF),
-          background: Color(0xFF121212),
+          background: _pureBlack,
           primary: Color(0xFFBB86FC),
           secondary: Color(0xFF03DAC6),
           accent: Color(0xFF03DAC6),
