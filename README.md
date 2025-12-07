@@ -5,19 +5,19 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![pub package](https://img.shields.io/badge/pub-v1.1.0-blue)](https://github.com/cahyo40/youi)
 
-A comprehensive, production-ready Flutter UI library with **70+ components**, **30 color schemes**, charts, and a complete design system for building beautiful, consistent applications.
+A comprehensive, production-ready Flutter UI library with **70+ components**, **36 color schemes**, **51 fonts**, charts, and a complete design system for building beautiful, consistent applications.
 
 ## ✨ Features
 
 | Feature | Description |
 |---------|-------------|
 | 🎯 **Design System** | Unified colors, typography, spacing, and shadows |
-| 🎨 **30 Color Schemes** | Industry-specific themes (Tech, Healthcare, Finance, etc.) |
+| 🎨 **36 Color Schemes** | Industry-specific themes with AMOLED dark mode |
+| 🔤 **51 Google Fonts** | Pre-configured fonts via `YoFonts` enum |
 | 🌓 **Theme Support** | Light & dark mode with easy customization |
 | 📱 **Responsive** | Adaptive layouts for mobile, tablet, desktop |
-| 🧩 **70+ Components** | Buttons, Cards, Dialogs, Forms, Navigation, Charts, and more |
+| 🧩 **70+ Components** | Buttons, Cards, Dialogs, Forms, Navigation, Charts |
 | 📊 **Charts** | Line, Bar, Pie/Donut charts with fl_chart |
-| 🛠️ **Utilities** | Date formatting, ID generation, logging, connectivity |
 
 ## 📦 Installation
 
@@ -67,18 +67,151 @@ Scaffold(
 )
 ```
 
-## 🎨 Color Schemes
+---
 
-Choose from 30 industry-specific color schemes:
+## 🎨 Customization
+
+### Custom Color Scheme
+
+Create your own color scheme by using `setCustomPalette()`:
+
+```dart
+import 'package:yo_ui/yo_ui.dart';
+
+void main() {
+  // Set custom color palette before runApp()
+  setCustomPalette(
+    light: YoCorePalette(
+      text: Color(0xFF1A1A2E),
+      background: Color(0xFFFAFAFF),
+      primary: Color(0xFF6C63FF),      // Your primary brand color
+      secondary: Color(0xFF9D4EDD),    // Secondary color
+      accent: Color(0xFF00D9A5),       // Accent color for highlights
+    ),
+    dark: YoCorePalette(
+      text: Color(0xFFF0F0FF),
+      background: Color(0xFF000000),   // Pure black for AMOLED
+      primary: Color(0xFF8B7FFF),
+      secondary: Color(0xFFB76EFF),
+      accent: Color(0xFF1FF8DF),
+    ),
+  );
+
+  runApp(MyApp());
+}
+
+// Then use YoColorScheme.custom in your theme
+MaterialApp(
+  theme: YoTheme.lightTheme(context, YoColorScheme.custom),
+  darkTheme: YoTheme.darkTheme(context, YoColorScheme.custom),
+)
+```
+
+### Available Color Schemes (36)
 
 | Category | Schemes |
 |----------|---------|
 | **Tech** | `techPurple`, `codingDark`, `cryptoModern` |
 | **Healthcare** | `oceanTeal`, `healthcarePro`, `wellnessMint` |
-| **Business** | `corporateModern`, `realEstatePro`, `startupVibrant` |
+| **Business** | `corporateModern`, `realEstatePro`, `posRetail` |
 | **Lifestyle** | `foodAmber`, `travelCoral`, `fitnessEnergy` |
 | **Creative** | `creativeMagenta`, `musicVibes`, `artGallery` |
-| **Entertainment** | `gamingNeon`, `kidsLearning`, `energyRed` |
+| **Entertainment** | `gamingNeon`, `neonCyberpunk`, `kidsLearning` |
+| **Dark Themes** | `amoledBlack`, `midnightBlue`, `carbonDark`, `minimalMono` |
+
+---
+
+### Custom Fonts
+
+Use `YoFonts` enum for type-safe font selection (51 fonts available):
+
+```dart
+import 'package:yo_ui/yo_ui.dart';
+
+void main() {
+  // Using YoFonts enum (recommended)
+  YoTextTheme.setFont(
+    primary: YoFonts.nunito,       // Headline & Title (default: poppins)
+    secondary: YoFonts.openSans,   // Body text (default: inter)
+    mono: YoFonts.firaSans,        // Numbers & code (default: Space Mono)
+  );
+
+  runApp(MyApp());
+}
+```
+
+**Available Fonts (YoFonts enum):**
+
+| Category | Fonts |
+|----------|-------|
+| **Sans Serif** | `roboto`, `openSans`, `lato`, `montserrat`, `poppins`, `inter`, `dmSans`, `nunito`, `quicksand`, `ubuntu` |
+| **Display** | `oswald`, `raleway`, `bebasNeue`, `anton`, `teko`, `righteous` |
+| **Elegant** | `playfairDisplay`, `merriweather`, `crimsonText`, `spectral`, `ebGaramond`, `gelasio` |
+| **Modern** | `manrope`, `sora`, `lexend`, `spaceGrotesk`, `publicSans`, `archivo` |
+| **Casual** | `cabin`, `karla`, `barlow`, `workSans`, `heebo`, `mukta` |
+
+**Using custom font string (for fonts not in enum):**
+
+```dart
+// For fonts not available in YoFonts enum
+YoTextTheme.setFontFamily(
+  primary: 'YourCustomFont',
+  mono: 'JetBrains Mono',
+);
+```
+
+---
+
+### Complete Custom Setup Example
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:yo_ui/yo_ui.dart';
+
+void main() {
+  // 1. Custom Colors
+  setCustomPalette(
+    light: YoCorePalette(
+      text: Color(0xFF2D3436),
+      background: Color(0xFFFDFDFD),
+      primary: Color(0xFF0984E3),
+      secondary: Color(0xFF74B9FF),
+      accent: Color(0xFF00CEC9),
+    ),
+    dark: YoCorePalette(
+      text: Color(0xFFDFE6E9),
+      background: Color(0xFF000000),
+      primary: Color(0xFF74B9FF),
+      secondary: Color(0xFF0984E3),
+      accent: Color(0xFF00CEC9),
+    ),
+  );
+
+  // 2. Custom Fonts using YoFonts enum
+  YoTextTheme.setFont(
+    primary: YoFonts.montserrat,
+    secondary: YoFonts.sourceSans3,
+    mono: YoFonts.firaSans,
+  );
+
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'My Custom App',
+      theme: YoTheme.lightTheme(context, YoColorScheme.custom),
+      darkTheme: YoTheme.darkTheme(context, YoColorScheme.custom),
+      themeMode: ThemeMode.system,
+      home: HomeScreen(),
+    );
+  }
+}
+```
+
+---
 
 ## 🧩 Components
 
@@ -244,6 +377,8 @@ YoTimeline(
 YoTimeline.stepper(events: [...], currentStep: 1)
 ```
 
+---
+
 ## 📐 Adaptive Design
 
 ```dart
@@ -264,6 +399,8 @@ YoAdaptive.value(
 YoSpace.adaptiveMd(context)
 YoPadding.page(context)
 ```
+
+---
 
 ## 🛠️ Utilities
 
@@ -294,6 +431,41 @@ YoConnectivity.addListener((connected) {
 });
 ```
 
+---
+
+## 🔧 Context Extensions
+
+Quick access to theme values via BuildContext:
+
+```dart
+// Text styles
+context.yoHeadlineLarge
+context.yoBodyMedium
+context.yoLabelSmall
+
+// Colors
+context.primaryColor
+context.backgroundColor
+context.textColor
+context.gray500
+context.errorColor
+context.successColor
+
+// Screen info
+context.yoScreenWidth
+context.yoIsMobile
+context.yoIsTablet
+context.yoIsDesktop
+
+// Spacing
+context.yoSpacingSm   // 8
+context.yoSpacingMd   // 16
+context.yoSpacingLg   // 24
+context.yoSpacingXl   // 32
+```
+
+---
+
 ## 📚 Dependencies
 
 | Package | Purpose |
@@ -305,6 +477,8 @@ YoConnectivity.addListener((connected) {
 | `intl` | Date/number formatting |
 | `photo_view` | Image viewer |
 | `fl_chart` | Charts & graphs |
+
+---
 
 ## 📄 License
 

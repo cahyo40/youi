@@ -17,12 +17,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **YoSidebar** - Collapsible sidebar with expanded/collapsed modes
 - **YoDrawerFooter** - Footer widget for drawer
 
+### Added - Color Schemes (6 New)
+- **`amoledBlack`** - Pure black AMOLED theme for battery saving
+- **`midnightBlue`** - Dark professional theme for enterprise apps
+- **`carbonDark`** - Sleek carbon theme for modern dashboards
+- **`neonCyberpunk`** - Futuristic neon theme for gaming/tech apps
+- **`minimalMono`** - Ultra minimal monochrome theme for focus apps
+- **`posRetail`** - Business POS system theme
+
 ### Added - Features
 - **YoAdaptive** - Comprehensive adaptive design system with breakpoints
+- **YoTextTheme.setFont()** - Type-safe font selection using `YoFonts` enum
+- **YoFonts enum** - 51 pre-configured Google Fonts for easy selection
 - **YoTimeline.stepper()** - Stepper-style timeline factory
 - **YoDropDown** - Improved with label, error/helper text, outlined/filled variants
 - **Stock indicator** for YoProductCard (for POS systems)
 - **Edit/Delete actions** for YoProductCard
+- **Dark mode backgrounds** - Changed to pure/near black (#000000) for AMOLED displays
 
 ### Improved
 - **YoCalendar** - Simplified from 927 to ~420 lines, removed YoCalendarTheme
@@ -50,6 +61,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 - `YoResponsive` - Use `YoAdaptive` instead
 - Old responsive extensions in `context_extension.dart` and `device_extensions.dart`
+- `YoTextTheme.setFontFamily()` - Use `YoTextTheme.setFont()` with `YoFonts` enum instead
 
 ### Dependencies
 - Added `fl_chart: ^0.69.2` for chart components

@@ -68,6 +68,7 @@ export 'src/components/utility/yo_responsive_builder.dart';
 export 'src/extensions/color_extensions.dart';
 export 'src/extensions/context_extension.dart';
 export 'src/extensions/device_extensions.dart';
+export 'src/fonts/yo_fonts.dart';
 export 'src/helpers/development/yo_logger.dart';
 export 'src/helpers/helpers.dart';
 export 'src/helpers/network/yo_connectivity.dart';
