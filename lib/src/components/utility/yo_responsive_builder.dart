@@ -10,7 +10,7 @@ class YoResponsiveBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = context.yoScreenSize;
+    final screenSize = context.screenSize;
 
     return builder(context, screenSize);
   }
