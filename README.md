@@ -1,28 +1,24 @@
-## `README.md`
-
 # 🎨 YoUI - Flutter Style Guide & Component Library
 
-[![Flutter](https://img.shields.io/badge/Flutter-3.0+-blue.svg)](https://flutter.dev)
-[![Dart](https://img.shields.io/badge/Dart-3.0+-blue.svg)](https://dart.dev)
+[![Flutter](https://img.shields.io/badge/Flutter-3.0+-02569B?logo=flutter)](https://flutter.dev)
+[![Dart](https://img.shields.io/badge/Dart-3.0+-0175C2?logo=dart)](https://dart.dev)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![pub package](https://img.shields.io/badge/pub-v1.0.3-blue)](https://github.com/cahyo40/youi)
 
-A comprehensive, production-ready Flutter style guide and component library that helps you build beautiful, consistent, and maintainable applications with ease.
+A comprehensive, production-ready Flutter UI library with **60+ components**, **30 color schemes**, and a complete design system for building beautiful, consistent applications.
 
 ## ✨ Features
 
-- 🎯 **Consistent Design System** - Unified colors, typography, and spacing
-- 🎨 **Theme Support** - Light & dark themes with easy customization
-- 📱 **Responsive Design** - Adaptive layouts for all screen sizes
-- 🚀 **Performance Optimized** - Built with performance in mind
-- 🌐 **Internationalization Ready** - Support for multiple languages
-- ♿ **Accessibility Friendly** - WCAG compliant components
-- 🛠️ **Developer Experience** - Easy to use and extend
+| Feature | Description |
+|---------|-------------|
+| 🎯 **Design System** | Unified colors, typography, and spacing |
+| 🎨 **30 Color Schemes** | Industry-specific themes (Tech, Healthcare, Finance, etc.) |
+| 🌓 **Theme Support** | Light & dark mode with easy customization |
+| 📱 **Responsive** | Adaptive layouts for mobile, tablet, desktop |
+| 🧩 **60+ Components** | Buttons, Cards, Dialogs, Forms, Navigation, and more |
+| 🛠️ **Utilities** | Date formatting, ID generation, logging, connectivity |
 
 ## 📦 Installation
-
-Add this to your `pubspec.yaml`:
-
-
 
 ```yaml
 dependencies:
@@ -32,482 +28,204 @@ dependencies:
       ref: main
 ```
 
-Then run:
 ```bash
 flutter pub get
 ```
 
 ## 🚀 Quick Start
 
-### 1. Wrap Your App with YoTheme
+### 1. Apply Theme
 
 ```dart
 import 'package:yo_ui/yo_ui.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'My App',
-      theme: YoTheme.lightTheme(context),
-      darkTheme: YoTheme.darkTheme(context),
-      home: const HomePage(),
-    );
-  }
-}
-```
-
-### 2. Use YoUI Components
-
-```dart
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: context.backgroundColor,
-      appBar: AppBar(
-        title: YoText.titleLarge('Welcome to YoUI'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            YoText.headlineMedium('Beautiful Components'),
-            const SizedBox(height: 16),
-            YoButton.primary(
-              text: 'Get Started',
-              onPressed: () {},
-              expanded: true,
-            ),
-            const SizedBox(height: 16),
-            YoCard(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    YoText.bodyMedium('Consistent design across your entire app'),
-                    const SizedBox(height: 8),
-                    YoText.bodySmall('Powered by YoUI design system'),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-```
-
-## 🎨 Core Components
-
-### Colors & Theming
-
-```dart
-// Using context extensions
-Container(
-  color: context.primaryColor,
-  child: Text('Hello', style: TextStyle(color: context.textColor)),
-)
-
-// Direct color access
-Container(
-  color: YoColors.primary(context),
-)
-
-// Gradients
-Container(
-  decoration: BoxDecoration(gradient: context.primaryGradient),
+MaterialApp(
+  theme: YoTheme.lightTheme(context),
+  darkTheme: YoTheme.darkTheme(context),
+  // Or use a specific color scheme:
+  // theme: YoTheme.lightTheme(context, YoColorScheme.techPurple),
 )
 ```
 
-### Typography
+### 2. Use Components
 
 ```dart
-// Predefined text styles
-YoText.displayLarge('Display Large')
-YoText.headlineMedium('Headline Medium')
-YoText.titleSmall('Title Small')
-YoText.bodyMedium('Body Medium')
-YoText.labelLarge('Label Large')
-
-// With customizations
-YoText.bodyMedium(
-  'Custom Text',
-  color: Colors.red,
-  fontWeight: FontWeight.bold,
-)
-
-// Mono font for numbers/currency
-YoText.monoLarge('Rp 1.000.000')
-```
-
-### Buttons
-
-```dart
-// Primary button
-YoButton.primary(
-  text: 'Primary Button',
-  onPressed: () {},
-)
-
-// Secondary button
-YoButton.secondary(
-  text: 'Secondary Button',
-  onPressed: () {},
-)
-
-// Outline button
-YoButton.outline(
-  text: 'Outline Button',
-  onPressed: () {},
-)
-
-// Ghost button
-YoButton.ghost(
-  text: 'Ghost Button',
-  onPressed: () {},
-)
-
-// With icons and loading
-YoButton.primary(
-  text: 'Processing...',
-  onPressed: () {},
-  isLoading: true,
-  icon: Icon(Icons.download),
-)
-```
-
-### Cards
-
-```dart
-// Basic card
-YoCard(
-  child: Text('Card Content'),
-)
-
-
-// Elevated card
-YoCard.elevated(
-  child: Text('Elevated Card'),
-)
-```
-
-## 📱 Advanced Components
-
-### Image Handling
-
-```dart
-// Network image with caching
-YoImage.network(
-  url: 'https://example.com/image.jpg',
-  width: 200,
-  height: 200,
-  borderRadius: BorderRadius.circular(12),
-)
-
-// Asset image
-YoImage.asset(
-  assetPath: 'assets/images/photo.jpg',
-  placeholder: YoLoading.spinner(),
-)
-
-// Image viewer
-YoImageViewer.show(
-  context: context,
-  imageUrls: ['url1.jpg', 'url2.jpg'],
-  enableDownload: true,
-  enableZoom: true,
-)
-```
-
-### Dialogs & Bottom Sheets
-
-```dart
-// Simple dialog
-YoDialog.show(
-  context: context,
-  title: 'Information',
-  content: 'This is a dialog message',
-  actions: [
-    YoButton.primary(text: 'OK', onPressed: () => Navigator.pop(context)),
-  ],
-)
-
-// Confirmation dialog
-YoConfirmDialog.show(
-  context: context,
-  title: 'Delete Item',
-  content: 'Are you sure you want to delete this item?',
-  confirmText: 'Delete',
-  isDestructive: true,
-).then((confirmed) {
-  if (confirmed == true) {
-    // Delete item
-  }
-})
-
-// Bottom sheet
-YoBottomSheet.show(
-  context: context,
-  title: 'Options',
-  child: ListView(
+Scaffold(
+  body: Column(
     children: [
-      ListTile(title: Text('Option 1')),
-      ListTile(title: Text('Option 2')),
+      YoText.headlineMedium('Welcome to YoUI'),
+      YoButton.primary(
+        text: 'Get Started',
+        onPressed: () {},
+      ),
+      YoCard(
+        child: YoText.bodyMedium('Beautiful components'),
+      ),
     ],
   ),
 )
 ```
 
-### Feedback & Loading
+## 🎨 Color Schemes
+
+Choose from 30 industry-specific color schemes:
+
+| Category | Schemes |
+|----------|---------|
+| **Tech** | `techPurple`, `codingDark`, `cryptoModern` |
+| **Healthcare** | `oceanTeal`, `healthcarePro`, `wellnessMint` |
+| **Business** | `corporateModern`, `realEstatePro`, `startupVibrant` |
+| **Lifestyle** | `foodAmber`, `travelCoral`, `fitnessEnergy` |
+| **Creative** | `creativeMagenta`, `musicVibes`, `artGallery` |
+| **Entertainment** | `gamingNeon`, `kidsLearning`, `energyRed` |
 
 ```dart
-// Loading indicators
-YoLoading.spinner(size: 24)
-YoLoading.dots(size: 24)
-
-// Skeleton loading
-YoSkeleton.line(width: 200, height: 16)
-YoSkeleton.circle(size: 50)
-
-// Empty states
-YoEmptyState.noData(
-  title: 'No data found',
-  description: 'Try refreshing the page',
-  actionText: 'Refresh',
-  onAction: () => _loadData(),
-)
-
-// Error states
-YoErrorState(
-  onRetry: _loadData,
-  error: 'Connection failed',
-)
-
-// Loading overlay
-YoLoadingOverlay(
-  isLoading: _isLoading,
-  message: 'Loading data...',
-  child: YourContent(),
-)
+// Apply a specific scheme
+YoTheme.lightTheme(context, YoColorScheme.techPurple)
 ```
 
-## 🛠️ Utilities & Helpers
+## 🧩 Components
+
+### Typography
+
+```dart
+YoText.displayLarge('Display')
+YoText.headlineMedium('Headline')
+YoText.bodyMedium('Body text')
+YoText.monoLarge('Rp 1.000.000')  // Monospace for numbers
+```
+
+### Buttons
+
+```dart
+YoButton.primary(text: 'Primary', onPressed: () {})
+YoButton.secondary(text: 'Secondary', onPressed: () {})
+YoButton.outline(text: 'Outline', onPressed: () {})
+YoButton.ghost(text: 'Ghost', onPressed: () {})
+
+// With loading state
+YoButton.primary(text: 'Loading...', isLoading: true, onPressed: () {})
+```
+
+### Feedback
+
+```dart
+// Loading
+YoLoading.spinner()
+YoLoading.dots()
+
+// Skeleton
+YoSkeleton.line(width: 200)
+YoSkeleton.circle(size: 50)
+
+// States
+YoEmptyState.noData(title: 'No data', onAction: () {})
+YoErrorState(error: 'Error message', onRetry: () {})
+```
+
+### Dialogs & Sheets
+
+```dart
+// Dialog
+YoDialog.show(context: context, title: 'Title', content: 'Message');
+
+// Confirm dialog
+YoConfirmDialog.show(
+  context: context,
+  title: 'Delete?',
+  isDestructive: true,
+);
+
+// Bottom sheet
+YoBottomSheet.show(context: context, child: YourWidget());
+```
+
+## 🛠️ Utilities
 
 ### Date Formatting
 
 ```dart
-// Basic formatting
-YoDateFormatter.formatDate(DateTime.now()) // '15 Jan 2024'
-YoDateFormatter.formatDateTime(DateTime.now()) // '15 Jan 2024 14:30'
-YoDateFormatter.formatTime(DateTime.now()) // '14:30'
-
-// Relative time
-YoDateFormatter.formatRelativeTime(someDate) // '2 hours ago'
-
-// Date manipulation
-YoDateFormatter.startOfDay(DateTime.now())
-YoDateFormatter.endOfMonth(DateTime.now())
-YoDateFormatter.isToday(someDate)
+YoDateFormatter.formatDate(DateTime.now())       // '07 Dec 2024'
+YoDateFormatter.formatRelativeTime(date)         // '2 hours ago'
+YoDateFormatter.isToday(date)                    // true/false
 ```
 
 ### ID Generation
 
 ```dart
-// Various ID types
-YoIdGenerator.numericId(length: 8) // '12345678'
-YoIdGenerator.alphanumericId(length: 12) // 'aB3xY8pQ2rM1'
-YoIdGenerator.uuid() // UUID v4
-
-// Prefixed IDs
-YoIdGenerator.userId() // 'USR_aB3xY8pQ'
-YoIdGenerator.orderId() // 'ORD_20240115001'
-
-// Timestamp-based
-YoIdGenerator.timestampId() // '15012024093015'
-```
-
-### Logging
-
-```dart
-// Different log levels
-YoLogger.debug('Debug message', data: {'key': 'value'})
-YoLogger.info('Info message')
-YoLogger.warning('Warning message')
-YoLogger.error('Error occurred', error: e, stackTrace: stackTrace)
-
-// Performance tracking
-YoLogger.trackPerformance('Heavy operation', () {
-  // Your code here
-})
+YoIdGenerator.uuid()                    // UUID v4
+YoIdGenerator.numericId(length: 8)      // '12345678'
+YoIdGenerator.userId()                  // 'USR_aB3xY8pQ'
 ```
 
 ### Connectivity
 
 ```dart
-// Initialize connectivity
 await YoConnectivity.initialize();
+bool isOnline = YoConnectivity.isConnected;
 
-// Check connection status
-bool isConnected = YoConnectivity.isConnected;
-String connectionType = YoConnectivity.connectionName;
-
-// Listen for changes
-YoConnectivity.addListener((isConnected) {
-  if (!isConnected) {
-    // Show offline banner
-  }
-});
-
-// Ensure connection for network calls
-YoConnectivity.ensureConnection(() {
-  return api.fetchData();
+YoConnectivity.addListener((connected) {
+  // Handle connection changes
 });
 ```
 
-## 🎯 Responsive Design
+## 📐 Responsive Design
 
 ```dart
+// Check device type
+if (YoResponsive.isMobile(context)) { }
+if (YoResponsive.isTablet(context)) { }
+if (YoResponsive.isDesktop(context)) { }
+
 // Responsive values
-Container(
-  width: YoResponsive.responsiveValue(context,
-    mobile: 300,
-    tablet: 400,
-    desktop: 500,
-  ),
-)
-
-// Conditional rendering
-if (YoResponsive.isMobile(context)) {
-  // Mobile layout
-} else if (YoResponsive.isTablet(context)) {
-  // Tablet layout
-} else {
-  // Desktop layout
-}
-
-// Responsive widgets
-YoResponsive.responsiveWidget(
+YoResponsive.responsiveValue(
   context,
-  mobile: MobileWidget(),
-  tablet: TabletWidget(),
-  desktop: DesktopWidget(),
+  mobile: 16.0,
+  tablet: 24.0,
+  desktop: 32.0,
 )
 ```
 
-## 🔧 Customization
-
-### Theme Customization
+## 📏 Spacing & Padding
 
 ```dart
-// Copy theme with custom colors
-final customTheme = YoThemeCopyWith.copyWithColors(
-  baseTheme: YoTheme.lightTheme,
-  primary: Colors.blue,
-  secondary: Colors.green,
-);
+// Predefined padding
+Padding(padding: YoPadding.all16, child: ...)
+Container(margin: YoPadding.symmetricV8, ...)
 
-// Copy theme with custom fonts
-final fontTheme = YoThemeCopyWith.copyWithFonts(
-  baseTheme: YoTheme.lightTheme,
-  primaryFont: 'Inter',
-  secondaryFont: 'Poppins',
-);
+// Spacing constants
+SizedBox(height: YoSpacing.md)  // 16
+SizedBox(width: YoSpacing.lg)   // 24
 ```
 
-### Color System
+## 🔧 Context Extensions
 
 ```dart
-class MyColors {
-  static const Color brandPrimary = Color(0xFF0066CC);
-  static const Color brandSecondary = Color(0xFF00A86B);
-}
+// Text styles
+context.yoHeadlineLarge
+context.yoBodyMedium
 
-// Extend YoColors
-extension CustomColors on YoColors {
-  static Color brandPrimary(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.light 
-        ? MyColors.brandPrimary 
-        : MyColors.brandPrimary.withOpacity(0.8);
-  }
-}
+// Screen info
+context.yoScreenWidth
+context.yoIsMobile
+context.yoIsTablet
 ```
 
+## 📚 Dependencies
 
-### 📘 YoPadding
+| Package | Purpose |
+|---------|---------|
+| `google_fonts` | Typography |
+| `cached_network_image` | Image caching |
+| `connectivity_plus` | Network state |
+| `device_info_plus` | Device information |
+| `intl` | Date/number formatting |
+| `photo_view` | Image viewer |
 
-#### 🧪 Contoh Penggunaan
-```dart
-Padding(
-  padding: YoPadding.all16,
-  child: Text('Hello World'),
-)
+## 📄 License
 
-Container(
-  margin: YoPadding.symmetricV8,
-  padding: YoPadding.symmetricH12,
-  child: Icon(Icons.favorite),
-)
-```
+MIT License - see [LICENSE](LICENSE) for details.
 
-#### 📚 Daftar Nilai
-| Kategori | Contoh Nama | Nilai |
-|----------|-------------|--------|
-| All | `all4` → `all32` | `EdgeInsets.all(value)` |
-| Horizontal | `symmetricH4` → `symmetricH32` | `EdgeInsets.symmetric(horizontal: value)` |
-| Vertical | `symmetricV4` → `symmetricV32` | `EdgeInsets.symmetric(vertical: value)` |
-| Only | `onlyTop8`, `onlyLeft16`, … | `EdgeInsets.only(...)` |
-| Custom | `fromLTRB(l, t, r, b)` | `EdgeInsets.fromLTRB(...)` |
-| Custom | `only({left, top, right, bottom})` | `EdgeInsets.only(...)` |
-
-
-
-
-## 📚 API Reference
-
-### Available Text Styles
-- `displayLarge`, `displayMedium`, `displaySmall`
-- `headlineLarge`, `headlineMedium`, `headlineSmall`
-- `titleLarge`, `titleMedium`, `titleSmall`
-- `bodyLarge`, `bodyMedium`, `bodySmall`
-- `labelLarge`, `labelMedium`, `labelSmall`
-- `monoLarge`, `monoMedium`, `monoSmall`
-
-### Color Palette
-- `primary`, `secondary`, `accent`, `background`, `text`
-- `success`, `error`, `warning`, `info`
-- `gray50` to `gray900`
-
-### Spacing Scale
-- `xs: 4`, `sm: 8`, `md: 16`, `lg: 24`, `xl: 32`, `xxl: 48`
-
-
+---
 
 **Built with ❤️ for the Flutter community**
-```
-
-### `CHANGELOG.md`
-
-```markdown
-# Changelog
-
-## [1.0.0] - 2024-01-15
-
-### Added
-- Initial release
-- Core components (Text, Button, Card)
-- Theme system (Light & Dark)
-- Utility helpers (Date, ID, Logger)
-- Image handling components
-- Dialog and bottom sheet widgets
-```
