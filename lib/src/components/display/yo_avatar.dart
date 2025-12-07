@@ -1,12 +1,11 @@
-// [file name]: yo_avatar.dart
 import 'package:flutter/material.dart';
-
-import '../../../yo_ui.dart';
+import 'package:yo_ui/yo_ui.dart';
 
 enum YoAvatarSize { xs, sm, md, lg, xl }
 
 enum YoAvatarVariant { circle, rounded, square }
 
+/// Avatar widget dengan berbagai konfigurasi
 class YoAvatar extends StatelessWidget {
   final String? imageUrl;
   final String? text;
@@ -21,6 +20,8 @@ class YoAvatar extends StatelessWidget {
   final Color? badgeColor;
   final Widget? customBadge;
   final VoidCallback? onTap;
+  final double? borderWidth;
+  final Color? borderColor;
 
   const YoAvatar({
     super.key,
@@ -37,12 +38,14 @@ class YoAvatar extends StatelessWidget {
     this.badgeColor,
     this.customBadge,
     this.onTap,
+    this.borderWidth,
+    this.borderColor,
   }) : assert(
          imageUrl != null || text != null || icon != null,
          'Either imageUrl, text, or icon must be provided',
        );
 
-  // Named constructor untuk image avatar
+  /// Image avatar
   const YoAvatar.image({
     super.key,
     required this.imageUrl,
@@ -53,13 +56,15 @@ class YoAvatar extends StatelessWidget {
     this.badgeColor,
     this.customBadge,
     this.onTap,
+    this.borderWidth,
+    this.borderColor,
   }) : text = null,
        icon = null,
        backgroundColor = null,
        textColor = null,
        iconColor = null;
 
-  // Named constructor untuk text avatar
+  /// Text/initials avatar
   const YoAvatar.text({
     super.key,
     required this.text,
@@ -72,11 +77,13 @@ class YoAvatar extends StatelessWidget {
     this.badgeColor,
     this.customBadge,
     this.onTap,
+    this.borderWidth,
+    this.borderColor,
   }) : imageUrl = null,
        icon = null,
        iconColor = null;
 
-  // Named constructor untuk icon avatar
+  /// Icon avatar
   const YoAvatar.icon({
     super.key,
     required this.icon,
@@ -89,31 +96,74 @@ class YoAvatar extends StatelessWidget {
     this.badgeColor,
     this.customBadge,
     this.onTap,
+    this.borderWidth,
+    this.borderColor,
   }) : imageUrl = null,
        text = null,
        textColor = null;
 
+  /// Get pixel size from enum
+  double get pixelSize => sizeMap[size]!;
+
+  static const sizeMap = {
+    YoAvatarSize.xs: 24.0,
+    YoAvatarSize.sm: 32.0,
+    YoAvatarSize.md: 40.0,
+    YoAvatarSize.lg: 56.0,
+    YoAvatarSize.xl: 72.0,
+  };
+
+  static const _textSizeMap = {
+    YoAvatarSize.xs: 10.0,
+    YoAvatarSize.sm: 12.0,
+    YoAvatarSize.md: 14.0,
+    YoAvatarSize.lg: 18.0,
+    YoAvatarSize.xl: 24.0,
+  };
+
+  static const _iconSizeMap = {
+    YoAvatarSize.xs: 12.0,
+    YoAvatarSize.sm: 16.0,
+    YoAvatarSize.md: 20.0,
+    YoAvatarSize.lg: 28.0,
+    YoAvatarSize.xl: 36.0,
+  };
+
+  static const _badgeSizeMap = {
+    YoAvatarSize.xs: 8.0,
+    YoAvatarSize.sm: 10.0,
+    YoAvatarSize.md: 12.0,
+    YoAvatarSize.lg: 14.0,
+    YoAvatarSize.xl: 16.0,
+  };
+
   @override
   Widget build(BuildContext context) {
-    final double avatarSize = _getSize();
-    final BorderRadius effectiveBorderRadius = _getBorderRadius();
+    final avatarSize = sizeMap[size]!;
+    final effectiveBorderRadius = _getBorderRadius(avatarSize);
 
     Widget avatarContent = Container(
       width: avatarSize,
       height: avatarSize,
       decoration: BoxDecoration(
         borderRadius: effectiveBorderRadius,
-        color: backgroundColor ?? _getDefaultBackgroundColor(context),
+        color:
+            backgroundColor ??
+            Theme.of(context).colorScheme.surfaceContainerHighest,
+        border: borderWidth != null
+            ? Border.all(
+                color: borderColor ?? context.backgroundColor,
+                width: borderWidth!,
+              )
+            : null,
       ),
-      child: _buildAvatarContent(context),
+      child: _buildContent(context),
     );
 
-    // Wrap dengan GestureDetector jika ada onTap
     if (onTap != null) {
       avatarContent = GestureDetector(onTap: onTap, child: avatarContent);
     }
 
-    // Tambahkan badge jika diperlukan
     if (showBadge || customBadge != null) {
       return Stack(
         clipBehavior: Clip.none,
@@ -122,7 +172,7 @@ class YoAvatar extends StatelessWidget {
           Positioned(
             top: -2,
             right: -2,
-            child: customBadge ?? _buildDefaultBadge(context),
+            child: customBadge ?? _buildBadge(context),
           ),
         ],
       );
@@ -131,85 +181,69 @@ class YoAvatar extends StatelessWidget {
     return avatarContent;
   }
 
-  Widget _buildAvatarContent(BuildContext context) {
+  Widget _buildContent(BuildContext context) {
     if (imageUrl != null) {
       return ClipRRect(
-        borderRadius: _getBorderRadius(),
+        borderRadius: _getBorderRadius(sizeMap[size]!),
         child: Image.network(
           imageUrl!,
           fit: BoxFit.cover,
           width: double.infinity,
           height: double.infinity,
-          errorBuilder: (context, error, stackTrace) {
-            return _buildFallbackContent(context);
-          },
-          loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) return child;
+          errorBuilder: (_, __, ___) => _buildFallback(context),
+          loadingBuilder: (_, child, progress) {
+            if (progress == null) return child;
             return Center(
-              child: CircularProgressIndicator(
-                value: loadingProgress.expectedTotalBytes != null
-                    ? loadingProgress.cumulativeBytesLoaded /
-                          loadingProgress.expectedTotalBytes!
-                    : null,
-                strokeWidth: 2,
+              child: SizedBox(
+                width: _iconSizeMap[size],
+                height: _iconSizeMap[size],
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  value: progress.expectedTotalBytes != null
+                      ? progress.cumulativeBytesLoaded /
+                            progress.expectedTotalBytes!
+                      : null,
+                ),
               ),
             );
           },
         ),
       );
     }
-
-    return _buildFallbackContent(context);
+    return _buildFallback(context);
   }
 
-  Widget _buildFallbackContent(BuildContext context) {
+  Widget _buildFallback(BuildContext context) {
     if (text != null) {
       return Center(
-        child: YoText(
+        child: Text(
           _getInitials(text!),
           style: TextStyle(
-            color: textColor ?? _getDefaultTextColor(context),
-            fontSize: _getTextSize(),
+            color: textColor ?? Theme.of(context).colorScheme.onSurfaceVariant,
+            fontSize: _textSizeMap[size],
             fontWeight: FontWeight.w600,
           ),
         ),
       );
     }
 
-    if (icon != null) {
-      return Center(
-        child: Icon(
-          icon,
-          size: _getIconSize(),
-          color: iconColor ?? _getDefaultIconColor(context),
-        ),
-      );
-    }
-
-    // Fallback ke icon user
     return Center(
       child: Icon(
-        Icons.person,
-        size: _getIconSize(),
-        color: iconColor ?? _getDefaultIconColor(context),
+        icon ?? Icons.person,
+        size: _iconSizeMap[size],
+        color: iconColor ?? Theme.of(context).colorScheme.onSurfaceVariant,
       ),
     );
   }
 
-  Widget _buildDefaultBadge(BuildContext context) {
-    final Color effectiveBadgeColor =
-        badgeColor ?? Theme.of(context).colorScheme.primary;
-
+  Widget _buildBadge(BuildContext context) {
     return Container(
-      width: _getBadgeSize(),
-      height: _getBadgeSize(),
+      width: _badgeSizeMap[size],
+      height: _badgeSizeMap[size],
       decoration: BoxDecoration(
-        color: effectiveBadgeColor,
+        color: badgeColor ?? context.primaryColor,
         shape: BoxShape.circle,
-        border: Border.all(
-          color: Theme.of(context).colorScheme.background,
-          width: 1.5,
-        ),
+        border: Border.all(color: context.backgroundColor, width: 1.5),
       ),
     );
   }
@@ -217,178 +251,21 @@ class YoAvatar extends StatelessWidget {
   String _getInitials(String name) {
     final parts = name.trim().split(' ');
     if (parts.length == 1) {
-      return parts[0].length > 2
+      return parts[0].length > 1
           ? parts[0].substring(0, 2).toUpperCase()
           : parts[0].toUpperCase();
     }
     return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
   }
 
-  double _getSize() {
-    switch (size) {
-      case YoAvatarSize.xs:
-        return 24;
-      case YoAvatarSize.sm:
-        return 32;
-      case YoAvatarSize.md:
-        return 40;
-      case YoAvatarSize.lg:
-        return 56;
-      case YoAvatarSize.xl:
-        return 72;
-    }
-  }
-
-  double _getTextSize() {
-    switch (size) {
-      case YoAvatarSize.xs:
-        return 10;
-      case YoAvatarSize.sm:
-        return 12;
-      case YoAvatarSize.md:
-        return 14;
-      case YoAvatarSize.lg:
-        return 16;
-      case YoAvatarSize.xl:
-        return 18;
-    }
-  }
-
-  double _getIconSize() {
-    switch (size) {
-      case YoAvatarSize.xs:
-        return 12;
-      case YoAvatarSize.sm:
-        return 16;
-      case YoAvatarSize.md:
-        return 20;
-      case YoAvatarSize.lg:
-        return 24;
-      case YoAvatarSize.xl:
-        return 28;
-    }
-  }
-
-  double _getBadgeSize() {
-    switch (size) {
-      case YoAvatarSize.xs:
-        return 8;
-      case YoAvatarSize.sm:
-        return 10;
-      case YoAvatarSize.md:
-        return 12;
-      case YoAvatarSize.lg:
-        return 14;
-      case YoAvatarSize.xl:
-        return 16;
-    }
-  }
-
-  BorderRadius _getBorderRadius() {
-    final double radius = borderRadius ?? _getDefaultBorderRadius();
-
+  BorderRadius _getBorderRadius(double avatarSize) {
     switch (variant) {
       case YoAvatarVariant.circle:
-        return BorderRadius.circular(_getSize() / 2);
+        return BorderRadius.circular(avatarSize / 2);
       case YoAvatarVariant.rounded:
-        return BorderRadius.circular(radius);
+        return BorderRadius.circular(borderRadius ?? 8);
       case YoAvatarVariant.square:
-        return BorderRadius.circular(radius);
-    }
-  }
-
-  double _getDefaultBorderRadius() {
-    switch (variant) {
-      case YoAvatarVariant.circle:
-        return _getSize() / 2;
-      case YoAvatarVariant.rounded:
-        return 8;
-      case YoAvatarVariant.square:
-        return 4;
-    }
-  }
-
-  Color _getDefaultBackgroundColor(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    return colorScheme.surfaceVariant;
-  }
-
-  Color _getDefaultTextColor(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    return colorScheme.onSurfaceVariant;
-  }
-
-  Color _getDefaultIconColor(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    return colorScheme.onSurfaceVariant;
-  }
-}
-
-// Group Avatar untuk menampilkan multiple avatars
-class YoAvatarGroup extends StatelessWidget {
-  final List<YoAvatar> avatars;
-  final double overlap;
-  final YoAvatarSize size;
-  final int maxDisplay;
-  final Widget? moreBuilder;
-
-  const YoAvatarGroup({
-    super.key,
-    required this.avatars,
-    this.overlap = 0.7,
-    this.size = YoAvatarSize.md,
-    this.maxDisplay = 4,
-    this.moreBuilder,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final displayAvatars = avatars.take(maxDisplay).toList();
-    final remainingCount = avatars.length - maxDisplay;
-
-    return SizedBox(
-      height: _getSize(),
-      child: Stack(
-        children: [
-          ...displayAvatars.asMap().entries.map((entry) {
-            final index = entry.key;
-            final avatar = entry.value;
-            return Positioned(
-              left: index * _getSize() * (1 - overlap),
-              child: avatar,
-            );
-          }),
-          if (remainingCount > 0)
-            Positioned(
-              left: displayAvatars.length * _getSize() * (1 - overlap),
-              child: moreBuilder ?? _buildMoreAvatar(remainingCount, context),
-            ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMoreAvatar(int count, BuildContext context) {
-    return YoAvatar.text(
-      text: '+$count',
-      size: size,
-      backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
-      textColor: Theme.of(context).colorScheme.onSurfaceVariant,
-    );
-  }
-
-  double _getSize() {
-    switch (size) {
-      case YoAvatarSize.xs:
-        return 24;
-      case YoAvatarSize.sm:
-        return 32;
-      case YoAvatarSize.md:
-        return 40;
-      case YoAvatarSize.lg:
-        return 56;
-      case YoAvatarSize.xl:
-        return 72;
+        return BorderRadius.circular(borderRadius ?? 4);
     }
   }
 }

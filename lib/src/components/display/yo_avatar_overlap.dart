@@ -1,294 +1,120 @@
-// File: yo_avatar_overlap.dart
 import 'package:flutter/material.dart';
+import 'package:yo_ui/yo_ui.dart';
 
-import '../../../yo_ui.dart';
-
+/// Overlapping avatars untuk menampilkan grup user
 class YoAvatarOverlap extends StatelessWidget {
   final List<String> imageUrls;
+  final List<YoAvatar>? avatars;
   final double overlap;
   final YoAvatarSize size;
   final int maxDisplay;
   final Widget? moreBuilder;
-  final Axis direction;
-  final MainAxisAlignment mainAxisAlignment;
-  final CrossAxisAlignment crossAxisAlignment;
-  final YoAvatarVariant variant;
-  final double? borderRadius;
   final VoidCallback? onTapMore;
+  final YoAvatarVariant variant;
 
   const YoAvatarOverlap({
     super.key,
     required this.imageUrls,
-    this.overlap = 0.7,
+    this.overlap = 0.3,
     this.size = YoAvatarSize.md,
     this.maxDisplay = 4,
     this.moreBuilder,
-    this.direction = Axis.horizontal,
-    this.mainAxisAlignment = MainAxisAlignment.start,
-    this.crossAxisAlignment = CrossAxisAlignment.center,
-    this.variant = YoAvatarVariant.circle,
-    this.borderRadius,
     this.onTapMore,
-  });
+    this.variant = YoAvatarVariant.circle,
+  }) : avatars = null;
 
-  // Horizontal constructor
-  const YoAvatarOverlap.horizontal({
+  /// Dengan custom avatars
+  const YoAvatarOverlap.custom({
     super.key,
-    required this.imageUrls,
-    this.overlap = 0.7,
+    required this.avatars,
+    this.overlap = 0.3,
     this.size = YoAvatarSize.md,
     this.maxDisplay = 4,
     this.moreBuilder,
-    this.mainAxisAlignment = MainAxisAlignment.start,
-    this.crossAxisAlignment = CrossAxisAlignment.center,
-    this.variant = YoAvatarVariant.circle,
-    this.borderRadius,
     this.onTapMore,
-  })  : direction = Axis.horizontal;
-
-  // Vertical constructor
-  const YoAvatarOverlap.vertical({
-    super.key,
-    required this.imageUrls,
-    this.overlap = 0.7,
-    this.size = YoAvatarSize.md,
-    this.maxDisplay = 4,
-    this.moreBuilder,
-    this.mainAxisAlignment = MainAxisAlignment.start,
-    this.crossAxisAlignment = CrossAxisAlignment.center,
     this.variant = YoAvatarVariant.circle,
-    this.borderRadius,
-    this.onTapMore,
-  })  : direction = Axis.vertical;
+  }) : imageUrls = const [];
 
   @override
   Widget build(BuildContext context) {
-    final displayUrls = imageUrls.take(maxDisplay).toList();
-    final remainingCount = imageUrls.length - maxDisplay;
-    final double avatarSize = _getAvatarSize();
+    final displayCount = _getDisplayCount();
+    final remainingCount = _getRemainingCount();
+    final avatarSize = YoAvatar.sizeMap[size]!;
+    final offsetAmount = avatarSize * overlap;
 
-    if (direction == Axis.vertical) {
-      return _buildVerticalOverlap(
-        context,
-        displayUrls,
-        remainingCount,
-        avatarSize,
-      );
-    }
-
-    return _buildHorizontalOverlap(
-      context,
-      displayUrls,
-      remainingCount,
-      avatarSize,
-    );
-  }
-
-  Widget _buildHorizontalOverlap(
-    BuildContext context,
-    List<String> displayUrls,
-    int remainingCount,
-    double avatarSize,
-  ) {
     return SizedBox(
       height: avatarSize,
-      child: Row(
-        mainAxisAlignment: mainAxisAlignment,
-        crossAxisAlignment: crossAxisAlignment,
+      width: _calculateWidth(
+        displayCount,
+        remainingCount,
+        avatarSize,
+        offsetAmount,
+      ),
+      child: Stack(
         children: [
-          ...displayUrls.asMap().entries.map((entry) {
-            final index = entry.key;
-            final imageUrl = entry.value;
-            return Padding(
-              padding: EdgeInsets.only(
-                left: index > 0 ? -avatarSize * (1 - overlap) : 0,
-              ),
-              child: YoAvatar.image(
-                imageUrl: imageUrl,
-                size: size,
-                variant: variant,
-                borderRadius: borderRadius,
-              ),
-            );
-          }),
+          ..._buildAvatars(displayCount, offsetAmount),
           if (remainingCount > 0)
-            Padding(
-              padding: EdgeInsets.only(
-                left: displayUrls.isNotEmpty 
-                    ? -avatarSize * (1 - overlap) 
-                    : 0,
-              ),
-              child: _buildMoreWidget(remainingCount, context),
+            Positioned(
+              left: displayCount * (avatarSize - offsetAmount),
+              child: _buildMoreAvatar(remainingCount, context),
             ),
         ],
       ),
     );
   }
 
-  Widget _buildVerticalOverlap(
-    BuildContext context,
-    List<String> displayUrls,
+  int _getDisplayCount() {
+    final total = avatars != null ? avatars!.length : imageUrls.length;
+    return total > maxDisplay ? maxDisplay : total;
+  }
+
+  int _getRemainingCount() {
+    final total = avatars != null ? avatars!.length : imageUrls.length;
+    return total > maxDisplay ? total - maxDisplay : 0;
+  }
+
+  double _calculateWidth(
+    int displayCount,
     int remainingCount,
     double avatarSize,
+    double offset,
   ) {
-    return SizedBox(
-      width: avatarSize,
-      child: Column(
-        mainAxisAlignment: mainAxisAlignment,
-        crossAxisAlignment: crossAxisAlignment,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ...displayUrls.asMap().entries.map((entry) {
-            final index = entry.key;
-            final imageUrl = entry.value;
-            return Padding(
-              padding: EdgeInsets.only(
-                top: index > 0 ? -avatarSize * (1 - overlap) : 0,
-              ),
-              child: YoAvatar.image(
-                imageUrl: imageUrl,
-                size: size,
-                variant: variant,
-                borderRadius: borderRadius,
-              ),
+    final count = displayCount + (remainingCount > 0 ? 1 : 0);
+    return avatarSize + (count - 1) * (avatarSize - offset);
+  }
+
+  List<Widget> _buildAvatars(int count, double offset) {
+    final avatarSize = YoAvatar.sizeMap[size]!;
+
+    return List.generate(count, (index) {
+      final avatar = avatars != null
+          ? avatars![index]
+          : YoAvatar.image(
+              imageUrl: imageUrls[index],
+              size: size,
+              variant: variant,
+              borderWidth: 2,
             );
-          }),
-          if (remainingCount > 0)
-            Padding(
-              padding: EdgeInsets.only(
-                top: displayUrls.isNotEmpty 
-                    ? -avatarSize * (1 - overlap) 
-                    : 0,
-              ),
-              child: _buildMoreWidget(remainingCount, context),
-            ),
-        ],
-      ),
-    );
+
+      return Positioned(left: index * (avatarSize - offset), child: avatar);
+    });
   }
 
-  Widget _buildMoreWidget(int count, BuildContext context) {
-    final widget = moreBuilder ?? _buildDefaultMoreAvatar(count, context);
-    
+  Widget _buildMoreAvatar(int count, BuildContext context) {
+    final widget =
+        moreBuilder ??
+        YoAvatar.text(
+          text: '+$count',
+          size: size,
+          backgroundColor: context.gray200,
+          textColor: context.gray700,
+          variant: variant,
+          borderWidth: 2,
+        );
+
     if (onTapMore != null) {
-      return GestureDetector(
-        onTap: onTapMore,
-        child: widget,
-      );
+      return GestureDetector(onTap: onTapMore, child: widget);
     }
-    
     return widget;
-  }
-
-  Widget _buildDefaultMoreAvatar(int count, BuildContext context) {
-    return YoAvatar.text(
-      text: '+$count',
-      size: size,
-      backgroundColor: context.gray300,
-      textColor: context.gray700,
-      variant: variant,
-      borderRadius: borderRadius,
-    );
-  }
-
-  double _getAvatarSize() {
-    switch (size) {
-      case YoAvatarSize.xs:
-        return 24;
-      case YoAvatarSize.sm:
-        return 32;
-      case YoAvatarSize.md:
-        return 40;
-      case YoAvatarSize.lg:
-        return 56;
-      case YoAvatarSize.xl:
-        return 72;
-    }
-  }
-}
-
-// Extension methods untuk mudah digunakan
-extension AvatarOverlapExtensions on List<String> {
-  YoAvatarOverlap toAvatarOverlap({
-    Key? key,
-    double overlap = 0.7,
-    YoAvatarSize size = YoAvatarSize.md,
-    int maxDisplay = 4,
-    Widget? moreBuilder,
-    Axis direction = Axis.horizontal,
-    MainAxisAlignment mainAxisAlignment = MainAxisAlignment.start,
-    CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.center,
-    YoAvatarVariant variant = YoAvatarVariant.circle,
-    double? borderRadius,
-    VoidCallback? onTapMore,
-  }) {
-    return YoAvatarOverlap(
-      key: key,
-      imageUrls: this,
-      overlap: overlap,
-      size: size,
-      maxDisplay: maxDisplay,
-      moreBuilder: moreBuilder,
-      direction: direction,
-      mainAxisAlignment: mainAxisAlignment,
-      crossAxisAlignment: crossAxisAlignment,
-      variant: variant,
-      borderRadius: borderRadius,
-      onTapMore: onTapMore,
-    );
-  }
-
-  YoAvatarOverlap toHorizontalAvatarOverlap({
-    Key? key,
-    double overlap = 0.7,
-    YoAvatarSize size = YoAvatarSize.md,
-    int maxDisplay = 4,
-    Widget? moreBuilder,
-    MainAxisAlignment mainAxisAlignment = MainAxisAlignment.start,
-    CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.center,
-    YoAvatarVariant variant = YoAvatarVariant.circle,
-    double? borderRadius,
-    VoidCallback? onTapMore,
-  }) {
-    return YoAvatarOverlap.horizontal(
-      key: key,
-      imageUrls: this,
-      overlap: overlap,
-      size: size,
-      maxDisplay: maxDisplay,
-      moreBuilder: moreBuilder,
-      mainAxisAlignment: mainAxisAlignment,
-      crossAxisAlignment: crossAxisAlignment,
-      variant: variant,
-      borderRadius: borderRadius,
-      onTapMore: onTapMore,
-    );
-  }
-
-  YoAvatarOverlap toVerticalAvatarOverlap({
-    Key? key,
-    double overlap = 0.7,
-    YoAvatarSize size = YoAvatarSize.md,
-    int maxDisplay = 4,
-    Widget? moreBuilder,
-    MainAxisAlignment mainAxisAlignment = MainAxisAlignment.start,
-    CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.center,
-    YoAvatarVariant variant = YoAvatarVariant.circle,
-    double? borderRadius,
-    VoidCallback? onTapMore,
-  }) {
-    return YoAvatarOverlap.vertical(
-      key: key,
-      imageUrls: this,
-      overlap: overlap,
-      size: size,
-      maxDisplay: maxDisplay,
-      moreBuilder: moreBuilder,
-      mainAxisAlignment: mainAxisAlignment,
-      crossAxisAlignment: crossAxisAlignment,
-      variant: variant,
-      borderRadius: borderRadius,
-      onTapMore: onTapMore,
-    );
   }
 }

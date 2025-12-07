@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:yo_ui/yo_ui.dart';
 
+/// Calendar view type
 enum YoCalendarView { daily, weekly, monthly }
 
+/// Calendar event model
 class YoCalendarEvent {
   final String id;
   final String title;
@@ -27,100 +29,10 @@ class YoCalendarEvent {
   Duration get duration => endTime.difference(startTime);
 }
 
-class YoCalendarTheme {
-  final Color primaryColor;
-  final Color backgroundColor;
-  final Color headerBackgroundColor;
-  final Color headerTextColor;
-  final Color dayHeaderBackgroundColor;
-  final Color dayHeaderTextColor;
-  final Color todayHighlightColor;
-  final Color todayTextColor;
-  final Color eventBackgroundColor;
-  final Color eventTextColor;
-  final Color borderColor;
-  final double eventBorderRadius;
-  final EdgeInsets eventPadding;
-  final double hourLabelWidth;
-  final double dayHeaderHeight;
-
-  const YoCalendarTheme({
-    this.primaryColor = Colors.blue,
-    this.backgroundColor = Colors.white,
-    this.headerBackgroundColor = Colors.blue,
-    this.headerTextColor = Colors.white,
-    this.dayHeaderBackgroundColor = Colors.grey,
-    this.dayHeaderTextColor = Colors.black87,
-    this.todayHighlightColor = Colors.red,
-    this.todayTextColor = Colors.white,
-    this.eventBackgroundColor = Colors.blue,
-    this.eventTextColor = Colors.white,
-    this.borderColor = Colors.grey,
-    this.eventBorderRadius = 8.0,
-    this.eventPadding = const EdgeInsets.all(8.0),
-    this.hourLabelWidth = 60.0,
-    this.dayHeaderHeight = 40.0,
-  });
-
-  factory YoCalendarTheme.fromContext(BuildContext context) {
-    return YoCalendarTheme(
-      primaryColor: context.primaryColor,
-      backgroundColor: context.backgroundColor,
-      headerBackgroundColor: context.primaryColor,
-      headerTextColor: context.onPrimaryColor,
-      dayHeaderBackgroundColor: context.gray100,
-      dayHeaderTextColor: context.textColor,
-      todayHighlightColor: context.errorColor,
-      todayTextColor: context.onPrimaryColor,
-      eventBackgroundColor: context.primaryColor,
-      eventTextColor: context.onPrimaryColor,
-      borderColor: context.gray300,
-    );
-  }
-
-  YoCalendarTheme copyWith({
-    Color? primaryColor,
-    Color? backgroundColor,
-    Color? headerBackgroundColor,
-    Color? headerTextColor,
-    Color? dayHeaderBackgroundColor,
-    Color? dayHeaderTextColor,
-    Color? todayHighlightColor,
-    Color? todayTextColor,
-    Color? eventBackgroundColor,
-    Color? eventTextColor,
-    Color? borderColor,
-    double? eventBorderRadius,
-    EdgeInsets? eventPadding,
-    double? hourLabelWidth,
-    double? dayHeaderHeight,
-  }) {
-    return YoCalendarTheme(
-      primaryColor: primaryColor ?? this.primaryColor,
-      backgroundColor: backgroundColor ?? this.backgroundColor,
-      headerBackgroundColor:
-          headerBackgroundColor ?? this.headerBackgroundColor,
-      headerTextColor: headerTextColor ?? this.headerTextColor,
-      dayHeaderBackgroundColor:
-          dayHeaderBackgroundColor ?? this.dayHeaderBackgroundColor,
-      dayHeaderTextColor: dayHeaderTextColor ?? this.dayHeaderTextColor,
-      todayHighlightColor: todayHighlightColor ?? this.todayHighlightColor,
-      todayTextColor: todayTextColor ?? this.todayTextColor,
-      eventBackgroundColor: eventBackgroundColor ?? this.eventBackgroundColor,
-      eventTextColor: eventTextColor ?? this.eventTextColor,
-      borderColor: borderColor ?? this.borderColor,
-      eventBorderRadius: eventBorderRadius ?? this.eventBorderRadius,
-      eventPadding: eventPadding ?? this.eventPadding,
-      hourLabelWidth: hourLabelWidth ?? this.hourLabelWidth,
-      dayHeaderHeight: dayHeaderHeight ?? this.dayHeaderHeight,
-    );
-  }
-}
-
+/// Calendar widget with daily, weekly, and monthly views
 class YoCalendar extends StatefulWidget {
   final List<YoCalendarEvent> events;
   final YoCalendarView initialView;
-  final YoCalendarTheme? theme;
   final DateTime? initialDate;
   final Function(DateTime)? onDateSelected;
   final Function(YoCalendarEvent)? onEventTap;
@@ -134,7 +46,6 @@ class YoCalendar extends StatefulWidget {
     super.key,
     required this.events,
     this.initialView = YoCalendarView.monthly,
-    this.theme,
     this.initialDate,
     this.onDateSelected,
     this.onEventTap,
@@ -163,50 +74,43 @@ class _YoCalendarState extends State<YoCalendar> {
     _selectedDate = _currentDate;
   }
 
-  YoCalendarTheme get _theme {
-    if (widget.theme != null) return widget.theme!;
-    return YoCalendarTheme.fromContext(context);
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
+  // Navigation helpers
   void _changeView(YoCalendarView? newView) {
-    if (newView != null) {
-      setState(() {
-        _currentView = newView;
-      });
-      _notifyRangeChanged();
-    }
+    if (newView == null) return;
+    setState(() => _currentView = newView);
+    _notifyRangeChanged();
   }
 
   void _navigateToPrevious() {
     setState(() {
-      switch (_currentView) {
-        case YoCalendarView.daily:
-          _currentDate = _currentDate.subtract(const Duration(days: 1));
-          break;
-        case YoCalendarView.weekly:
-          _currentDate = _currentDate.subtract(const Duration(days: 7));
-          break;
-        case YoCalendarView.monthly:
-          _currentDate = DateTime(_currentDate.year, _currentDate.month - 1);
-          break;
-      }
+      _currentDate = switch (_currentView) {
+        YoCalendarView.daily => _currentDate.subtract(const Duration(days: 1)),
+        YoCalendarView.weekly => _currentDate.subtract(const Duration(days: 7)),
+        YoCalendarView.monthly => DateTime(
+          _currentDate.year,
+          _currentDate.month - 1,
+        ),
+      };
     });
     _notifyRangeChanged();
   }
 
   void _navigateToNext() {
     setState(() {
-      switch (_currentView) {
-        case YoCalendarView.daily:
-          _currentDate = _currentDate.add(const Duration(days: 1));
-          break;
-        case YoCalendarView.weekly:
-          _currentDate = _currentDate.add(const Duration(days: 7));
-          break;
-        case YoCalendarView.monthly:
-          _currentDate = DateTime(_currentDate.year, _currentDate.month + 1);
-          break;
-      }
+      _currentDate = switch (_currentView) {
+        YoCalendarView.daily => _currentDate.add(const Duration(days: 1)),
+        YoCalendarView.weekly => _currentDate.add(const Duration(days: 7)),
+        YoCalendarView.monthly => DateTime(
+          _currentDate.year,
+          _currentDate.month + 1,
+        ),
+      };
     });
     _notifyRangeChanged();
   }
@@ -222,9 +126,7 @@ class _YoCalendarState extends State<YoCalendar> {
   void _selectDate(DateTime date) {
     setState(() {
       _selectedDate = date;
-      if (_currentView == YoCalendarView.monthly) {
-        _currentDate = date;
-      }
+      if (_currentView == YoCalendarView.monthly) _currentDate = date;
     });
     widget.onDateSelected?.call(date);
   }
@@ -235,143 +137,119 @@ class _YoCalendarState extends State<YoCalendar> {
   }
 
   (DateTime, DateTime) _getCurrentRange() {
-    switch (_currentView) {
-      case YoCalendarView.daily:
-        final start = DateTime(
-          _currentDate.year,
-          _currentDate.month,
-          _currentDate.day,
-        );
-        final end = start.add(const Duration(days: 1));
-        return (start, end);
-      case YoCalendarView.weekly:
-        final start = _currentDate.subtract(
-          Duration(days: _currentDate.weekday - 1),
-        );
-        final end = start.add(const Duration(days: 7));
-        return (start, end);
-      case YoCalendarView.monthly:
-        final start = DateTime(_currentDate.year, _currentDate.month, 1);
-        final end = DateTime(_currentDate.year, _currentDate.month + 1, 1);
-        return (start, end);
-    }
+    return switch (_currentView) {
+      YoCalendarView.daily => (
+        DateTime(_currentDate.year, _currentDate.month, _currentDate.day),
+        DateTime(_currentDate.year, _currentDate.month, _currentDate.day + 1),
+      ),
+      YoCalendarView.weekly => (
+        _currentDate.subtract(Duration(days: _currentDate.weekday - 1)),
+        _currentDate
+            .subtract(Duration(days: _currentDate.weekday - 1))
+            .add(const Duration(days: 7)),
+      ),
+      YoCalendarView.monthly => (
+        DateTime(_currentDate.year, _currentDate.month, 1),
+        DateTime(_currentDate.year, _currentDate.month + 1, 1),
+      ),
+    };
   }
+
+  // Date/Time helpers
+  List<YoCalendarEvent> _getEventsForDay(DateTime day) {
+    return widget.events.where((e) {
+      return e.startTime.year == day.year &&
+          e.startTime.month == day.month &&
+          e.startTime.day == day.day;
+    }).toList()..sort((a, b) => a.startTime.compareTo(b.startTime));
+  }
+
+  bool _isSameDay(DateTime a, DateTime b) =>
+      a.year == b.year && a.month == b.month && a.day == b.day;
+
+  String _formatDate(DateTime d) => '${d.day} ${_monthName(d.month)} ${d.year}';
+  String _monthName(int m) => [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ][m - 1];
+  String _dayName(int w) =>
+      ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][w - 1];
+
+  String _formatTime(DateTime t) =>
+      '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
 
   String _getHeaderTitle() {
-    switch (_currentView) {
-      case YoCalendarView.daily:
-        return '${_formatDate(_currentDate)}';
-      case YoCalendarView.weekly:
+    return switch (_currentView) {
+      YoCalendarView.daily => _formatDate(_currentDate),
+      YoCalendarView.weekly => () {
         final range = _getCurrentRange();
         return '${_formatDate(range.$1)} - ${_formatDate(range.$2.subtract(const Duration(days: 1)))}';
-      case YoCalendarView.monthly:
-        return '${_getMonthName(_currentDate.month)} ${_currentDate.year}';
-    }
+      }(),
+      YoCalendarView.monthly =>
+        '${_monthName(_currentDate.month)} ${_currentDate.year}',
+    };
   }
 
-  String _formatDate(DateTime date) {
-    return '${date.day} ${_getMonthName(date.month)} ${date.year}';
-  }
-
-  String _getMonthName(int month) {
-    const months = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
-    ];
-    return months[month - 1];
-  }
-
-  String _getDayName(int weekday) {
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    return days[weekday - 1];
-  }
-
-  // Sort events by date and time
-  List<YoCalendarEvent> _getSortedEventsForDay(DateTime day) {
-    final events = widget.events.where((event) {
-      final eventDay = DateTime(
-        event.startTime.year,
-        event.startTime.month,
-        event.startTime.day,
-      );
-      final targetDay = DateTime(day.year, day.month, day.day);
-      return eventDay == targetDay;
-    }).toList();
-
-    // Sort by start time
-    events.sort((a, b) => a.startTime.compareTo(b.startTime));
-    return events;
-  }
-
-  List<YoCalendarEvent> _getSortedEventsForTimeRange(DateTime day, int hour) {
-    final events = widget.events.where((event) {
-      final eventDay = DateTime(
-        event.startTime.year,
-        event.startTime.month,
-        event.startTime.day,
-      );
-      final targetDay = DateTime(day.year, day.month, day.day);
-      return eventDay == targetDay && event.startTime.hour == hour;
-    }).toList();
-
-    // Sort by start time
-    events.sort((a, b) => a.startTime.compareTo(b.startTime));
-    return events;
-  }
-
-  List<YoCalendarEvent> _getAllSortedEvents() {
-    final events = List<YoCalendarEvent>.from(widget.events);
-    // Sort by start time
-    events.sort((a, b) => a.startTime.compareTo(b.startTime));
-    return events;
-  }
-
-  Widget _buildHeader() {
+  @override
+  Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: _theme.headerBackgroundColor,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
+        color: context.backgroundColor,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: context.gray200),
+      ),
+      child: Column(
+        children: [
+          _buildHeader(context),
+          Expanded(child: _buildView(context)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: context.primaryColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
       ),
       padding: const EdgeInsets.all(16),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Top row: Title, Navigation, and Controls
+          // Top row
           Row(
             children: [
               if (widget.showNavigation) ...[
                 YoButton.outline(
                   text: 'Today',
                   onPressed: _goToToday,
-                  textColor: _theme.headerTextColor,
+                  textColor: context.onPrimaryColor,
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: (widget.title != null)
-                      ? YoText.titleMedium(
-                          widget.title!,
-                          fontWeight: FontWeight.bold,
-                          align: TextAlign.center,
-                          color: _theme.headerTextColor.withOpacity(0.9),
-                        )
-                      : SizedBox(),
-                ),
-
                 const SizedBox(width: 16),
               ],
-
-              if (widget.showViewSelector) _buildViewSelector(),
-
+              if (widget.title != null)
+                Expanded(
+                  child: Text(
+                    widget.title!,
+                    style: context.yoTitleMedium.copyWith(
+                      color: context.onPrimaryColor.withAlpha(230),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                )
+              else
+                const Expanded(child: SizedBox()),
+              if (widget.showViewSelector) _buildViewSelector(context),
               if (widget.headerTrailing != null) ...[
                 const SizedBox(width: 16),
                 widget.headerTrailing!,
@@ -379,27 +257,25 @@ class _YoCalendarState extends State<YoCalendar> {
             ],
           ),
 
-          // Bottom row: Date range
-          const SizedBox(height: 18),
+          // Navigation row
+          const SizedBox(height: 12),
           Row(
-            spacing: 8,
             children: [
               IconButton(
-                icon: Icon(Icons.chevron_left, color: _theme.headerTextColor),
+                icon: Icon(Icons.chevron_left, color: context.onPrimaryColor),
                 onPressed: _navigateToPrevious,
               ),
               Expanded(
-                child: YoText.titleMedium(
+                child: Text(
                   _getHeaderTitle(),
-
-                  color: _theme.headerTextColor.withOpacity(0.9),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  align: TextAlign.center,
+                  style: context.yoBodyLarge.copyWith(
+                    color: context.onPrimaryColor,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
               ),
               IconButton(
-                icon: Icon(Icons.chevron_right, color: _theme.headerTextColor),
+                icon: Icon(Icons.chevron_right, color: context.onPrimaryColor),
                 onPressed: _navigateToNext,
               ),
             ],
@@ -409,239 +285,141 @@ class _YoCalendarState extends State<YoCalendar> {
     );
   }
 
-  Widget _buildViewSelector() {
+  Widget _buildViewSelector(BuildContext context) {
     return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
-        color: _theme.headerBackgroundColor, // Background sesuai primary color
-        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: context.onPrimaryColor.withAlpha(77)),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: DropdownButton<YoCalendarView>(
         value: _currentView,
         onChanged: _changeView,
-        dropdownColor:
-            _theme.headerBackgroundColor, // Background sesuai primary color
+        dropdownColor: context.primaryColor,
         underline: const SizedBox(),
-        icon: Icon(
-          Icons.arrow_drop_down,
-          color: context.onPrimaryColor,
-        ), // Icon color onPrimaryBW
-        style: TextStyle(
-          color: context.onPrimaryColor, // Text color onPrimaryBW
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-        ),
-        items: const [
-          DropdownMenuItem(
-            value: YoCalendarView.daily,
-            child: Text('Daily View'),
-          ),
-          DropdownMenuItem(
-            value: YoCalendarView.weekly,
-            child: Text('Weekly View'),
-          ),
-          DropdownMenuItem(
-            value: YoCalendarView.monthly,
-            child: Text('Monthly View'),
-          ),
-        ],
+        icon: Icon(Icons.arrow_drop_down, color: context.onPrimaryColor),
+        style: TextStyle(color: context.onPrimaryColor, fontSize: 14),
+        items: YoCalendarView.values.map((v) {
+          final label = switch (v) {
+            YoCalendarView.daily => 'Day',
+            YoCalendarView.weekly => 'Week',
+            YoCalendarView.monthly => 'Month',
+          };
+          return DropdownMenuItem(value: v, child: Text(label));
+        }).toList(),
       ),
     );
   }
 
-  Widget _buildDailyView() {
-    final hours = List.generate(24, (index) => index);
+  Widget _buildView(BuildContext context) {
+    return switch (_currentView) {
+      YoCalendarView.daily => _buildDailyView(context),
+      YoCalendarView.weekly => _buildWeeklyView(context),
+      YoCalendarView.monthly => _buildMonthlyView(context),
+    };
+  }
 
+  Widget _buildDailyView(BuildContext context) {
+    final events = _getEventsForDay(_currentDate);
     return Column(
       children: [
-        // Day header
-        Container(
-          height: _theme.dayHeaderHeight,
-          decoration: BoxDecoration(
-            color: _theme.dayHeaderBackgroundColor,
-            border: Border(bottom: BorderSide(color: _theme.borderColor)),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-            children: [
-              SizedBox(
-                width: _theme.hourLabelWidth,
-                child: Text(
-                  'Time',
-                  style: TextStyle(
-                    color: _theme.dayHeaderTextColor,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              Expanded(
-                child: Center(
-                  child: Text(
-                    _formatDate(_currentDate),
-                    style: TextStyle(
-                      color: _theme.dayHeaderTextColor,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        // Events list for the day
-        Expanded(
-          child: _buildEventsList(
-            _getSortedEventsForDay(_currentDate),
-            showDate: false,
-          ),
-        ),
+        _buildDayHeader(context, _currentDate, showLabel: true),
+        Expanded(child: _buildEventsList(context, events)),
       ],
     );
   }
 
-  Widget _buildWeeklyView() {
-    final today = DateTime.now();
+  Widget _buildWeeklyView(BuildContext context) {
     final weekStart = _currentDate.subtract(
       Duration(days: _currentDate.weekday - 1),
     );
-    final days = List.generate(
-      7,
-      (index) => weekStart.add(Duration(days: index)),
-    );
+    final days = List.generate(7, (i) => weekStart.add(Duration(days: i)));
+    final today = DateTime.now();
 
-    // Get all events for the week and sort them
     final weekEvents = <YoCalendarEvent>[];
     for (final day in days) {
-      final dayEvents = _getSortedEventsForDay(day);
-      for (final event in dayEvents) {
-        weekEvents.add(event);
-      }
+      weekEvents.addAll(_getEventsForDay(day));
     }
     weekEvents.sort((a, b) => a.startTime.compareTo(b.startTime));
 
     return Column(
       children: [
-        // Week days header
+        // Week header
         Container(
-          height: _theme.dayHeaderHeight,
+          height: 50,
           decoration: BoxDecoration(
-            color: _theme.dayHeaderBackgroundColor,
-            border: Border(bottom: BorderSide(color: _theme.borderColor)),
+            color: context.gray50,
+            border: Border(bottom: BorderSide(color: context.gray200)),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
-            children: [
-              SizedBox(
-                width: _theme.hourLabelWidth,
-                child: Text(
-                  'Date',
-                  style: TextStyle(
-                    color: _theme.dayHeaderTextColor,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              ...days.map(
-                (day) => Expanded(
-                  child: GestureDetector(
-                    onTap: () => _selectDate(day),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border(
-                          left: BorderSide(color: _theme.borderColor),
+            children: days.map((day) {
+              final isToday = _isSameDay(day, today);
+              return Expanded(
+                child: GestureDetector(
+                  onTap: () => _selectDate(day),
+                  child: Container(
+                    color: isToday ? context.errorColor : null,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          _dayName(day.weekday),
+                          style: context.yoBodySmall.copyWith(
+                            color: isToday
+                                ? context.onPrimaryColor
+                                : context.gray500,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                        color: _isSameDay(day, today)
-                            ? _theme.todayHighlightColor
-                            : null,
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            _getDayName(day.weekday),
-                            style: TextStyle(
-                              color: _isSameDay(day, today)
-                                  ? _theme.todayTextColor
-                                  : _theme.dayHeaderTextColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            ),
+                        Text(
+                          '${day.day}',
+                          style: context.yoBodyMedium.copyWith(
+                            color: isToday
+                                ? context.onPrimaryColor
+                                : context.textColor,
+                            fontWeight: isToday
+                                ? FontWeight.bold
+                                : FontWeight.normal,
                           ),
-                          Text(
-                            day.day.toString(),
-                            style: TextStyle(
-                              color: _isSameDay(day, today)
-                                  ? _theme.todayTextColor
-                                  : _theme.dayHeaderTextColor,
-                              fontWeight: _isSameDay(day, today)
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              ),
-            ],
+              );
+            }).toList(),
           ),
         ),
-        // Events list for the week
-        Expanded(child: _buildEventsList(weekEvents, showDate: true)),
+        Expanded(child: _buildEventsList(context, weekEvents, showDate: true)),
       ],
     );
   }
 
-  Widget _buildMonthlyView() {
+  Widget _buildMonthlyView(BuildContext context) {
     final today = DateTime.now();
-    final firstDayOfMonth = DateTime(_currentDate.year, _currentDate.month, 1);
-    final lastDayOfMonth = DateTime(
-      _currentDate.year,
-      _currentDate.month + 1,
-      0,
-    );
-
-    final startDate = firstDayOfMonth.subtract(
-      Duration(days: firstDayOfMonth.weekday - 1),
-    );
-    final endDate = lastDayOfMonth.add(
-      Duration(days: 7 - lastDayOfMonth.weekday),
-    );
-
-    final totalDays = endDate.difference(startDate).inDays;
-    final weeks = (totalDays / 7).ceil();
-
-    // Get all events for the month and sort them
-    final monthEvents = <YoCalendarEvent>[];
-    DateTime currentDay = startDate;
-    while (currentDay.isBefore(endDate)) {
-      final dayEvents = _getSortedEventsForDay(currentDay);
-      for (final event in dayEvents) {
-        monthEvents.add(event);
-      }
-      currentDay = currentDay.add(const Duration(days: 1));
-    }
-    monthEvents.sort((a, b) => a.startTime.compareTo(b.startTime));
+    final firstDay = DateTime(_currentDate.year, _currentDate.month, 1);
+    final lastDay = DateTime(_currentDate.year, _currentDate.month + 1, 0);
+    final startDate = firstDay.subtract(Duration(days: firstDay.weekday - 1));
+    final totalDays =
+        ((lastDay.difference(startDate).inDays + 7 - lastDay.weekday) / 7)
+            .ceil() *
+        7;
 
     return Column(
       children: [
-        // Calendar grid header
+        // Day names header
         Container(
-          height: _theme.dayHeaderHeight,
-          decoration: BoxDecoration(
-            color: _theme.dayHeaderBackgroundColor,
-            border: Border(bottom: BorderSide(color: _theme.borderColor)),
-          ),
+          height: 40,
+          color: context.gray50,
           child: Row(
             children: List.generate(
               7,
-              (index) => Expanded(
+              (i) => Expanded(
                 child: Center(
                   child: Text(
-                    _getDayName(index + 1),
-                    style: TextStyle(
-                      color: _theme.dayHeaderTextColor,
-                      fontWeight: FontWeight.bold,
+                    _dayName(i + 1),
+                    style: context.yoBodySmall.copyWith(
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
@@ -649,70 +427,60 @@ class _YoCalendarState extends State<YoCalendar> {
             ),
           ),
         ),
-        // Calendar grid with dates
+
+        // Calendar grid
         Expanded(
           child: GridView.builder(
             controller: _scrollController,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 7,
-              childAspectRatio: 1.3,
+              childAspectRatio: 1.2,
             ),
-            itemCount: weeks * 7,
-            itemBuilder: (context, index) {
-              final currentDay = startDate.add(Duration(days: index));
-              final isCurrentMonth = currentDay.month == _currentDate.month;
-              final isToday = _isSameDay(currentDay, today);
-              final isSelected = _isSameDay(currentDay, _selectedDate);
-              final hasEvents = _getSortedEventsForDay(currentDay).isNotEmpty;
+            itemCount: totalDays,
+            itemBuilder: (ctx, index) {
+              final day = startDate.add(Duration(days: index));
+              final isCurrentMonth = day.month == _currentDate.month;
+              final isToday = _isSameDay(day, today);
+              final isSelected = _isSameDay(day, _selectedDate);
+              final hasEvents = _getEventsForDay(day).isNotEmpty;
 
               return GestureDetector(
-                onTap: () => _selectDate(currentDay),
+                onTap: () => _selectDate(day),
                 child: Container(
                   decoration: BoxDecoration(
-                    border: Border(
-                      right: BorderSide(color: _theme.borderColor),
-                      bottom: BorderSide(color: _theme.borderColor),
-                    ),
+                    border: Border.all(color: context.gray100),
                     color: isToday
-                        ? _theme.todayHighlightColor
-                        : (isSelected
-                              ? _theme.primaryColor.withOpacity(0.1)
-                              : _theme.backgroundColor),
+                        ? context.errorColor
+                        : isSelected
+                        ? context.primaryColor.withAlpha(26)
+                        : context.backgroundColor,
                   ),
                   padding: const EdgeInsets.all(4),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        currentDay.day.toString(),
-                        style: TextStyle(
+                        '${day.day}',
+                        style: context.yoBodySmall.copyWith(
                           color: isToday
-                              ? _theme.todayTextColor
-                              : (isCurrentMonth
-                                    ? _theme.dayHeaderTextColor
-                                    : _theme.dayHeaderTextColor.withOpacity(
-                                        0.3,
-                                      )),
+                              ? context.onPrimaryColor
+                              : isCurrentMonth
+                              ? context.textColor
+                              : context.gray300,
                           fontWeight: isToday
                               ? FontWeight.bold
                               : FontWeight.normal,
-                          fontSize: 14,
                         ),
                       ),
-                      const SizedBox(height: 2),
-                      // Event dots indicator
                       if (hasEvents && isCurrentMonth)
-                        Row(
-                          children: [
-                            Container(
-                              width: 6,
-                              height: 6,
-                              decoration: BoxDecoration(
-                                color: _theme.primaryColor,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                          ],
+                        Container(
+                          width: 6,
+                          height: 6,
+                          margin: const EdgeInsets.only(top: 2),
+                          decoration: BoxDecoration(
+                            color: context.primaryColor,
+                            shape: BoxShape.circle,
+                          ),
                         ),
                     ],
                   ),
@@ -721,67 +489,83 @@ class _YoCalendarState extends State<YoCalendar> {
             },
           ),
         ),
-        // Events list for selected date
-        if (_currentView == YoCalendarView.monthly)
-          Container(
-            height: 200,
-            decoration: BoxDecoration(
-              border: Border(top: BorderSide(color: _theme.borderColor)),
-            ),
-            child: _buildEventsList(
-              _getSortedEventsForDay(_selectedDate),
-              showDate: false,
-            ),
+
+        // Selected date events
+        Container(
+          height: 180,
+          decoration: BoxDecoration(
+            border: Border(top: BorderSide(color: context.gray200)),
           ),
+          child: _buildEventsList(context, _getEventsForDay(_selectedDate)),
+        ),
       ],
     );
   }
 
+  Widget _buildDayHeader(
+    BuildContext context,
+    DateTime day, {
+    bool showLabel = false,
+  }) {
+    return Container(
+      height: 40,
+      color: context.gray50,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        children: [
+          if (showLabel)
+            Text(
+              'Date:',
+              style: context.yoBodyMedium.copyWith(fontWeight: FontWeight.w600),
+            ),
+          const SizedBox(width: 8),
+          Expanded(child: Text(_formatDate(day), style: context.yoBodyMedium)),
+        ],
+      ),
+    );
+  }
+
   Widget _buildEventsList(
+    BuildContext context,
     List<YoCalendarEvent> events, {
-    bool showDate = true,
+    bool showDate = false,
   }) {
     if (events.isEmpty) {
       return Center(
         child: Text(
           'No events',
-          style: TextStyle(
-            color: _theme.dayHeaderTextColor.withOpacity(0.5),
-            fontSize: 16,
-          ),
+          style: context.yoBodyMedium.copyWith(color: context.gray400),
         ),
       );
     }
 
     return ListView.builder(
-      controller: _scrollController,
+      padding: const EdgeInsets.all(8),
       itemCount: events.length,
-      itemBuilder: (context, index) {
-        final event = events[index];
-        return _buildEventCard(event, showDate: showDate);
-      },
+      itemBuilder: (ctx, i) =>
+          _buildEventCard(context, events[i], showDate: showDate),
     );
   }
 
-  Widget _buildEventCard(YoCalendarEvent event, {bool showDate = true}) {
-    final eventColor = event.color ?? _theme.eventBackgroundColor;
+  Widget _buildEventCard(
+    BuildContext context,
+    YoCalendarEvent event, {
+    bool showDate = false,
+  }) {
+    final color = event.color ?? context.primaryColor;
 
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      elevation: 1,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(_theme.eventBorderRadius),
-      ),
+      margin: const EdgeInsets.symmetric(vertical: 4),
       child: InkWell(
         onTap: () => widget.onEventTap?.call(event),
-        borderRadius: BorderRadius.circular(_theme.eventBorderRadius),
+        borderRadius: BorderRadius.circular(8),
         child: Container(
+          padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: eventColor.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(_theme.eventBorderRadius),
-            border: Border.all(color: eventColor.withOpacity(0.3), width: 1),
+            color: color.withAlpha(26),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: color.withAlpha(77)),
           ),
-          padding: _theme.eventPadding,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -790,12 +574,13 @@ class _YoCalendarState extends State<YoCalendar> {
                 width: 4,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: eventColor,
+                  color: color,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
               const SizedBox(width: 12),
-              // Event content
+
+              // Content
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -803,20 +588,16 @@ class _YoCalendarState extends State<YoCalendar> {
                     if (showDate) ...[
                       Text(
                         _formatDate(event.startTime),
-                        style: TextStyle(
-                          color: _theme.dayHeaderTextColor.withOpacity(0.7),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
+                        style: context.yoBodySmall.copyWith(
+                          color: context.gray500,
                         ),
                       ),
                       const SizedBox(height: 2),
                     ],
                     Text(
                       event.title,
-                      style: TextStyle(
-                        color: _theme.dayHeaderTextColor,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
+                      style: context.yoBodyMedium.copyWith(
+                        fontWeight: FontWeight.w600,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -825,9 +606,8 @@ class _YoCalendarState extends State<YoCalendar> {
                       const SizedBox(height: 2),
                       Text(
                         event.description!,
-                        style: TextStyle(
-                          color: _theme.dayHeaderTextColor.withOpacity(0.7),
-                          fontSize: 12,
+                        style: context.yoBodySmall.copyWith(
+                          color: context.gray600,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -839,25 +619,22 @@ class _YoCalendarState extends State<YoCalendar> {
                         Icon(
                           Icons.access_time,
                           size: 12,
-                          color: _theme.dayHeaderTextColor.withOpacity(0.6),
+                          color: context.gray500,
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          _formatEventTime(event),
-                          style: TextStyle(
-                            color: _theme.dayHeaderTextColor.withOpacity(0.6),
-                            fontSize: 11,
+                          event.isAllDay
+                              ? 'All day'
+                              : '${_formatTime(event.startTime)} - ${_formatTime(event.endTime)}',
+                          style: context.yoBodySmall.copyWith(
+                            color: context.gray500,
                           ),
                         ),
                       ],
                     ),
                     if (event.children.isNotEmpty) ...[
                       const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 4,
-                        children: event.children.map((child) => child).toList(),
-                      ),
+                      Wrap(spacing: 8, runSpacing: 4, children: event.children),
                     ],
                   ],
                 ),
@@ -867,60 +644,5 @@ class _YoCalendarState extends State<YoCalendar> {
         ),
       ),
     );
-  }
-
-  String _formatEventTime(YoCalendarEvent event) {
-    if (event.isAllDay) {
-      return 'All day';
-    }
-
-    final start = event.startTime;
-    final end = event.endTime;
-
-    if (_isSameDay(start, end)) {
-      return '${start.hour.toString().padLeft(2, '0')}:${start.minute.toString().padLeft(2, '0')} - ${end.hour.toString().padLeft(2, '0')}:${end.minute.toString().padLeft(2, '0')}';
-    } else {
-      return '${_formatDate(start)} - ${_formatDate(end)}';
-    }
-  }
-
-  bool _isSameDay(DateTime date1, DateTime date2) {
-    return date1.year == date2.year &&
-        date1.month == date2.month &&
-        date1.day == date2.day;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: _theme.backgroundColor,
-        borderRadius: const BorderRadius.all(Radius.circular(8)),
-        border: Border.all(color: _theme.borderColor),
-      ),
-      child: Column(
-        children: [
-          _buildHeader(),
-          Expanded(child: _buildCalendarView()),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCalendarView() {
-    switch (_currentView) {
-      case YoCalendarView.daily:
-        return _buildDailyView();
-      case YoCalendarView.weekly:
-        return _buildWeeklyView();
-      case YoCalendarView.monthly:
-        return _buildMonthlyView();
-    }
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
   }
 }

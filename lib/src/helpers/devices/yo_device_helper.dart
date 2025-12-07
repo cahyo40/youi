@@ -4,8 +4,13 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../../layout/yo_adaptive.dart';
+
+/// Device helper for hardware/platform specific information
+/// For responsive/screen size checks, use YoAdaptive instead
 class YoDeviceHelper {
-  // Get Device Information
+  // === DEVICE INFORMATION (Platform specific) ===
+
   static Future<Map<String, dynamic>> getDeviceInfo() async {
     final deviceData = <String, dynamic>{};
     final deviceInfo = DeviceInfoPlugin();
@@ -57,112 +62,108 @@ class YoDeviceHelper {
     return deviceData;
   }
 
-  // Check if device is tablet
-  static bool isTablet(BuildContext context) {
-    final shortestSide = MediaQuery.of(context).size.shortestSide;
-    return shortestSide > 600;
-  }
+  // === SCREEN SIZE CHECKS ===
+  // Uses YoAdaptive as single source of truth
 
-  // Check if device is phone
-  static bool isPhone(BuildContext context) {
-    final shortestSide = MediaQuery.of(context).size.shortestSide;
-    return shortestSide < 600;
-  }
+  /// @deprecated Use YoAdaptive.isTablet(context) instead
+  static bool isTablet(BuildContext context) => YoAdaptive.isTablet(context);
 
-  // Check if device is landscape
+  /// @deprecated Use YoAdaptive.isMobile(context) instead
+  static bool isPhone(BuildContext context) => YoAdaptive.isMobile(context);
+
+  // === ORIENTATION ===
+
   static bool isLandscape(BuildContext context) {
     return MediaQuery.of(context).orientation == Orientation.landscape;
   }
 
-  // Check if device is portrait
   static bool isPortrait(BuildContext context) {
     return MediaQuery.of(context).orientation == Orientation.portrait;
   }
 
-  // Get screen size category
-  static ScreenSize getScreenSize(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
+  // === SCREEN SIZE CATEGORIES ===
 
-    if (width < 600) return ScreenSize.small;
-    if (width < 1200) return ScreenSize.medium;
-    return ScreenSize.large;
+  static ScreenSize getScreenSize(BuildContext context) {
+    final type = YoAdaptive.getDeviceType(context);
+    switch (type) {
+      case YoDeviceType.mobile:
+        return ScreenSize.small;
+      case YoDeviceType.tablet:
+        return ScreenSize.medium;
+      case YoDeviceType.desktop:
+      case YoDeviceType.largeDesktop:
+        return ScreenSize.large;
+    }
   }
 
-  // Get screen height category
   static ScreenHeight getScreenHeight(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
-
     if (height < 600) return ScreenHeight.small;
     if (height < 900) return ScreenHeight.medium;
     return ScreenHeight.large;
   }
 
-  // Get pixel ratio
+  // === DEVICE METRICS ===
+
   static double getPixelRatio(BuildContext context) {
     return MediaQuery.of(context).devicePixelRatio;
   }
 
-  // Get text scale factor
   static double getTextScaleFactor(BuildContext context) {
-    return MediaQuery.of(context).textScaleFactor;
+    return MediaQuery.of(context).textScaler.scale(1.0);
   }
 
-  // Get platform brightness
   static Brightness getPlatformBrightness(BuildContext context) {
     return MediaQuery.of(context).platformBrightness;
   }
 
-  // Get safe area padding
+  // === SAFE AREA AND INSETS ===
+
   static EdgeInsets getSafeAreaPadding(BuildContext context) {
     return MediaQuery.of(context).padding;
   }
 
-  // Get view padding
   static EdgeInsets getViewPadding(BuildContext context) {
     return MediaQuery.of(context).viewPadding;
   }
 
-  // Get view insets
   static EdgeInsets getViewInsets(BuildContext context) {
     return MediaQuery.of(context).viewInsets;
   }
 
-  // Check if device has notch
+  // === NOTCH AND NAVIGATION BAR ===
+
   static bool hasNotch(BuildContext context) {
     final padding = MediaQuery.of(context).padding;
-    return padding.top > 0;
+    return padding.top > 24;
   }
 
-  // Get notch height
   static double getNotchHeight(BuildContext context) {
-    final padding = MediaQuery.of(context).padding;
-    return padding.top;
+    return MediaQuery.of(context).padding.top;
   }
 
-  // Get bottom navigation bar height
   static double getBottomNavigationBarHeight(BuildContext context) {
-    final padding = MediaQuery.of(context).padding;
-    return padding.bottom;
+    return MediaQuery.of(context).padding.bottom;
   }
 
-  // Get status bar height
   static double getStatusBarHeight(BuildContext context) {
-    final padding = MediaQuery.of(context).padding;
-    return padding.top;
+    return MediaQuery.of(context).padding.top;
   }
 
-  // Check if keyboard is visible
+  // === KEYBOARD ===
+
   static bool isKeyboardVisible(BuildContext context) {
     return MediaQuery.of(context).viewInsets.bottom > 0;
   }
 
-  // Get keyboard height
   static double getKeyboardHeight(BuildContext context) {
     return MediaQuery.of(context).viewInsets.bottom;
   }
 
-  // Get platform type
+  // === PLATFORM TYPE ===
+
   static PlatformType getPlatformType() {
+    if (kIsWeb) return PlatformType.web;
     if (Platform.isAndroid) return PlatformType.android;
     if (Platform.isIOS) return PlatformType.ios;
     if (Platform.isWindows) return PlatformType.windows;
@@ -171,8 +172,8 @@ class YoDeviceHelper {
     return PlatformType.unknown;
   }
 
-  // Get platform name
   static String getPlatformName() {
+    if (kIsWeb) return 'Web';
     if (Platform.isAndroid) return 'Android';
     if (Platform.isIOS) return 'iOS';
     if (Platform.isWindows) return 'Windows';
@@ -181,20 +182,16 @@ class YoDeviceHelper {
     return 'Unknown';
   }
 
-  // Check if app is running on web
   static bool get isWeb => kIsWeb;
-
-  // Check if app is running on mobile
-  static bool get isMobile => Platform.isAndroid || Platform.isIOS;
-
-  // Check if app is running on desktop
+  static bool get isMobile => !kIsWeb && (Platform.isAndroid || Platform.isIOS);
   static bool get isDesktop =>
-      Platform.isWindows || Platform.isMacOS || Platform.isLinux;
+      !kIsWeb && (Platform.isWindows || Platform.isMacOS || Platform.isLinux);
 }
 
-// Enums untuk type safety
+// === ENUMS ===
+
 enum ScreenSize { small, medium, large }
 
 enum ScreenHeight { small, medium, large }
 
-enum PlatformType { android, ios, windows, macos, linux, unknown }
+enum PlatformType { android, ios, windows, macos, linux, web, unknown }

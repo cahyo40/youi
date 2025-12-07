@@ -1,262 +1,234 @@
-// File: yo_timeline.dart
 import 'package:flutter/material.dart';
 import 'package:yo_ui/yo_ui.dart';
 
+/// Timeline direction
+enum YoTimelineDirection { vertical, horizontal }
+
+/// Timeline event model
 class YoTimelineEvent {
   final String title;
+  final String? subtitle;
   final String? description;
-  final DateTime date;
+  final DateTime? date;
   final IconData? icon;
   final Color? color;
   final Widget? customDot;
   final List<Widget>? actions;
+  final bool isCompleted;
+  final bool isActive;
 
   const YoTimelineEvent({
     required this.title,
+    this.subtitle,
     this.description,
-    required this.date,
+    this.date,
     this.icon,
     this.color,
     this.customDot,
     this.actions,
+    this.isCompleted = false,
+    this.isActive = false,
   });
 }
 
+/// Timeline widget for displaying events in sequence
 class YoTimeline extends StatelessWidget {
   final List<YoTimelineEvent> events;
-  final TimelineDirection direction;
+  final YoTimelineDirection direction;
   final Color? lineColor;
+  final Color? activeColor;
+  final Color? completedColor;
   final double lineWidth;
   final double dotSize;
-  final bool showConnectingLine;
-  final EdgeInsetsGeometry itemPadding;
+  final bool showConnector;
+  final bool alternating;
+  final EdgeInsetsGeometry? padding;
+  final ScrollPhysics? physics;
+  final bool shrinkWrap;
 
   const YoTimeline({
     super.key,
     required this.events,
-    this.direction = TimelineDirection.vertical,
+    this.direction = YoTimelineDirection.vertical,
     this.lineColor,
+    this.activeColor,
+    this.completedColor,
     this.lineWidth = 2.0,
     this.dotSize = 24.0,
-    this.showConnectingLine = true,
-    this.itemPadding = EdgeInsets.zero,
+    this.showConnector = true,
+    this.alternating = false,
+    this.padding,
+    this.physics,
+    this.shrinkWrap = true,
   });
 
-  @override
-  Widget build(BuildContext context) {
-    if (direction == TimelineDirection.horizontal) {
-      return _buildHorizontalTimeline(context);
-    }
-    return _buildVerticalTimeline(context);
-  }
+  /// Stepper style timeline
+  factory YoTimeline.stepper({
+    Key? key,
+    required List<YoTimelineEvent> events,
+    int currentStep = 0,
+    Color? activeColor,
+    Color? completedColor,
+  }) {
+    final steppedEvents = events.asMap().entries.map((e) {
+      return YoTimelineEvent(
+        title: e.value.title,
+        subtitle: e.value.subtitle,
+        description: e.value.description,
+        icon: e.key < currentStep
+            ? Icons.check
+            : e.key == currentStep
+            ? Icons.circle
+            : null,
+        isCompleted: e.key < currentStep,
+        isActive: e.key == currentStep,
+      );
+    }).toList();
 
-  Widget _buildVerticalTimeline(BuildContext context) {
-    return ListView.separated(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: events.length,
-      separatorBuilder: (context, index) =>
-          SizedBox(height: context.yoSpacingLg),
-      itemBuilder: (context, index) {
-        return _buildTimelineItem(context, events[index], index);
-      },
+    return YoTimeline(
+      key: key,
+      events: steppedEvents,
+      activeColor: activeColor,
+      completedColor: completedColor,
     );
   }
 
-  Widget _buildHorizontalTimeline(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
+    if (direction == YoTimelineDirection.horizontal) {
+      return _buildHorizontal(context);
+    }
+    return _buildVertical(context);
+  }
+
+  Widget _buildVertical(BuildContext context) {
+    return ListView.builder(
+      shrinkWrap: shrinkWrap,
+      physics: physics ?? const NeverScrollableScrollPhysics(),
+      padding: padding,
+      itemCount: events.length,
+      itemBuilder: (_, i) => _buildVerticalItem(context, events[i], i),
+    );
+  }
+
+  Widget _buildHorizontal(BuildContext context) {
     return SizedBox(
-      height: 120,
-      child: ListView.separated(
+      height: 140,
+      child: ListView.builder(
         scrollDirection: Axis.horizontal,
+        physics: physics,
+        padding: padding ?? const EdgeInsets.symmetric(horizontal: 16),
         itemCount: events.length,
-        separatorBuilder: (context, index) =>
-            SizedBox(width: context.yoSpacingXl),
-        itemBuilder: (context, index) {
-          return _buildHorizontalTimelineItem(context, events[index], index);
-        },
+        itemBuilder: (_, i) => _buildHorizontalItem(context, events[i], i),
       ),
     );
   }
 
-  Widget _buildTimelineItem(
+  Widget _buildVerticalItem(
     BuildContext context,
     YoTimelineEvent event,
     int index,
   ) {
-    return Padding(
-      padding: itemPadding,
+    final isLast = index == events.length - 1;
+    final isLeft = alternating && index.isEven;
+    final dotColor = _getDotColor(context, event);
+
+    return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Timeline Line and Dot
-          Column(
-            children: [
-              // Dot
-              Container(
-                width: dotSize,
-                height: dotSize,
-                decoration: BoxDecoration(
-                  color: event.color ?? context.primaryColor,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: context.backgroundColor, width: 2),
-                ),
-                child:
-                    event.customDot ??
-                    (event.icon != null
-                        ? Icon(
-                            event.icon,
-                            size: dotSize * 0.6,
-                            color: context.onPrimaryColor,
-                          )
-                        : null),
-              ),
-              // Connecting Line
-              if (showConnectingLine && index < events.length - 1)
-                Container(
-                  width: lineWidth,
-                  height: 40,
-                  color: lineColor ?? context.gray300,
-                ),
-            ],
-          ),
+          if (alternating && !isLeft)
+            Expanded(child: _buildContent(context, event)),
 
-          SizedBox(width: context.yoSpacingMd),
-
-          // Content
-          Expanded(
-            child: Card(
-              elevation: 1,
-              child: Padding(
-                padding: EdgeInsets.all(context.yoSpacingMd),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: YoText.bodyLarge(
-                            event.title,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        YoText.bodySmall(
-                          YoDateFormatter.formatDate(event.date),
-                          color: context.gray500,
-                        ),
-                      ],
+          // Timeline indicator
+          SizedBox(
+            width: dotSize + 16,
+            child: Column(
+              children: [
+                _buildDot(context, event, dotColor),
+                if (showConnector && !isLast)
+                  Expanded(
+                    child: Container(
+                      width: lineWidth,
+                      color: lineColor ?? context.gray300,
                     ),
-
-                    if (event.description != null) ...[
-                      SizedBox(height: context.yoSpacingSm),
-                      YoText.bodyMedium(
-                        event.description!,
-                        color: context.gray600,
-                      ),
-                    ],
-
-                    if (event.actions != null && event.actions!.isNotEmpty) ...[
-                      SizedBox(height: context.yoSpacingSm),
-                      Row(
-                        children: [
-                          for (final action in event.actions!) ...[
-                            action,
-                            if (action != event.actions!.last)
-                              SizedBox(width: context.yoSpacingSm),
-                          ],
-                        ],
-                      ),
-                    ],
-                  ],
-                ),
-              ),
+                  ),
+              ],
             ),
           ),
+
+          if (!alternating || isLeft)
+            Expanded(child: _buildContent(context, event)),
         ],
       ),
     );
   }
 
-  Widget _buildHorizontalTimelineItem(
+  Widget _buildHorizontalItem(
     BuildContext context,
     YoTimelineEvent event,
     int index,
   ) {
+    final isLast = index == events.length - 1;
+    final dotColor = _getDotColor(context, event);
+
     return SizedBox(
-      width: 200,
+      width: 160,
       child: Column(
         children: [
-          // Dot and Line
-          Stack(
+          // Dot with horizontal connector
+          Row(
             children: [
-              if (showConnectingLine && index < events.length - 1)
-                Positioned(
-                  left: dotSize / 2,
-                  top: dotSize / 2 - lineWidth / 2,
+              _buildDot(context, event, dotColor),
+              if (showConnector && !isLast)
+                Expanded(
                   child: Container(
-                    width: 200 - dotSize,
                     height: lineWidth,
                     color: lineColor ?? context.gray300,
                   ),
                 ),
-              Container(
-                width: dotSize,
-                height: dotSize,
-                decoration: BoxDecoration(
-                  color: event.color ?? context.primaryColor,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: context.backgroundColor, width: 2),
-                ),
-                child:
-                    event.customDot ??
-                    (event.icon != null
-                        ? Icon(
-                            event.icon,
-                            size: dotSize * 0.6,
-                            color: context.onPrimaryColor,
-                          )
-                        : null),
-              ),
             ],
           ),
-
-          SizedBox(height: context.yoSpacingSm),
+          const SizedBox(height: 8),
 
           // Content
           Expanded(
-            child: Card(
-              elevation: 1,
-              child: Padding(
-                padding: EdgeInsets.all(context.yoSpacingMd),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    YoText.bodyMedium(
-                      event.title,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    event.title,
+                    style: context.yoBodyMedium.copyWith(
                       fontWeight: FontWeight.w600,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
                     ),
-
-                    SizedBox(height: context.yoSpacingXs),
-
-                    YoText.bodySmall(
-                      YoDateFormatter.formatDate(event.date),
-                      color: context.gray500,
-                    ),
-
-                    if (event.description != null) ...[
-                      SizedBox(height: context.yoSpacingSm),
-                      Expanded(
-                        child: YoText.bodySmall(
-                          event.description!,
-                          color: context.gray600,
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (event.date != null) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      YoDateFormatter.formatDate(event.date!),
+                      style: context.yoBodySmall.copyWith(
+                        color: context.gray500,
                       ),
-                    ],
+                    ),
                   ],
-                ),
+                  if (event.description != null) ...[
+                    const SizedBox(height: 4),
+                    Expanded(
+                      child: Text(
+                        event.description!,
+                        style: context.yoBodySmall.copyWith(
+                          color: context.gray600,
+                        ),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ],
               ),
             ),
           ),
@@ -264,6 +236,103 @@ class YoTimeline extends StatelessWidget {
       ),
     );
   }
-}
 
-enum TimelineDirection { vertical, horizontal }
+  Widget _buildDot(BuildContext context, YoTimelineEvent event, Color color) {
+    if (event.customDot != null) return event.customDot!;
+
+    return Container(
+      width: dotSize,
+      height: dotSize,
+      decoration: BoxDecoration(
+        color: color,
+        shape: BoxShape.circle,
+        border: Border.all(color: context.backgroundColor, width: 2),
+        boxShadow: [
+          if (event.isActive)
+            BoxShadow(
+              color: color.withAlpha(102),
+              blurRadius: 8,
+              spreadRadius: 2,
+            ),
+        ],
+      ),
+      child: event.icon != null
+          ? Icon(event.icon, size: dotSize * 0.6, color: context.onPrimaryColor)
+          : null,
+    );
+  }
+
+  Widget _buildContent(BuildContext context, YoTimelineEvent event) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 24),
+      child: Card(
+        elevation: event.isActive ? 2 : 1,
+        margin: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+          side: event.isActive
+              ? BorderSide(color: _getDotColor(context, event).withAlpha(128))
+              : BorderSide.none,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          event.title,
+                          style: context.yoBodyLarge.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        if (event.subtitle != null)
+                          Text(
+                            event.subtitle!,
+                            style: context.yoBodySmall.copyWith(
+                              color: context.gray500,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  if (event.date != null)
+                    Text(
+                      YoDateFormatter.formatDate(event.date!),
+                      style: context.yoBodySmall.copyWith(
+                        color: context.gray500,
+                      ),
+                    ),
+                ],
+              ),
+              if (event.description != null) ...[
+                const SizedBox(height: 8),
+                Text(
+                  event.description!,
+                  style: context.yoBodyMedium.copyWith(color: context.gray600),
+                ),
+              ],
+              if (event.actions != null && event.actions!.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                Wrap(spacing: 8, runSpacing: 8, children: event.actions!),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Color _getDotColor(BuildContext context, YoTimelineEvent event) {
+    if (event.color != null) return event.color!;
+    if (event.isCompleted) return completedColor ?? context.successColor;
+    if (event.isActive) return activeColor ?? context.primaryColor;
+    return context.gray300;
+  }
+}

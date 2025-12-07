@@ -52,23 +52,29 @@ class PhoneNumberFormatter extends TextInputFormatter {
     if (text.startsWith('0')) {
       if (text.length >= 3) {
         formatted = text.substring(0, 3);
-        if (text.length > 3)
+        if (text.length > 3) {
           formatted += ' ${text.substring(3, min(text.length, 7))}';
-        if (text.length > 7)
+        }
+        if (text.length > 7) {
           formatted += ' ${text.substring(7, min(text.length, 11))}';
-        if (text.length > 11)
+        }
+        if (text.length > 11) {
           formatted += ' ${text.substring(11, min(text.length, 15))}';
+        }
       } else {
         formatted = text;
       }
     } else if (text.startsWith('62')) {
       formatted = '+62';
-      if (text.length > 2)
+      if (text.length > 2) {
         formatted += ' ${text.substring(2, min(text.length, 5))}';
-      if (text.length > 5)
+      }
+      if (text.length > 5) {
         formatted += ' ${text.substring(5, min(text.length, 9))}';
-      if (text.length > 9)
+      }
+      if (text.length > 9) {
         formatted += ' ${text.substring(9, min(text.length, 13))}';
+      }
     } else {
       formatted = text;
     }

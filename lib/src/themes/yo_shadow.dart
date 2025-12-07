@@ -1,45 +1,72 @@
-// yo_shadow.dart
-// Revisi 2025-06 – ramah dark-mode, light-mode, Flutter ≥ 3.10
 import 'package:flutter/material.dart';
 
-import '../../yo_ui.dart'; // mengandung YoColorContext
+import '../../yo_ui.dart';
 
-/// Utility preset bayangan yang otomatis mengikuti tema (dark/light)
-// ignore: unintended_html_in_doc_comment
-/// Semua method return List<BoxShadow> siap pakai di BoxDecoration
+/// Utility shadow presets yang otomatis mengikuti tema (dark/light)
+/// Semua method return `List<BoxShadow>` siap pakai di BoxDecoration
 class YoBoxShadow {
   const YoBoxShadow._();
 
   /* --------------------------------------------------------------- */
-  /* 1. Soft & Natural – cocok untuk card, sheet, tile               */
+  /* 1. Soft – bayangan halus untuk card, sheet, tile                */
   /* --------------------------------------------------------------- */
   static List<BoxShadow> soft(
     BuildContext context, {
     double blur = 16,
     double y = 4,
   }) {
-    final shadowColor = Theme.of(context).brightness == Brightness.dark
-        ? Colors.black.withOpacity(0.35)
-        : Colors.black.withOpacity(0.08);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return [
-      BoxShadow(color: shadowColor, blurRadius: blur, offset: Offset(0, y)),
+      BoxShadow(
+        color: Colors.black.withAlpha(isDark ? 89 : 20),
+        blurRadius: blur,
+        offset: Offset(0, y),
+      ),
     ];
   }
 
   /* --------------------------------------------------------------- */
-  /* 2. Primary-tinted – bayangan berwarna primary (brand)           */
+  /* 2. Elevated – bayangan standar untuk elevated surfaces          */
+  /* --------------------------------------------------------------- */
+  static List<BoxShadow> elevated(
+    BuildContext context, {
+    double blur = 12,
+    double y = 4,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return [
+      BoxShadow(
+        color: Colors.black.withAlpha(isDark ? 102 : 15),
+        blurRadius: blur,
+        offset: Offset(0, y),
+      ),
+      BoxShadow(
+        color: Colors.black.withAlpha(isDark ? 77 : 10),
+        blurRadius: blur / 2,
+        offset: Offset(0, y / 2),
+      ),
+    ];
+  }
+
+  /* --------------------------------------------------------------- */
+  /* 3. Primary Tinted – bayangan berwarna primary (brand)           */
   /* --------------------------------------------------------------- */
   static List<BoxShadow> tinted(
     BuildContext context, {
     double blur = 20,
     double y = 6,
   }) {
-    final base = context.primaryColor.withOpacity(0.18);
-    return [BoxShadow(color: base, blurRadius: blur, offset: Offset(0, y))];
+    return [
+      BoxShadow(
+        color: context.primaryColor.withAlpha(46),
+        blurRadius: blur,
+        offset: Offset(0, y),
+      ),
+    ];
   }
 
   /* --------------------------------------------------------------- */
-  /* 3. Layered – dua lapisan untuk kesan lebih dalam                */
+  /* 4. Layered – dua lapisan untuk kesan lebih dalam                */
   /* --------------------------------------------------------------- */
   static List<BoxShadow> layered(
     BuildContext context, {
@@ -48,19 +75,15 @@ class YoBoxShadow {
     double y1 = 2,
     double y2 = 6,
   }) {
-    final dark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return [
       BoxShadow(
-        color: (dark ? Colors.black : Colors.black).withOpacity(
-          dark ? 0.30 : 0.04,
-        ),
+        color: Colors.black.withAlpha(isDark ? 77 : 10),
         blurRadius: blur1,
         offset: Offset(0, y1),
       ),
       BoxShadow(
-        color: (dark ? Colors.black : Colors.black).withOpacity(
-          dark ? 0.20 : 0.06,
-        ),
+        color: Colors.black.withAlpha(isDark ? 51 : 15),
         blurRadius: blur2,
         offset: Offset(0, y2),
       ),
@@ -68,58 +91,18 @@ class YoBoxShadow {
   }
 
   /* --------------------------------------------------------------- */
-  /* 4. Dark-Mode Optimised – tetap kelam tanpa over-glow            */
-  /* --------------------------------------------------------------- */
-  static List<BoxShadow> darkMode(
-    BuildContext context, {
-    double blur = 24,
-    double y = 8,
-  }) {
-    final shadow = Colors.black.withOpacity(0.45);
-    return [BoxShadow(color: shadow, blurRadius: blur, offset: Offset(0, y))];
-  }
-
-  /* --------------------------------------------------------------- */
-  /* 5. Neumorphism raised – timbul di permukaan putih/abu           */
-  /* --------------------------------------------------------------- */
-  static List<BoxShadow> neuRaised(
-    BuildContext context, {
-    double blur = 12,
-    double distance = 6,
-  }) {
-    final dark = Theme.of(context).brightness == Brightness.dark;
-    final lightColor = dark
-        ? context.gray800.withOpacity(0.7)
-        : Colors.white.withOpacity(0.8);
-    final darkColor = dark
-        ? Colors.black.withOpacity(0.5)
-        : Colors.black.withOpacity(0.15);
-    return [
-      BoxShadow(
-        color: lightColor,
-        blurRadius: blur,
-        offset: Offset(-distance, -distance),
-      ),
-      BoxShadow(
-        color: darkColor,
-        blurRadius: blur,
-        offset: Offset(distance, distance),
-      ),
-    ];
-  }
-
-  /* --------------------------------------------------------------- */
-  /* 6. Glassmorphism glow – untuk elemen transparan/berwarna        */
+  /* 5. Glow – efek glow untuk highlight elements                    */
   /* --------------------------------------------------------------- */
   static List<BoxShadow> glow(
     BuildContext context, {
-    double blur = 40,
-    double spread = -8,
+    Color? color,
+    double blur = 24,
+    double spread = 0,
   }) {
-    final tint = context.primaryColor.withOpacity(0.22);
+    final glowColor = color ?? context.primaryColor;
     return [
       BoxShadow(
-        color: tint,
+        color: glowColor.withAlpha(56),
         blurRadius: blur,
         spreadRadius: spread,
         offset: Offset.zero,
@@ -128,52 +111,17 @@ class YoBoxShadow {
   }
 
   /* --------------------------------------------------------------- */
-  /* 7. Long-throw drop – bayangan jauh (header floating)            */
-  /* --------------------------------------------------------------- */
-  static List<BoxShadow> long(
-    BuildContext context, {
-    double blur = 32,
-    double y = 16,
-  }) {
-    final dark = Theme.of(context).brightness == Brightness.dark;
-    return [
-      BoxShadow(
-        color: Colors.black.withOpacity(dark ? 0.50 : 0.12),
-        blurRadius: blur,
-        offset: Offset(0, y),
-      ),
-    ];
-  }
-
-  /* --------------------------------------------------------------- */
-  /* 8. Gradient two-tone – dua warna berlapis (promo banner)        */
-  /* --------------------------------------------------------------- */
-  static List<BoxShadow> gradient(
-    BuildContext context, {
-    double blur = 24,
-    double y1 = 8,
-    double y2 = 12,
-  }) {
-    final c1 = context.primaryColor.withOpacity(0.28);
-    final c2 = context.secondaryColor.withOpacity(0.24);
-    return [
-      BoxShadow(color: c1, blurRadius: blur, offset: Offset(0, y1)),
-      BoxShadow(color: c2, blurRadius: blur, offset: Offset(0, y2)),
-    ];
-  }
-
-  /* --------------------------------------------------------------- */
-  /* 9. Sharp & Subtle – hampir tanpa blur (list divider kecil)      */
+  /* 6. Sharp – bayangan tajam untuk subtle divider/border           */
   /* --------------------------------------------------------------- */
   static List<BoxShadow> sharp(
     BuildContext context, {
     double blur = 2,
     double y = 1,
   }) {
-    final dark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return [
       BoxShadow(
-        color: Colors.black.withOpacity(dark ? 0.25 : 0.08),
+        color: Colors.black.withAlpha(isDark ? 64 : 20),
         blurRadius: blur,
         offset: Offset(0, y),
       ),
@@ -181,96 +129,68 @@ class YoBoxShadow {
   }
 
   /* --------------------------------------------------------------- */
-  /* 10. Apple-style – iOS 17 background blur                        */
+  /* 7. Float – bayangan untuk floating elements (FAB, modal)        */
   /* --------------------------------------------------------------- */
-  static List<BoxShadow> apple(
+  static List<BoxShadow> float(
     BuildContext context, {
-    double blur1 = 10,
-    double blur2 = 24,
-    double y1 = 4,
-    double y2 = 12,
-    double spread2 = -12,
-  }) {
-    final dark = Theme.of(context).brightness == Brightness.dark;
-    final base = dark ? Colors.black : Colors.black;
-    return [
-      BoxShadow(
-        color: base.withOpacity(dark ? 0.30 : 0.12),
-        blurRadius: blur1,
-        offset: Offset(0, y1),
-      ),
-      BoxShadow(
-        color: base.withOpacity(dark ? 0.20 : 0.06),
-        blurRadius: blur2,
-        spreadRadius: spread2,
-        offset: Offset(0, y2),
-      ),
-    ];
-  }
-
-  /* --------------------------------------------------------------- */
-  /* 11. FAB floating – khusus FloatingActionButton                  */
-  /* --------------------------------------------------------------- */
-  static List<BoxShadow> floatFab(BuildContext context) {
-    final dark = Theme.of(context).brightness == Brightness.dark;
-    return [
-      BoxShadow(
-        color: context.primaryColor.withOpacity(dark ? 0.35 : 0.20),
-        blurRadius: 16,
-        offset: const Offset(0, 6),
-      ),
-      BoxShadow(
-        color: Colors.black.withOpacity(dark ? 0.40 : 0.12),
-        blurRadius: 24,
-        offset: const Offset(0, 10),
-      ),
-    ];
-  }
-
-  /* --------------------------------------------------------------- */
-  /* 12. Surface elevated – card/section timbul halus                */
-  /* --------------------------------------------------------------- */
-  static List<BoxShadow> surfaceElevated(BuildContext context) {
-    final dark = Theme.of(context).brightness == Brightness.dark;
-    return [
-      BoxShadow(
-        color: Colors.black.withOpacity(dark ? 0.40 : 0.06),
-        blurRadius: 12,
-        offset: const Offset(0, 4),
-      ),
-      BoxShadow(
-        color: Colors.black.withOpacity(dark ? 0.30 : 0.04),
-        blurRadius: 6,
-        offset: const Offset(0, 2),
-      ),
-    ];
-  }
-
-  static List<BoxShadow> neuRaisedYo(
-    BuildContext context, {
-    double blur = 12,
-    double distance = 6,
+    double blur = 24,
+    double y = 8,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    final lightColor = isDark
-        ? context.gray800.withOpacity(0.7)
-        : Colors.white.withOpacity(0.8);
-    final darkColor = isDark
-        ? Colors.black.withOpacity(0.5)
-        : Colors.black.withOpacity(0.15);
-
     return [
       BoxShadow(
-        color: lightColor,
+        color: Colors.black.withAlpha(isDark ? 128 : 31),
         blurRadius: blur,
-        offset: Offset(-distance, -distance),
-      ),
-      BoxShadow(
-        color: darkColor,
-        blurRadius: blur,
-        offset: Offset(distance, distance),
+        offset: Offset(0, y),
       ),
     ];
   }
+
+  /* --------------------------------------------------------------- */
+  /* 8. Button – khusus untuk button dengan primary tint             */
+  /* --------------------------------------------------------------- */
+  static List<BoxShadow> button(
+    BuildContext context, {
+    double blur = 12,
+    double y = 4,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return [
+      BoxShadow(
+        color: context.primaryColor.withAlpha(isDark ? 89 : 51),
+        blurRadius: blur,
+        offset: Offset(0, y),
+      ),
+      BoxShadow(
+        color: Colors.black.withAlpha(isDark ? 102 : 31),
+        blurRadius: blur * 2,
+        offset: Offset(0, y * 2),
+      ),
+    ];
+  }
+
+  /* --------------------------------------------------------------- */
+  /* 9. None – no shadow (untuk consistency)                         */
+  /* --------------------------------------------------------------- */
+  static List<BoxShadow> none() => [];
+
+  /* --------------------------------------------------------------- */
+  /* PRESET SHORTCUTS                                                 */
+  /* --------------------------------------------------------------- */
+
+  /// Small shadow for subtle elevation
+  static List<BoxShadow> sm(BuildContext context) =>
+      soft(context, blur: 8, y: 2);
+
+  /// Medium shadow for cards
+  static List<BoxShadow> md(BuildContext context) =>
+      soft(context, blur: 16, y: 4);
+
+  /// Large shadow for modals/dialogs
+  static List<BoxShadow> lg(BuildContext context) =>
+      float(context, blur: 24, y: 8);
+
+  /// Extra large shadow for floating elements
+  static List<BoxShadow> xl(BuildContext context) =>
+      float(context, blur: 32, y: 12);
 }

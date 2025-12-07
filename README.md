@@ -1,21 +1,22 @@
-# 🎨 YoUI - Flutter Style Guide & Component Library
+# 🎨 YoUI - Flutter UI Component Library
 
-[![Flutter](https://img.shields.io/badge/Flutter-3.0+-02569B?logo=flutter)](https://flutter.dev)
-[![Dart](https://img.shields.io/badge/Dart-3.0+-0175C2?logo=dart)](https://dart.dev)
+[![Flutter](https://img.shields.io/badge/Flutter-3.19+-02569B?logo=flutter)](https://flutter.dev)
+[![Dart](https://img.shields.io/badge/Dart-3.5+-0175C2?logo=dart)](https://dart.dev)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![pub package](https://img.shields.io/badge/pub-v1.0.3-blue)](https://github.com/cahyo40/youi)
+[![pub package](https://img.shields.io/badge/pub-v1.1.0-blue)](https://github.com/cahyo40/youi)
 
-A comprehensive, production-ready Flutter UI library with **60+ components**, **30 color schemes**, and a complete design system for building beautiful, consistent applications.
+A comprehensive, production-ready Flutter UI library with **70+ components**, **30 color schemes**, charts, and a complete design system for building beautiful, consistent applications.
 
 ## ✨ Features
 
 | Feature | Description |
 |---------|-------------|
-| 🎯 **Design System** | Unified colors, typography, and spacing |
+| 🎯 **Design System** | Unified colors, typography, spacing, and shadows |
 | 🎨 **30 Color Schemes** | Industry-specific themes (Tech, Healthcare, Finance, etc.) |
 | 🌓 **Theme Support** | Light & dark mode with easy customization |
 | 📱 **Responsive** | Adaptive layouts for mobile, tablet, desktop |
-| 🧩 **60+ Components** | Buttons, Cards, Dialogs, Forms, Navigation, and more |
+| 🧩 **70+ Components** | Buttons, Cards, Dialogs, Forms, Navigation, Charts, and more |
+| 📊 **Charts** | Line, Bar, Pie/Donut charts with fl_chart |
 | 🛠️ **Utilities** | Date formatting, ID generation, logging, connectivity |
 
 ## 📦 Installation
@@ -79,65 +80,189 @@ Choose from 30 industry-specific color schemes:
 | **Creative** | `creativeMagenta`, `musicVibes`, `artGallery` |
 | **Entertainment** | `gamingNeon`, `kidsLearning`, `energyRed` |
 
-```dart
-// Apply a specific scheme
-YoTheme.lightTheme(context, YoColorScheme.techPurple)
-```
-
 ## 🧩 Components
 
-### Typography
+### Display Cards
 
 ```dart
-YoText.displayLarge('Display')
-YoText.headlineMedium('Headline')
-YoText.bodyMedium('Body text')
-YoText.monoLarge('Rp 1.000.000')  // Monospace for numbers
+// Product Card (E-commerce & POS)
+YoProductCard(
+  imageUrl: 'https://...',
+  title: 'Product Name',
+  price: 99.99,
+  stock: 15,
+  onEdit: () {},
+  onDelete: () {},
+)
+
+// Destination Card (Travel)
+YoDestinationCard.featured(
+  imageUrl: 'https://...',
+  title: 'Bali, Indonesia',
+  location: 'Southeast Asia',
+  rating: 4.8,
+  price: 1200,
+)
+
+// Profile Card (Social)
+YoProfileCard.cover(
+  avatarUrl: 'https://...',
+  name: 'John Doe',
+  stats: [YoProfileStat(value: '1.2K', label: 'Followers')],
+)
+
+// Article Card (Blog/News)
+YoArticleCard.featured(
+  imageUrl: 'https://...',
+  title: 'Article Title',
+  category: 'Technology',
+  readTime: 5,
+)
 ```
 
-### Buttons
+### Charts (fl_chart)
 
 ```dart
-YoButton.primary(text: 'Primary', onPressed: () {})
-YoButton.secondary(text: 'Secondary', onPressed: () {})
-YoButton.outline(text: 'Outline', onPressed: () {})
-YoButton.ghost(text: 'Ghost', onPressed: () {})
+// Line Chart
+YoLineChart.simple(
+  data: [YoChartData(x: 1, y: 10), YoChartData(x: 2, y: 25)],
+  title: 'Sales Trend',
+  curved: true,
+  filled: true,
+)
 
-// With loading state
-YoButton.primary(text: 'Loading...', isLoading: true, onPressed: () {})
+// Bar Chart
+YoBarChart(
+  data: [
+    YoChartData(x: 0, y: 100, label: 'Jan'),
+    YoChartData(x: 1, y: 150, label: 'Feb'),
+  ],
+  title: 'Monthly Revenue',
+)
+
+// Pie/Donut Chart
+YoPieChart.donut(
+  data: [
+    YoPieData(value: 35, label: 'Product A'),
+    YoPieData(value: 25, label: 'Product B'),
+  ],
+  centerText: '60%',
+)
+
+// Sparkline (mini chart)
+YoSparkLine(data: [10, 15, 8, 20, 18, 25])
+```
+
+### Navigation
+
+```dart
+// Bottom Navigation
+YoBottomNav(
+  currentIndex: 0,
+  items: [
+    YoBottomNavItem(icon: Icons.home, label: 'Home'),
+    YoBottomNavItem(icon: Icons.search, label: 'Search'),
+  ],
+  onTap: (index) {},
+)
+
+// Sidebar
+YoSidebar(
+  items: [
+    YoSidebarItem(icon: Icons.dashboard, label: 'Dashboard'),
+    YoSidebarItem(icon: Icons.settings, label: 'Settings'),
+  ],
+)
+
+// Drawer
+YoDrawer(
+  header: YoDrawerHeader(title: 'App Name', subtitle: 'user@email.com'),
+  items: [
+    YoDrawerItem(icon: Icons.home, title: 'Home'),
+    YoDrawerItem.divider(),
+    YoDrawerItem.header('Settings'),
+  ],
+  footer: YoDrawerFooter(text: 'Made with YoUI', version: '1.1.0'),
+)
+```
+
+### Forms
+
+```dart
+// Dropdown with validation
+YoDropDown<String>(
+  value: selectedValue,
+  labelText: 'Category',
+  hintText: 'Select category',
+  isRequired: true,
+  errorText: hasError ? 'Required field' : null,
+  items: [
+    YoDropDownItem(value: 'tech', label: 'Technology'),
+    YoDropDownItem(value: 'health', label: 'Healthcare'),
+  ],
+  onChanged: (value) {},
+)
 ```
 
 ### Feedback
 
 ```dart
+// Dialogs
+YoDialog.show(context: context, title: 'Title', content: 'Message');
+YoConfirmDialog.showDestructive(context: context, title: 'Delete?');
+YoBottomSheet.showList(context: context, items: [...]);
+
 // Loading
 YoLoading.spinner()
 YoLoading.dots()
-
-// Skeleton
-YoSkeleton.line(width: 200)
-YoSkeleton.circle(size: 50)
+YoLoadingOverlay.showWhile(context: context, task: () async {});
 
 // States
 YoEmptyState.noData(title: 'No data', onAction: () {})
-YoErrorState(error: 'Error message', onRetry: () {})
+YoEmptyState.error(error: exception, onRetry: () {})
 ```
 
-### Dialogs & Sheets
+### Timeline
 
 ```dart
-// Dialog
-YoDialog.show(context: context, title: 'Title', content: 'Message');
+YoTimeline(
+  events: [
+    YoTimelineEvent(
+      title: 'Order Placed',
+      description: 'Your order has been confirmed',
+      date: DateTime.now(),
+      isCompleted: true,
+    ),
+    YoTimelineEvent(
+      title: 'Processing',
+      isActive: true,
+    ),
+  ],
+)
 
-// Confirm dialog
-YoConfirmDialog.show(
-  context: context,
-  title: 'Delete?',
-  isDestructive: true,
-);
+// Stepper style
+YoTimeline.stepper(events: [...], currentStep: 1)
+```
 
-// Bottom sheet
-YoBottomSheet.show(context: context, child: YourWidget());
+## 📐 Adaptive Design
+
+```dart
+// Check device type
+if (YoAdaptive.isMobile(context)) { }
+if (YoAdaptive.isTablet(context)) { }
+if (YoAdaptive.isDesktop(context)) { }
+
+// Responsive values
+YoAdaptive.value(
+  context,
+  mobile: 16.0,
+  tablet: 24.0,
+  desktop: 32.0,
+)
+
+// Adaptive spacing
+YoSpace.adaptiveMd(context)
+YoPadding.page(context)
 ```
 
 ## 🛠️ Utilities
@@ -169,48 +294,6 @@ YoConnectivity.addListener((connected) {
 });
 ```
 
-## 📐 Responsive Design
-
-```dart
-// Check device type
-if (YoResponsive.isMobile(context)) { }
-if (YoResponsive.isTablet(context)) { }
-if (YoResponsive.isDesktop(context)) { }
-
-// Responsive values
-YoResponsive.responsiveValue(
-  context,
-  mobile: 16.0,
-  tablet: 24.0,
-  desktop: 32.0,
-)
-```
-
-## 📏 Spacing & Padding
-
-```dart
-// Predefined padding
-Padding(padding: YoPadding.all16, child: ...)
-Container(margin: YoPadding.symmetricV8, ...)
-
-// Spacing constants
-SizedBox(height: YoSpacing.md)  // 16
-SizedBox(width: YoSpacing.lg)   // 24
-```
-
-## 🔧 Context Extensions
-
-```dart
-// Text styles
-context.yoHeadlineLarge
-context.yoBodyMedium
-
-// Screen info
-context.yoScreenWidth
-context.yoIsMobile
-context.yoIsTablet
-```
-
 ## 📚 Dependencies
 
 | Package | Purpose |
@@ -221,6 +304,7 @@ context.yoIsTablet
 | `device_info_plus` | Device information |
 | `intl` | Date/number formatting |
 | `photo_view` | Image viewer |
+| `fl_chart` | Charts & graphs |
 
 ## 📄 License
 

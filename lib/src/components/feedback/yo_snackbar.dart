@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:yo_ui/yo_ui.dart';
 
-import '../../../yo_ui_base.dart';
-
+/// Snackbar dengan berbagai tipe dan preset
 class YoSnackBar {
+  YoSnackBar._();
+
+  /// Show snackbar dengan konfigurasi lengkap
   static void show({
     required BuildContext context,
     required String message,
@@ -10,17 +13,94 @@ class YoSnackBar {
     VoidCallback? onAction,
     YoSnackBarType type = YoSnackBarType.info,
     Duration duration = const Duration(seconds: 4),
+    bool showIcon = true,
+    bool floating = true,
+    SnackBarAction? customAction,
   }) {
-    final snackBar = _buildSnackBar(
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        _buildSnackBar(
+          context: context,
+          message: message,
+          actionText: actionText,
+          onAction: onAction,
+          type: type,
+          duration: duration,
+          showIcon: showIcon,
+          floating: floating,
+          customAction: customAction,
+        ),
+      );
+  }
+
+  /// Success snackbar
+  static void success(
+    BuildContext context,
+    String message, {
+    VoidCallback? onAction,
+    String? actionText,
+  }) {
+    show(
       context: context,
       message: message,
-      actionText: actionText,
+      type: YoSnackBarType.success,
       onAction: onAction,
-      type: type,
-      duration: duration,
+      actionText: actionText,
     );
+  }
 
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  /// Error snackbar
+  static void error(
+    BuildContext context,
+    String message, {
+    VoidCallback? onAction,
+    String? actionText,
+  }) {
+    show(
+      context: context,
+      message: message,
+      type: YoSnackBarType.error,
+      onAction: onAction,
+      actionText: actionText,
+    );
+  }
+
+  /// Warning snackbar
+  static void warning(
+    BuildContext context,
+    String message, {
+    VoidCallback? onAction,
+    String? actionText,
+  }) {
+    show(
+      context: context,
+      message: message,
+      type: YoSnackBarType.warning,
+      onAction: onAction,
+      actionText: actionText,
+    );
+  }
+
+  /// Info snackbar
+  static void info(
+    BuildContext context,
+    String message, {
+    VoidCallback? onAction,
+    String? actionText,
+  }) {
+    show(
+      context: context,
+      message: message,
+      type: YoSnackBarType.info,
+      onAction: onAction,
+      actionText: actionText,
+    );
+  }
+
+  /// Hide current snackbar
+  static void hide(BuildContext context) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
   }
 
   static SnackBar _buildSnackBar({
@@ -30,60 +110,70 @@ class YoSnackBar {
     required VoidCallback? onAction,
     required YoSnackBarType type,
     required Duration duration,
+    required bool showIcon,
+    required bool floating,
+    SnackBarAction? customAction,
   }) {
-    final backgroundColor = _getBackgroundColor(context, type);
-    final textColor = _getTextColor(context, type);
-    final icon = _getIcon(type);
+    final colors = _getColors(context, type);
 
     return SnackBar(
-      backgroundColor: backgroundColor,
-      behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      backgroundColor: colors.$1,
+      behavior: floating ? SnackBarBehavior.floating : SnackBarBehavior.fixed,
+      shape: floating
+          ? RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))
+          : null,
+      margin: floating ? const EdgeInsets.all(16) : null,
       duration: duration,
       content: Row(
         children: [
-          Icon(icon, color: textColor, size: 20),
-          const SizedBox(width: 12),
-          Expanded(child: YoText.bodyMedium(message, color: textColor)),
+          if (showIcon) ...[
+            Icon(_getIcon(type), color: colors.$2, size: 20),
+            const SizedBox(width: 12),
+          ],
+          Expanded(
+            child: Text(
+              message,
+              style: TextStyle(color: colors.$2, fontSize: 14),
+            ),
+          ),
         ],
       ),
-      action: actionText != null && onAction != null
-          ? SnackBarAction(
-              label: actionText,
-              textColor: textColor,
-              onPressed: onAction,
-            )
-          : null,
+      action:
+          customAction ??
+          (actionText != null && onAction != null
+              ? SnackBarAction(
+                  label: actionText,
+                  textColor: colors.$2,
+                  onPressed: onAction,
+                )
+              : null),
     );
   }
 
-  static Color _getBackgroundColor(BuildContext context, YoSnackBarType type) {
+  /// Returns (backgroundColor, textColor)
+  static (Color, Color) _getColors(BuildContext context, YoSnackBarType type) {
     switch (type) {
       case YoSnackBarType.success:
-        return YoColors.success(context);
+        return (Colors.green.shade700, Colors.white);
       case YoSnackBarType.error:
-        return YoColors.error(context);
+        return (Theme.of(context).colorScheme.error, Colors.white);
       case YoSnackBarType.warning:
-        return YoColors.warning(context);
+        return (Colors.orange.shade700, Colors.white);
       case YoSnackBarType.info:
-        return YoColors.info(context);
+        return (context.primaryColor, Colors.white);
     }
-  }
-
-  static Color _getTextColor(BuildContext context, YoSnackBarType type) {
-    return YoColors.white;
   }
 
   static IconData _getIcon(YoSnackBarType type) {
     switch (type) {
       case YoSnackBarType.success:
-        return Icons.check_circle;
+        return Icons.check_circle_rounded;
       case YoSnackBarType.error:
-        return Icons.error;
+        return Icons.error_rounded;
       case YoSnackBarType.warning:
-        return Icons.warning;
+        return Icons.warning_rounded;
       case YoSnackBarType.info:
-        return Icons.info;
+        return Icons.info_rounded;
     }
   }
 }

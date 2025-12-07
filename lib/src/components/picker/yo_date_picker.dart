@@ -1,6 +1,5 @@
 // File: yo_date_picker.dart
 import 'package:flutter/material.dart';
-import 'package:yo_ui/src/components/feedback/dialog/yo_dialog_picker.dart';
 import 'package:yo_ui/yo_ui.dart';
 
 class YoDatePicker extends StatelessWidget {

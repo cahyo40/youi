@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:yo_ui/src/components/feedback/dialog/yo_dialog_picker.dart';
 import 'package:yo_ui/yo_ui.dart';
 
 class YoTimePicker extends StatelessWidget {

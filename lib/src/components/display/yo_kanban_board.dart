@@ -1,7 +1,7 @@
-// File: yo_kanban_board.dart
 import 'package:flutter/material.dart';
 import 'package:yo_ui/yo_ui.dart';
 
+/// Kanban item model
 class YoKanbanItem {
   final String id;
   final String title;
@@ -11,7 +11,7 @@ class YoKanbanItem {
   final List<String> tags;
   final DateTime? dueDate;
   final int priority;
-  final List<Widget> customWidgets; // NEW: List widget custom
+  final List<Widget> customWidgets;
 
   const YoKanbanItem({
     required this.id,
@@ -22,7 +22,7 @@ class YoKanbanItem {
     this.tags = const [],
     this.dueDate,
     this.priority = 0,
-    this.customWidgets = const [], // NEW: Default empty list
+    this.customWidgets = const [],
   });
 
   YoKanbanItem copyWith({
@@ -34,7 +34,7 @@ class YoKanbanItem {
     List<String>? tags,
     DateTime? dueDate,
     int? priority,
-    List<Widget>? customWidgets, // NEW: Add customWidgets to copyWith
+    List<Widget>? customWidgets,
   }) {
     return YoKanbanItem(
       id: id ?? this.id,
@@ -45,11 +45,12 @@ class YoKanbanItem {
       tags: tags ?? this.tags,
       dueDate: dueDate ?? this.dueDate,
       priority: priority ?? this.priority,
-      customWidgets: customWidgets ?? this.customWidgets, // NEW
+      customWidgets: customWidgets ?? this.customWidgets,
     );
   }
 }
 
+/// Kanban column model
 class YoKanbanColumn {
   final String id;
   final String title;
@@ -86,6 +87,7 @@ class YoKanbanColumn {
   }
 }
 
+/// Kanban board widget with drag-and-drop support
 class YoKanbanBoard extends StatefulWidget {
   final List<YoKanbanColumn> columns;
   final Function(YoKanbanItem, String fromColumnId, String toColumnId)?
@@ -123,7 +125,16 @@ class _YoKanbanBoardState extends State<YoKanbanBoard> {
   @override
   void initState() {
     super.initState();
-    _columns = widget.columns;
+    _columns = List.from(widget.columns);
+  }
+
+  @override
+  void didUpdateWidget(YoKanbanBoard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Sync columns if widget.columns changed externally
+    if (widget.columns != oldWidget.columns) {
+      _columns = List.from(widget.columns);
+    }
   }
 
   void _handleItemMove(
@@ -134,28 +145,20 @@ class _YoKanbanBoardState extends State<YoKanbanBoard> {
     if (fromColumnId == toColumnId || !widget.dragEnabled) return;
 
     setState(() {
-      // Remove from source column
-      final fromColumnIndex = _columns.indexWhere(
-        (col) => col.id == fromColumnId,
-      );
-      if (fromColumnIndex != -1) {
-        final fromColumn = _columns[fromColumnIndex];
-        final updatedFromItems = List<YoKanbanItem>.from(fromColumn.items)
-          ..removeWhere((i) => i.id == item.id);
-
-        _columns[fromColumnIndex] = fromColumn.copyWith(
-          items: updatedFromItems,
+      // Remove from source
+      final fromIdx = _columns.indexWhere((c) => c.id == fromColumnId);
+      if (fromIdx != -1) {
+        final fromCol = _columns[fromIdx];
+        _columns[fromIdx] = fromCol.copyWith(
+          items: fromCol.items.where((i) => i.id != item.id).toList(),
         );
       }
 
-      // Add to target column
-      final toColumnIndex = _columns.indexWhere((col) => col.id == toColumnId);
-      if (toColumnIndex != -1) {
-        final toColumn = _columns[toColumnIndex];
-        final updatedToItems = List<YoKanbanItem>.from(toColumn.items)
-          ..add(item);
-
-        _columns[toColumnIndex] = toColumn.copyWith(items: updatedToItems);
+      // Add to target
+      final toIdx = _columns.indexWhere((c) => c.id == toColumnId);
+      if (toIdx != -1) {
+        final toCol = _columns[toIdx];
+        _columns[toIdx] = toCol.copyWith(items: [...toCol.items, item]);
       }
     });
 
@@ -171,216 +174,181 @@ class _YoKanbanBoardState extends State<YoKanbanBoard> {
               scrollDirection: Axis.horizontal,
               padding: EdgeInsets.all(widget.columnSpacing),
               itemCount: _columns.length,
-              separatorBuilder: (context, index) =>
+              separatorBuilder: (_, __) =>
                   SizedBox(width: widget.columnSpacing),
-              itemBuilder: (context, index) {
-                return _buildColumn(context, _columns[index]);
-              },
+              itemBuilder: (_, i) => _buildColumn(context, _columns[i]),
             )
-          : Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                for (int i = 0; i < _columns.length; i++) ...[
-                  _buildColumn(context, _columns[i]),
-                  if (i < _columns.length - 1)
-                    SizedBox(width: widget.columnSpacing),
+          : Padding(
+              padding: EdgeInsets.all(widget.columnSpacing),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  for (int i = 0; i < _columns.length; i++) ...[
+                    Expanded(child: _buildColumn(context, _columns[i])),
+                    if (i < _columns.length - 1)
+                      SizedBox(width: widget.columnSpacing),
+                  ],
                 ],
-              ],
+              ),
             ),
     );
   }
 
   Widget _buildColumn(BuildContext context, YoKanbanColumn column) {
+    Widget content(bool isActive) =>
+        _buildColumnContent(context, column, isActive);
+
+    if (!widget.dragEnabled) {
+      return SizedBox(width: widget.columnWidth, child: content(false));
+    }
+
     return SizedBox(
-      width: widget.columnWidth,
-      child: widget.dragEnabled
-          ? DragTarget<Map<String, dynamic>>(
-              onAccept: (data) {
-                final String itemId = data['itemId'];
-                final String fromColumnId = data['fromColumnId'];
-
-                final item = _columns
-                    .firstWhere((col) => col.id == fromColumnId)
-                    .items
-                    .firstWhere((item) => item.id == itemId);
-
-                _handleItemMove(item, fromColumnId, column.id);
-              },
-              builder: (context, candidateData, rejectedData) {
-                return _buildColumnContent(
-                  context,
-                  column,
-                  candidateData.isNotEmpty,
-                );
-              },
-            )
-          : _buildColumnContent(context, column, false),
+      width: widget.scrollable ? widget.columnWidth : null,
+      child: DragTarget<Map<String, dynamic>>(
+        onWillAcceptWithDetails: (data) {
+          final fromColId = data.data['fromColumnId'] as String;
+          return fromColId != column.id;
+        },
+        onAcceptWithDetails: (data) {
+          final itemId = data.data['itemId'] as String;
+          final fromColId = data.data['fromColumnId'] as String;
+          final fromCol = _columns.firstWhere((c) => c.id == fromColId);
+          final item = fromCol.items.firstWhere((i) => i.id == itemId);
+          _handleItemMove(item, fromColId, column.id);
+        },
+        builder: (_, candidateData, __) => content(candidateData.isNotEmpty),
+      ),
     );
   }
 
   Widget _buildColumnContent(
     BuildContext context,
     YoKanbanColumn column,
-    bool isDragTargetActive,
+    bool isDragActive,
   ) {
     return Container(
       decoration: BoxDecoration(
         color: context.backgroundColor,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDragTargetActive
-              ? context.primaryColor.withOpacity(0.5)
+          color: isDragActive
+              ? context.primaryColor.withAlpha(128)
               : context.gray200,
-          width: isDragTargetActive ? 2 : 1,
+          width: isDragActive ? 2 : 1,
         ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
         children: [
-          // Column Header
+          // Header
           Padding(
             padding: EdgeInsets.all(context.yoSpacingMd),
-            child: Row(
-              children: [
-                if (column.icon != null) ...[
-                  Icon(
-                    column.icon,
-                    color: column.color ?? context.primaryColor,
-                    size: 16,
-                  ),
-                  SizedBox(width: context.yoSpacingSm),
-                ],
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () => widget.onColumnTap?.call(column),
+            child: GestureDetector(
+              onTap: () => widget.onColumnTap?.call(column),
+              child: Row(
+                children: [
+                  if (column.icon != null) ...[
+                    Icon(
+                      column.icon,
+                      color: column.color ?? context.primaryColor,
+                      size: 16,
+                    ),
+                    SizedBox(width: context.yoSpacingSm),
+                  ],
+                  Expanded(
                     child: YoText.bodyLarge(
                       '${column.title} (${column.items.length})',
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
 
-          // Column Items
+          // Items
           Expanded(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minHeight: 100,
-                maxHeight: double.infinity,
-              ),
-              child: column.items.isEmpty
-                  ? _buildEmptyState(context)
-                  : _buildItemsList(context, column),
-            ),
+            child: column.items.isEmpty
+                ? _buildEmpty(context, isDragActive)
+                : ListView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: context.yoSpacingSm,
+                    ),
+                    itemCount: column.items.length,
+                    itemBuilder: (_, i) =>
+                        _buildItem(context, column.items[i], column.id),
+                  ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildItemsList(BuildContext context, YoKanbanColumn column) {
-    return ListView.builder(
-      physics: const BouncingScrollPhysics(),
-      padding: EdgeInsets.symmetric(horizontal: context.yoSpacingSm),
-      shrinkWrap: true,
-      itemCount: column.items.length,
-      itemBuilder: (context, index) {
-        final item = column.items[index];
-        return _buildKanbanItem(context, item, column.id);
-      },
-    );
-  }
+  Widget _buildItem(BuildContext context, YoKanbanItem item, String columnId) {
+    final card = _buildItemCard(context, item, columnId);
 
-  Widget _buildKanbanItem(
-    BuildContext context,
-    YoKanbanItem item,
-    String columnId,
-  ) {
-    if (widget.dragEnabled) {
-      return _buildDraggableKanbanItem(context, item, columnId);
-    } else {
-      return _buildKanbanItemWidget(context, item, columnId, false);
-    }
-  }
+    if (!widget.dragEnabled) return card;
 
-  Widget _buildDraggableKanbanItem(
-    BuildContext context,
-    YoKanbanItem item,
-    String columnId,
-  ) {
     return LongPressDraggable<Map<String, dynamic>>(
       data: {'itemId': item.id, 'fromColumnId': columnId},
       feedback: Material(
         type: MaterialType.transparency,
-        child: Container(
-          width: widget.columnWidth - widget.columnSpacing * 2,
-          margin: EdgeInsets.all(context.yoSpacingSm),
+        child: SizedBox(
+          width: widget.columnWidth - 32,
           child: Card(
-            elevation: 4,
+            elevation: 8,
             child: Padding(
               padding: EdgeInsets.all(context.yoSpacingMd),
-              child: _buildKanbanItemContent(context, item, columnId, true),
+              child: _buildItemContent(context, item),
             ),
           ),
         ),
       ),
-      onDragStarted: () {
-        setState(() {
-          _draggedItemId = item.id;
-          _draggedFromColumnId = columnId;
-        });
-      },
-      onDragEnd: (_) {
-        setState(() {
-          _draggedItemId = null;
-          _draggedFromColumnId = null;
-        });
-      },
-      childWhenDragging: Opacity(
-        opacity: 0.3,
-        child: _buildKanbanItemContent(context, item, columnId, false),
-      ),
-      child: _buildKanbanItemWidget(context, item, columnId, false),
+      childWhenDragging: Opacity(opacity: 0.3, child: card),
+      onDragStarted: () => setState(() {
+        _draggedItemId = item.id;
+        _draggedFromColumnId = columnId;
+      }),
+      onDragEnd: (_) => setState(() {
+        _draggedItemId = null;
+        _draggedFromColumnId = null;
+      }),
+      child: card,
     );
   }
 
-  Widget _buildKanbanItemWidget(
+  Widget _buildItemCard(
     BuildContext context,
     YoKanbanItem item,
     String columnId,
-    bool isDragging,
   ) {
+    final isDragging =
+        _draggedItemId == item.id && _draggedFromColumnId == columnId;
+
     return Container(
-      margin: EdgeInsets.all(context.yoSpacingSm),
+      margin: EdgeInsets.symmetric(vertical: context.yoSpacingXs),
       child: Card(
         elevation: isDragging ? 4 : 1,
-        color: isDragging ? context.primaryColor.withOpacity(0.1) : null,
+        color: isDragging ? context.primaryColor.withAlpha(26) : null,
         child: InkWell(
           onTap: () => widget.onItemTap?.call(item, columnId),
           borderRadius: BorderRadius.circular(12),
           child: Padding(
             padding: EdgeInsets.all(context.yoSpacingMd),
-            child: _buildKanbanItemContent(context, item, columnId, isDragging),
+            child: _buildItemContent(context, item),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildKanbanItemContent(
-    BuildContext context,
-    YoKanbanItem item,
-    String columnId,
-    bool isDragging,
-  ) {
+  Widget _buildItemContent(BuildContext context, YoKanbanItem item) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Item Header with Drag Handle (only show when drag enabled)
+        // Header
         Row(
           children: [
             if (widget.dragEnabled) ...[
@@ -394,16 +362,13 @@ class _YoKanbanBoardState extends State<YoKanbanBoard> {
               ),
               SizedBox(width: context.yoSpacingSm),
             ],
-
             if (item.leading != null) ...[
               item.leading!,
               SizedBox(width: context.yoSpacingSm),
             ],
-
             Expanded(
               child: YoText.bodyMedium(item.title, fontWeight: FontWeight.w500),
             ),
-
             if (item.priority > 0)
               Container(
                 padding: EdgeInsets.symmetric(
@@ -411,7 +376,7 @@ class _YoKanbanBoardState extends State<YoKanbanBoard> {
                   vertical: 2,
                 ),
                 decoration: BoxDecoration(
-                  color: _getPriorityColor(context, item.priority),
+                  color: _priorityColor(context, item.priority),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: YoText.bodySmall(
@@ -422,6 +387,7 @@ class _YoKanbanBoardState extends State<YoKanbanBoard> {
           ],
         ),
 
+        // Description
         if (item.description != null) ...[
           SizedBox(height: context.yoSpacingXs),
           YoText.bodySmall(
@@ -432,47 +398,50 @@ class _YoKanbanBoardState extends State<YoKanbanBoard> {
           ),
         ],
 
-        // NEW: Custom widgets section - above tags, below description
+        // Custom widgets
         if (item.customWidgets.isNotEmpty) ...[
           SizedBox(height: context.yoSpacingSm),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: item.customWidgets.map((widget) {
-              return Padding(
-                padding: EdgeInsets.only(bottom: context.yoSpacingXs),
-                child: widget,
-              );
-            }).toList(),
+          ...item.customWidgets.map(
+            (w) => Padding(
+              padding: EdgeInsets.only(bottom: context.yoSpacingXs),
+              child: w,
+            ),
           ),
         ],
 
+        // Tags
         if (item.tags.isNotEmpty) ...[
           SizedBox(height: context.yoSpacingSm),
           Wrap(
             spacing: 4,
+            runSpacing: 4,
             children: item.tags
                 .map(
-                  (tag) => Container(
-                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  (t) => Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: context.gray100,
                       borderRadius: BorderRadius.circular(4),
                     ),
-                    child: YoText.bodySmall(tag, color: context.gray600),
+                    child: YoText.bodySmall(t, color: context.gray600),
                   ),
                 )
                 .toList(),
           ),
         ],
 
+        // Due date
         if (item.dueDate != null) ...[
           SizedBox(height: context.yoSpacingSm),
           Row(
             children: [
               Icon(Icons.access_time, size: 12, color: context.gray500),
-              SizedBox(width: 4),
+              const SizedBox(width: 4),
               YoText.bodySmall(
-                _formatDate(item.dueDate!),
+                YoDateFormatter.formatDate(item.dueDate!),
                 color: context.gray600,
               ),
             ],
@@ -482,253 +451,46 @@ class _YoKanbanBoardState extends State<YoKanbanBoard> {
     );
   }
 
-  Widget _buildEmptyState(BuildContext context) {
-    return widget.dragEnabled
-        ? DragTarget<Map<String, dynamic>>(
-            onAccept: (data) {
-              final String itemId = data['itemId'];
-              final String fromColumnId = data['fromColumnId'];
-
-              final fromColumn = _columns.firstWhere(
-                (col) => col.id == fromColumnId,
-              );
-              final item = fromColumn.items.firstWhere(
-                (item) => item.id == itemId,
-              );
-
-              // Find the first empty column
-              final emptyColumn = _columns.firstWhere(
-                (col) => col.items.isEmpty,
-              );
-              _handleItemMove(item, fromColumnId, emptyColumn.id);
-            },
-            builder: (context, candidateData, rejectedData) {
-              return _buildEmptyStateContent(candidateData.isNotEmpty);
-            },
-          )
-        : _buildEmptyStateContent(false);
-  }
-
-  Widget _buildEmptyStateContent(bool isDragTargetActive) {
+  Widget _buildEmpty(BuildContext context, bool isDragActive) {
     return Container(
       margin: EdgeInsets.all(context.yoSpacingMd),
       padding: EdgeInsets.all(context.yoSpacingXl),
       decoration: BoxDecoration(
-        border: isDragTargetActive
-            ? Border.all(color: context.primaryColor, width: 2)
-            : Border.all(color: context.gray300, style: BorderStyle.solid),
+        border: Border.all(
+          color: isDragActive ? context.primaryColor : context.gray300,
+          width: isDragActive ? 2 : 1,
+        ),
         borderRadius: BorderRadius.circular(8),
-        color: isDragTargetActive
-            ? context.primaryColor.withOpacity(0.1)
+        color: isDragActive
+            ? context.primaryColor.withAlpha(26)
             : context.gray50,
       ),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.inbox,
-              size: 48,
-              color: isDragTargetActive
-                  ? context.primaryColor
-                  : context.gray300,
-            ),
-            SizedBox(height: context.yoSpacingSm),
-            YoText.bodyMedium(
-              isDragTargetActive ? 'Drop here' : 'No items',
-              color: isDragTargetActive
-                  ? context.primaryColor
-                  : context.gray500,
-              fontWeight: isDragTargetActive
-                  ? FontWeight.w600
-                  : FontWeight.normal,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Color _getPriorityColor(BuildContext context, int priority) {
-    switch (priority) {
-      case 1:
-        return context.successColor;
-      case 2:
-        return context.warningColor;
-      case 3:
-        return context.errorColor;
-      default:
-        return context.primaryColor;
-    }
-  }
-
-  String _formatDate(DateTime date) {
-    return YoDateFormatter.formatDate(date);
-  }
-}
-
-// Simplified version untuk non-scrollable layout
-class YoKanbanBoardSimple extends StatefulWidget {
-  final List<YoKanbanColumn> columns;
-  final Function(YoKanbanItem, String fromColumnId, String toColumnId)?
-  onItemMoved;
-  final Function(YoKanbanItem, String columnId)? onItemTap;
-  final double columnWidth;
-  final double columnSpacing;
-  final double height;
-  final bool dragEnabled;
-
-  const YoKanbanBoardSimple({
-    super.key,
-    required this.columns,
-    this.onItemMoved,
-    this.onItemTap,
-    this.columnWidth = 280,
-    this.columnSpacing = 16,
-    this.height = 400,
-    this.dragEnabled = true,
-  });
-
-  @override
-  State<YoKanbanBoardSimple> createState() => _YoKanbanBoardSimpleState();
-}
-
-class _YoKanbanBoardSimpleState extends State<YoKanbanBoardSimple> {
-  late List<YoKanbanColumn> _columns;
-
-  @override
-  void initState() {
-    super.initState();
-    _columns = widget.columns;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: widget.height,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            for (int i = 0; i < _columns.length; i++) ...[
-              SizedBox(
-                width: widget.columnWidth,
-                child: _buildSimpleColumn(context, _columns[i]),
-              ),
-              if (i < _columns.length - 1)
-                SizedBox(width: widget.columnSpacing),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSimpleColumn(BuildContext context, YoKanbanColumn column) {
-    return Container(
-      decoration: BoxDecoration(
-        color: context.backgroundColor,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: context.gray200),
-      ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          // Column Header
-          Padding(
-            padding: EdgeInsets.all(context.yoSpacingMd),
-            child: Row(
-              children: [
-                if (column.icon != null) ...[
-                  Icon(
-                    column.icon,
-                    color: column.color ?? context.primaryColor,
-                    size: 16,
-                  ),
-                  SizedBox(width: context.yoSpacingSm),
-                ],
-                Expanded(
-                  child: YoText.bodyLarge(
-                    '${column.title} (${column.items.length})',
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
+          Icon(
+            Icons.inbox,
+            size: 40,
+            color: isDragActive ? context.primaryColor : context.gray300,
           ),
-
-          // Column Items dengan height constraint yang jelas
-          Container(
-            constraints: BoxConstraints(
-              minHeight: 100,
-              maxHeight: widget.height - 80, // Account for header height
-            ),
-            child: column.items.isEmpty
-                ? YoEmptyState.noData()
-                : ListView.builder(
-                    physics: const BouncingScrollPhysics(),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: context.yoSpacingSm,
-                    ),
-                    itemCount: column.items.length,
-                    itemBuilder: (context, index) {
-                      final item = column.items[index];
-                      return Container(
-                        margin: EdgeInsets.all(context.yoSpacingSm),
-                        child: Card(
-                          elevation: 1,
-                          child: Padding(
-                            padding: EdgeInsets.all(context.yoSpacingMd),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    if (widget.dragEnabled) ...[
-                                      Icon(
-                                        Icons.drag_handle,
-                                        size: 16,
-                                        color: context.gray400,
-                                      ),
-                                      SizedBox(width: context.yoSpacingSm),
-                                    ],
-                                    Expanded(
-                                      child: YoText.bodyMedium(
-                                        item.title,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-
-                                // NEW: Custom widgets untuk simple version
-                                if (item.customWidgets.isNotEmpty) ...[
-                                  SizedBox(height: context.yoSpacingSm),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: item.customWidgets.map((widget) {
-                                      return Padding(
-                                        padding: EdgeInsets.only(
-                                          bottom: context.yoSpacingXs,
-                                        ),
-                                        child: widget,
-                                      );
-                                    }).toList(),
-                                  ),
-                                ],
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+          SizedBox(height: context.yoSpacingSm),
+          YoText.bodyMedium(
+            isDragActive ? 'Drop here' : 'No items',
+            color: isDragActive ? context.primaryColor : context.gray500,
+            fontWeight: isDragActive ? FontWeight.w600 : FontWeight.normal,
           ),
         ],
       ),
     );
+  }
+
+  Color _priorityColor(BuildContext context, int priority) {
+    return switch (priority) {
+      1 => context.successColor,
+      2 => context.warningColor,
+      3 => context.errorColor,
+      _ => context.primaryColor,
+    };
   }
 }

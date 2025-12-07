@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 
+import '../layout/yo_adaptive.dart';
 import '../themes/yo_text_theme.dart';
 
+/// Context extensions for theme-aware text styles and utilities
 extension YoContextExtensions on BuildContext {
-  // === COLOR EXTENSIONS ===
-
   // === TEXT STYLE EXTENSIONS ===
 
-  // Text Styles - Theme aware
   TextStyle get yoDisplayLarge => YoTextTheme.displayLarge(this);
   TextStyle get yoDisplayMedium => YoTextTheme.displayMedium(this);
   TextStyle get yoDisplaySmall => YoTextTheme.displaySmall(this);
@@ -27,19 +26,27 @@ extension YoContextExtensions on BuildContext {
   TextStyle get yoCurrencyMedium => YoTextTheme.monoMedium(this);
   TextStyle get yoCurrencySmall => YoTextTheme.monoSmall(this);
 
-  // === SPACING & SCREEN HELPERS ===
+  // === STATIC SPACING (non-adaptive) ===
+  // Use context.adaptiveXs, adaptiveSm, etc for adaptive spacing
 
-  // Spacing
   double get yoSpacingXs => 4;
   double get yoSpacingSm => 8;
   double get yoSpacingMd => 16;
   double get yoSpacingLg => 24;
   double get yoSpacingXl => 32;
 
-  // Screen
+  // === SCREEN HELPERS ===
+  // Uses YoAdaptive as single source of truth
+
   double get yoScreenWidth => MediaQuery.of(this).size.width;
   double get yoScreenHeight => MediaQuery.of(this).size.height;
-  bool get yoIsMobile => yoScreenWidth < 600;
-  bool get yoIsTablet => yoScreenWidth >= 600 && yoScreenWidth < 1200;
-  bool get yoIsDesktop => yoScreenWidth >= 1200;
+
+  /// @deprecated Use context.isMobile instead
+  bool get yoIsMobile => YoAdaptive.isMobile(this);
+
+  /// @deprecated Use context.isTablet instead
+  bool get yoIsTablet => YoAdaptive.isTablet(this);
+
+  /// @deprecated Use context.isDesktop instead
+  bool get yoIsDesktop => YoAdaptive.isDesktop(this);
 }

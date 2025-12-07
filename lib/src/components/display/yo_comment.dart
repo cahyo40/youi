@@ -1,9 +1,7 @@
-// File: yo_comment.dart
 import 'package:flutter/material.dart';
 import 'package:yo_ui/yo_ui.dart';
 
-enum YoCommentVariant { normal, compact, detailed }
-
+/// Data model untuk comment
 class YoComment {
   final String id;
   final String userAvatar;
@@ -15,7 +13,6 @@ class YoComment {
   final List<YoComment> replies;
   final bool isEdited;
   final String? userRole;
-  final String? userTitle;
 
   const YoComment({
     required this.id,
@@ -28,37 +25,44 @@ class YoComment {
     this.replies = const [],
     this.isEdited = false,
     this.userRole,
-    this.userTitle,
   });
 }
 
+/// Widget untuk menampilkan komentar
 class YoCommentWidget extends StatelessWidget {
   final YoComment comment;
-  final YoCommentVariant variant;
+  final bool compact;
   final Function(YoComment)? onLike;
   final Function(YoComment)? onReply;
   final Function(YoComment)? onEdit;
   final Function(YoComment)? onDelete;
   final bool showReplies;
   final int maxReplyDepth;
-  final Color? backgroundColor;
-  final bool showActions;
-  final bool showLikes;
+  final int _currentDepth;
 
   const YoCommentWidget({
     super.key,
     required this.comment,
-    this.variant = YoCommentVariant.normal,
+    this.compact = false,
     this.onLike,
     this.onReply,
     this.onEdit,
     this.onDelete,
     this.showReplies = true,
     this.maxReplyDepth = 3,
-    this.backgroundColor,
-    this.showActions = true,
-    this.showLikes = true,
-  });
+  }) : _currentDepth = 0;
+
+  const YoCommentWidget._reply({
+    required this.comment,
+    required this.compact,
+    required this.onLike,
+    required this.onReply,
+    required this.onEdit,
+    required this.onDelete,
+    required this.showReplies,
+    required this.maxReplyDepth,
+    required int currentDepth,
+  }) : _currentDepth = currentDepth;
 
   @override
   Widget build(BuildContext context) {
@@ -66,31 +70,24 @@ class YoCommentWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildComment(context),
-
-        // Replies
         if (showReplies &&
             comment.replies.isNotEmpty &&
-            variant != YoCommentVariant.compact)
+            _currentDepth < maxReplyDepth)
           Padding(
-            padding: EdgeInsets.only(
-              left: _getReplyIndent(context),
-              top: context.yoSpacingMd,
-            ),
+            padding: EdgeInsets.only(left: compact ? 24 : 32, top: 8),
             child: Column(
               children: comment.replies
                   .map(
-                    (reply) => YoCommentWidget(
+                    (reply) => YoCommentWidget._reply(
                       comment: reply,
-                      variant: variant,
+                      compact: compact,
                       onLike: onLike,
                       onReply: onReply,
                       onEdit: onEdit,
                       onDelete: onDelete,
-                      showReplies: maxReplyDepth > 1,
-                      maxReplyDepth: maxReplyDepth - 1,
-                      backgroundColor: backgroundColor?.withOpacity(0.1),
-                      showActions: showActions,
-                      showLikes: showLikes,
+                      showReplies: showReplies,
+                      maxReplyDepth: maxReplyDepth,
+                      currentDepth: _currentDepth + 1,
                     ),
                   )
                   .toList(),
@@ -101,279 +98,131 @@ class YoCommentWidget extends StatelessWidget {
   }
 
   Widget _buildComment(BuildContext context) {
-    switch (variant) {
-      case YoCommentVariant.normal:
-        return _buildNormalComment(context);
-      case YoCommentVariant.compact:
-        return _buildCompactComment(context);
-      case YoCommentVariant.detailed:
-        return _buildDetailedComment(context);
-    }
+    if (compact) return _buildCompact(context);
+    return _buildNormal(context);
   }
 
-  Widget _buildNormalComment(BuildContext context) {
+  Widget _buildNormal(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: context.yoSpacingMd),
-      padding: EdgeInsets.all(context.yoSpacingMd),
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: backgroundColor ?? context.gray50,
+        color: context.gray50,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header - User info and timestamp
+          // Header
           Row(
             children: [
               YoAvatar.image(
                 imageUrl: comment.userAvatar,
                 size: YoAvatarSize.sm,
               ),
-              SizedBox(width: context.yoSpacingSm),
+              const SizedBox(width: 8),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        YoText.bodyMedium(
+                        Text(
                           comment.userName,
-                          fontWeight: FontWeight.w600,
+                          style: context.yoBodyMedium.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                         if (comment.userRole != null) ...[
-                          SizedBox(width: context.yoSpacingXs),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: context.yoSpacingXs,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: context.primaryColor.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: YoText.bodySmall(
-                              comment.userRole!,
-                              color: context.primaryColor,
-                            ),
-                          ),
+                          const SizedBox(width: 4),
+                          _buildRoleBadge(context),
                         ],
                       ],
                     ),
-                    YoText.bodySmall(
-                      _formatTimestamp(comment.timestamp),
-                      color: context.gray500,
+                    Text(
+                      _formatTime(comment.timestamp),
+                      style: context.yoBodySmall.copyWith(
+                        color: context.gray500,
+                      ),
                     ),
                   ],
                 ),
               ),
+              if (onEdit != null || onDelete != null) _buildMenu(context),
             ],
           ),
 
-          SizedBox(height: context.yoSpacingSm),
+          const SizedBox(height: 8),
+          Text(comment.text, style: context.yoBodyMedium),
+          const SizedBox(height: 8),
 
-          // Comment text
-          YoText.bodyMedium(comment.text),
-
-          SizedBox(height: context.yoSpacingSm),
-
-          // Footer - Actions and likes
-          if (showActions)
-            Row(
-              children: [
-                // Like button
-                if (showLikes)
-                  InkWell(
-                    onTap: () => onLike?.call(comment),
-                    borderRadius: BorderRadius.circular(6),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: context.yoSpacingSm,
-                        vertical: 4,
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            comment.isLiked
-                                ? Icons.favorite
-                                : Icons.favorite_border,
-                            size: 16,
-                            color: comment.isLiked
-                                ? context.errorColor
-                                : context.gray500,
-                          ),
-                          SizedBox(width: 4),
-                          YoText.bodySmall(
-                            comment.likes.toString(),
-                            color: comment.isLiked
-                                ? context.errorColor
-                                : context.gray500,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                // Reply button
-                InkWell(
-                  onTap: () => onReply?.call(comment),
-                  borderRadius: BorderRadius.circular(6),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: context.yoSpacingSm,
-                      vertical: 4,
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.reply, size: 16, color: context.gray500),
-                        SizedBox(width: 4),
-                        YoText.bodySmall('Reply', color: context.gray500),
-                      ],
-                    ),
-                  ),
+          // Actions
+          Row(
+            children: [
+              _buildAction(
+                context,
+                icon: comment.isLiked ? Icons.favorite : Icons.favorite_border,
+                label: comment.likes.toString(),
+                color: comment.isLiked ? context.errorColor : context.gray500,
+                onTap: () => onLike?.call(comment),
+              ),
+              const SizedBox(width: 16),
+              _buildAction(
+                context,
+                icon: Icons.reply,
+                label: 'Reply',
+                onTap: () => onReply?.call(comment),
+              ),
+              const Spacer(),
+              if (comment.isEdited)
+                Text(
+                  'edited',
+                  style: context.yoBodySmall.copyWith(color: context.gray400),
                 ),
-
-                Spacer(),
-
-                // Edited indicator
-                if (comment.isEdited)
-                  YoText.bodySmall('edited', color: context.gray400),
-
-                // More actions menu
-                if (onEdit != null || onDelete != null)
-                  PopupMenuButton<String>(
-                    icon: Icon(
-                      Icons.more_horiz,
-                      size: 16,
-                      color: context.gray500,
-                    ),
-                    itemBuilder: (context) => [
-                      if (onEdit != null)
-                        PopupMenuItem(
-                          value: 'edit',
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.edit,
-                                size: 16,
-                                color: context.gray600,
-                              ),
-                              SizedBox(width: 8),
-                              YoText.bodySmall('Edit'),
-                            ],
-                          ),
-                        ),
-                      if (onDelete != null)
-                        PopupMenuItem(
-                          value: 'delete',
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.delete,
-                                size: 16,
-                                color: context.errorColor,
-                              ),
-                              SizedBox(width: 8),
-                              YoText.bodySmall(
-                                'Delete',
-                                color: context.errorColor,
-                              ),
-                            ],
-                          ),
-                        ),
-                    ],
-                    onSelected: (value) {
-                      if (value == 'edit') {
-                        onEdit?.call(comment);
-                      } else if (value == 'delete') {
-                        onDelete?.call(comment);
-                      }
-                    },
-                  ),
-              ],
-            ),
+            ],
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildCompactComment(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(bottom: context.yoSpacingSm),
+  Widget _buildCompact(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Avatar
           YoAvatar.image(imageUrl: comment.userAvatar, size: YoAvatarSize.xs),
-          SizedBox(width: context.yoSpacingSm),
-
-          // Content
+          const SizedBox(width: 8),
           Expanded(
             child: Container(
-              padding: EdgeInsets.all(context.yoSpacingSm),
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: backgroundColor ?? context.gray100,
+                color: context.gray100,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // User info and timestamp
                   Row(
                     children: [
-                      YoText.bodySmall(
+                      Text(
                         comment.userName,
-                        fontWeight: FontWeight.w600,
+                        style: context.yoBodySmall.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                      SizedBox(width: context.yoSpacingXs),
-                      YoText.bodySmall(
-                        _formatTimestamp(comment.timestamp),
-                        color: context.gray500,
+                      const SizedBox(width: 4),
+                      Text(
+                        _formatTime(comment.timestamp),
+                        style: context.yoBodySmall.copyWith(
+                          color: context.gray500,
+                        ),
                       ),
-                      if (comment.isEdited) ...[
-                        SizedBox(width: context.yoSpacingXs),
-                        YoText.bodySmall('• edited', color: context.gray400),
-                      ],
                     ],
                   ),
-
-                  SizedBox(height: context.yoSpacingXs),
-
-                  // Comment text
-                  YoText.bodySmall(comment.text),
-
-                  // Actions (minimal)
-                  if (showActions)
-                    Padding(
-                      padding: EdgeInsets.only(top: context.yoSpacingXs),
-                      child: Row(
-                        children: [
-                          if (showLikes && onLike != null)
-                            GestureDetector(
-                              onTap: () => onLike?.call(comment),
-                              child: Icon(
-                                comment.isLiked
-                                    ? Icons.favorite
-                                    : Icons.favorite_outline,
-                                size: 14,
-                                color: comment.isLiked
-                                    ? context.errorColor
-                                    : context.gray500,
-                              ),
-                            ),
-                          if (showLikes && onLike != null)
-                            SizedBox(width: context.yoSpacingMd),
-                          if (onReply != null)
-                            GestureDetector(
-                              onTap: () => onReply?.call(comment),
-                              child: Icon(
-                                Icons.reply,
-                                size: 14,
-                                color: context.gray500,
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
+                  const SizedBox(height: 4),
+                  Text(comment.text, style: context.yoBodySmall),
                 ],
               ),
             ),
@@ -383,275 +232,99 @@ class YoCommentWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildDetailedComment(BuildContext context) {
+  Widget _buildRoleBadge(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: context.yoSpacingLg),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: backgroundColor ?? context.backgroundColor,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: context.gray200),
+        color: context.primaryColor.withAlpha(26),
+        borderRadius: BorderRadius.circular(4),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header with user info
-          Container(
-            padding: EdgeInsets.all(context.yoSpacingMd),
-            decoration: BoxDecoration(
-              color: context.gray50,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(16),
-                topRight: Radius.circular(16),
-              ),
-            ),
-            child: Row(
-              children: [
-                YoAvatar.image(
-                  imageUrl: comment.userAvatar,
-                  size: YoAvatarSize.md,
-                ),
-                SizedBox(width: context.yoSpacingMd),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          YoText.bodyLarge(
-                            comment.userName,
-                            fontWeight: FontWeight.w700,
-                          ),
-                          if (comment.userRole != null) ...[
-                            SizedBox(width: context.yoSpacingSm),
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: context.yoSpacingSm,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: context.primaryColor.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: YoText.bodySmall(
-                                comment.userRole!,
-                                color: context.primaryColor,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
-                      if (comment.userTitle != null) ...[
-                        SizedBox(height: 2),
-                        YoText.bodySmall(
-                          comment.userTitle!,
-                          color: context.gray600,
-                        ),
-                      ],
-                      SizedBox(height: 2),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.access_time,
-                            size: 12,
-                            color: context.gray500,
-                          ),
-                          SizedBox(width: 4),
-                          YoText.bodySmall(
-                            YoDateFormatter.formatRelativeTime(
-                              comment.timestamp,
-                            ),
-                            color: context.gray500,
-                          ),
-                          if (comment.isEdited) ...[
-                            SizedBox(width: 8),
-                            YoText.bodySmall(
-                              '• Edited',
-                              color: context.gray400,
-                            ),
-                          ],
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // Comment content
-          Padding(
-            padding: EdgeInsets.all(context.yoSpacingMd),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                YoText.bodyLarge(comment.text),
-
-                // Stats and actions
-                Padding(
-                  padding: EdgeInsets.only(top: context.yoSpacingMd),
-                  child: Row(
-                    children: [
-                      // Likes count
-                      if (showLikes)
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.favorite,
-                              size: 16,
-                              color: context.gray500,
-                            ),
-                            SizedBox(width: 4),
-                            YoText.bodySmall(
-                              '${comment.likes} ${comment.likes == 1 ? 'like' : 'likes'}',
-                              color: context.gray600,
-                            ),
-                            SizedBox(width: context.yoSpacingMd),
-                          ],
-                        ),
-
-                      // Replies count
-                      if (comment.replies.isNotEmpty)
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.chat_bubble_outline,
-                              size: 16,
-                              color: context.gray500,
-                            ),
-                            SizedBox(width: 4),
-                            YoText.bodySmall(
-                              '${comment.replies.length} ${comment.replies.length == 1 ? 'reply' : 'replies'}',
-                              color: context.gray600,
-                            ),
-                            SizedBox(width: context.yoSpacingMd),
-                          ],
-                        ),
-
-                      Spacer(),
-
-                      // Action buttons
-                      if (showActions)
-                        Row(
-                          children: [
-                            if (showLikes && onLike != null)
-                              _buildDetailedActionButton(
-                                context,
-                                comment.isLiked ? 'Liked' : 'Like',
-                                comment.isLiked
-                                    ? Icons.favorite
-                                    : Icons.favorite_border,
-                                () => onLike?.call(comment),
-                                isActive: comment.isLiked,
-                              ),
-                            if (onReply != null)
-                              _buildDetailedActionButton(
-                                context,
-                                'Reply',
-                                Icons.reply,
-                                () => onReply?.call(comment),
-                              ),
-                            if (onEdit != null)
-                              _buildDetailedActionButton(
-                                context,
-                                'Edit',
-                                Icons.edit,
-                                () => onEdit?.call(comment),
-                              ),
-                          ],
-                        ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+      child: Text(
+        comment.userRole!,
+        style: context.yoBodySmall.copyWith(color: context.primaryColor),
       ),
     );
   }
 
-  Widget _buildDetailedActionButton(
-    BuildContext context,
-    String text,
-    IconData icon,
-    VoidCallback onTap, {
-    bool isActive = false,
+  Widget _buildAction(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    Color? color,
+    VoidCallback? onTap,
   }) {
-    return Padding(
-      padding: EdgeInsets.only(left: context.yoSpacingSm),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(8),
-        child: Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: context.yoSpacingSm,
-            vertical: context.yoSpacingXs,
-          ),
-          decoration: BoxDecoration(
-            color: isActive
-                ? context.primaryColor.withOpacity(0.1)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Row(
-            children: [
-              Icon(
-                icon,
-                size: 16,
-                color: isActive ? context.primaryColor : context.gray600,
-              ),
-              SizedBox(width: 4),
-              YoText.bodySmall(
-                text,
-                color: isActive ? context.primaryColor : context.gray600,
-                fontWeight: FontWeight.w500,
-              ),
-            ],
-          ),
+    final effectiveColor = color ?? context.gray500;
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(6),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        child: Row(
+          children: [
+            Icon(icon, size: 16, color: effectiveColor),
+            const SizedBox(width: 4),
+            Text(
+              label,
+              style: context.yoBodySmall.copyWith(color: effectiveColor),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  double _getReplyIndent(BuildContext context) {
-    switch (variant) {
-      case YoCommentVariant.normal:
-        return context.yoSpacingXl;
-      case YoCommentVariant.compact:
-        return context.yoSpacingLg;
-      case YoCommentVariant.detailed:
-        return context.yoSpacingXl * 1.5;
-    }
+  Widget _buildMenu(BuildContext context) {
+    return PopupMenuButton<String>(
+      icon: Icon(Icons.more_horiz, size: 16, color: context.gray500),
+      onSelected: (value) {
+        if (value == 'edit') onEdit?.call(comment);
+        if (value == 'delete') onDelete?.call(comment);
+      },
+      itemBuilder: (context) => [
+        if (onEdit != null)
+          PopupMenuItem(
+            value: 'edit',
+            child: Row(
+              children: [
+                Icon(Icons.edit, size: 16, color: context.gray600),
+                const SizedBox(width: 8),
+                const Text('Edit'),
+              ],
+            ),
+          ),
+        if (onDelete != null)
+          PopupMenuItem(
+            value: 'delete',
+            child: Row(
+              children: [
+                Icon(Icons.delete, size: 16, color: context.errorColor),
+                const SizedBox(width: 8),
+                Text('Delete', style: TextStyle(color: context.errorColor)),
+              ],
+            ),
+          ),
+      ],
+    );
   }
 
-  String _formatTimestamp(DateTime timestamp) {
-    final now = DateTime.now();
-    final difference = now.difference(timestamp);
-
-    if (difference.inMinutes < 1) {
-      return 'Just now';
-    } else if (difference.inHours < 1) {
-      return '${difference.inMinutes}m ago';
-    } else if (difference.inDays < 1) {
-      return '${difference.inHours}h ago';
-    } else if (difference.inDays < 7) {
-      return '${difference.inDays}d ago';
-    } else {
-      return '${timestamp.day}/${timestamp.month}/${timestamp.year}';
-    }
+  String _formatTime(DateTime time) {
+    final diff = DateTime.now().difference(time);
+    if (diff.inMinutes < 1) return 'Just now';
+    if (diff.inHours < 1) return '${diff.inMinutes}m';
+    if (diff.inDays < 1) return '${diff.inHours}h';
+    if (diff.inDays < 7) return '${diff.inDays}d';
+    return '${time.day}/${time.month}/${time.year}';
   }
 }
 
+/// List of comments dengan empty state
 class YoCommentList extends StatelessWidget {
   final List<YoComment> comments;
-  final YoCommentVariant variant;
+  final bool compact;
   final Function(YoComment)? onLike;
   final Function(YoComment)? onReply;
   final Function(YoComment)? onEdit;
   final Function(YoComment)? onDelete;
-  final bool showReplies;
-  final bool showLikes;
   final Widget? emptyState;
   final ScrollPhysics? physics;
   final bool shrinkWrap;
@@ -659,13 +332,11 @@ class YoCommentList extends StatelessWidget {
   const YoCommentList({
     super.key,
     required this.comments,
-    this.variant = YoCommentVariant.normal,
+    this.compact = false,
     this.onLike,
     this.onReply,
     this.onEdit,
     this.onDelete,
-    this.showReplies = true,
-    this.showLikes = true,
     this.emptyState,
     this.physics,
     this.shrinkWrap = false,
@@ -674,131 +345,43 @@ class YoCommentList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (comments.isEmpty) {
-      return emptyState ?? _buildEmptyState(context);
+      return emptyState ?? _buildEmpty(context);
     }
 
     return ListView.builder(
       physics: physics,
       shrinkWrap: shrinkWrap,
       itemCount: comments.length,
-      itemBuilder: (context, index) {
-        return YoCommentWidget(
-          comment: comments[index],
-          variant: variant,
-          onLike: onLike,
-          onReply: onReply,
-          onEdit: onEdit,
-          onDelete: onDelete,
-          showReplies: showReplies,
-          showLikes: showLikes,
-        );
-      },
-    );
-  }
-
-  Widget _buildEmptyState(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(context.yoSpacingXl),
-      child: Column(
-        children: [
-          Icon(Icons.chat_bubble_outline, size: 64, color: context.gray300),
-          SizedBox(height: context.yoSpacingMd),
-          YoText.titleMedium(
-            'No comments yet',
-            color: context.gray500,
-            align: TextAlign.center,
-          ),
-          SizedBox(height: context.yoSpacingSm),
-          YoText.bodyMedium(
-            'Be the first to share your thoughts!',
-            color: context.gray400,
-            align: TextAlign.center,
-          ),
-        ],
+      itemBuilder: (_, index) => YoCommentWidget(
+        comment: comments[index],
+        compact: compact,
+        onLike: onLike,
+        onReply: onReply,
+        onEdit: onEdit,
+        onDelete: onDelete,
       ),
     );
   }
-}
 
-// Extension untuk mudah membuat comment list dengan variant tertentu
-extension YoCommentListExtensions on List<YoComment> {
-  YoCommentList toCommentList({
-    Key? key,
-    YoCommentVariant variant = YoCommentVariant.normal,
-    Function(YoComment)? onLike,
-    Function(YoComment)? onReply,
-    Function(YoComment)? onEdit,
-    Function(YoComment)? onDelete,
-    bool showReplies = true,
-    bool showLikes = true,
-    Widget? emptyState,
-    ScrollPhysics? physics,
-    bool shrinkWrap = false,
-  }) {
-    return YoCommentList(
-      key: key,
-      comments: this,
-      variant: variant,
-      onLike: onLike,
-      onReply: onReply,
-      onEdit: onEdit,
-      onDelete: onDelete,
-      showReplies: showReplies,
-      showLikes: showLikes,
-      emptyState: emptyState,
-      physics: physics,
-      shrinkWrap: shrinkWrap,
-    );
-  }
-
-  YoCommentList toCompactCommentList({
-    Key? key,
-    Function(YoComment)? onLike,
-    Function(YoComment)? onReply,
-    Function(YoComment)? onEdit,
-    Function(YoComment)? onDelete,
-    bool showLikes = true,
-    ScrollPhysics? physics,
-    bool shrinkWrap = false,
-  }) {
-    return YoCommentList(
-      key: key,
-      comments: this,
-      variant: YoCommentVariant.compact,
-      onLike: onLike,
-      onReply: onReply,
-      onEdit: onEdit,
-      onDelete: onDelete,
-      showReplies: false,
-      showLikes: showLikes,
-      physics: physics,
-      shrinkWrap: shrinkWrap,
-    );
-  }
-
-  YoCommentList toDetailedCommentList({
-    Key? key,
-    Function(YoComment)? onLike,
-    Function(YoComment)? onReply,
-    Function(YoComment)? onEdit,
-    Function(YoComment)? onDelete,
-    bool showReplies = true,
-    bool showLikes = true,
-    ScrollPhysics? physics,
-    bool shrinkWrap = false,
-  }) {
-    return YoCommentList(
-      key: key,
-      comments: this,
-      variant: YoCommentVariant.detailed,
-      onLike: onLike,
-      onReply: onReply,
-      onEdit: onEdit,
-      onDelete: onDelete,
-      showReplies: showReplies,
-      showLikes: showLikes,
-      physics: physics,
-      shrinkWrap: shrinkWrap,
+  Widget _buildEmpty(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(32),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.chat_bubble_outline, size: 64, color: context.gray300),
+          const SizedBox(height: 16),
+          Text(
+            'No comments yet',
+            style: context.yoTitleMedium.copyWith(color: context.gray500),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Be the first to share your thoughts!',
+            style: context.yoBodyMedium.copyWith(color: context.gray400),
+          ),
+        ],
+      ),
     );
   }
 }

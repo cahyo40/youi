@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:yo_ui/yo_ui.dart'; // ← pastikan import ini
+import 'package:yo_ui/yo_ui.dart';
 
 /* ---------------------------------------------------------- */
 /*  1.  ENUMS (tetap)                                        */
@@ -136,7 +136,6 @@ class _YoTextFormFieldState extends State<YoTextFormField>
   late FocusNode _focusNode;
   late bool _obscureText;
   late AnimationController _animationController;
-  late Animation<double> _labelAnimation;
   String? _errorText;
   bool _hasFocus = false;
   bool _hasText = false;
@@ -152,13 +151,6 @@ class _YoTextFormFieldState extends State<YoTextFormField>
     _animationController = AnimationController(
       duration: widget.animationDuration,
       vsync: this,
-    );
-
-    _labelAnimation = Tween<double>(begin: 1.0, end: 0.8).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: widget.animationCurve,
-      ),
     );
 
     _controller.addListener(_handleTextChange);
@@ -203,11 +195,14 @@ class _YoTextFormFieldState extends State<YoTextFormField>
       case YoInputType.phone:
         return TextInputType.phone;
       case YoInputType.number:
+      case YoInputType.currency:
         return TextInputType.number;
       case YoInputType.url:
         return TextInputType.url;
       case YoInputType.multiline:
         return TextInputType.multiline;
+      case YoInputType.search:
+        return TextInputType.text;
       default:
         return TextInputType.text;
     }
@@ -314,7 +309,15 @@ class _YoTextFormFieldState extends State<YoTextFormField>
           maxLines: widget.obscureText ? 1 : widget.maxLines,
           minLines: widget.minLines,
           maxLength: widget.maxLength,
-          validator: _validateInput,
+          validator: (value) {
+            final error = _validateInput(value);
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted && _errorText != error) {
+                setState(() => _errorText = error);
+              }
+            });
+            return error;
+          },
           onChanged: widget.onChanged,
           onFieldSubmitted: widget.onSubmitted,
           onTap: widget.onTap,

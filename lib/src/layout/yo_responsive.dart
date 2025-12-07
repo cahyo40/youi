@@ -1,34 +1,42 @@
 import 'package:flutter/material.dart';
 
+import 'yo_adaptive.dart';
+
+/// @deprecated Use YoAdaptive instead
+/// This class is kept for backward compatibility
 class YoResponsive {
-  static bool isMobile(BuildContext context) =>
-      MediaQuery.of(context).size.width < 600;
+  /// @deprecated Use YoAdaptive.isMobile(context) instead
+  static bool isMobile(BuildContext context) => YoAdaptive.isMobile(context);
 
-  static bool isTablet(BuildContext context) =>
-      MediaQuery.of(context).size.width >= 600 &&
-      MediaQuery.of(context).size.width < 1200;
+  /// @deprecated Use YoAdaptive.isTablet(context) instead
+  static bool isTablet(BuildContext context) => YoAdaptive.isTablet(context);
 
-  static bool isDesktop(BuildContext context) =>
-      MediaQuery.of(context).size.width >= 1200;
+  /// @deprecated Use YoAdaptive.isDesktop(context) instead
+  static bool isDesktop(BuildContext context) => YoAdaptive.isDesktop(context);
 
+  /// @deprecated Use `YoAdaptive.value<T>()` instead
   static T responsiveValue<T>(
     BuildContext context, {
     required T mobile,
     T? tablet,
     T? desktop,
   }) {
-    if (isDesktop(context) && desktop != null) return desktop;
-    if (isTablet(context) && tablet != null) return tablet;
-    return mobile;
+    return YoAdaptive.value<T>(
+      context,
+      mobile: mobile,
+      tablet: tablet,
+      desktop: desktop,
+    );
   }
 
+  /// @deprecated Use `YoAdaptive.value<Widget>()` instead
   static Widget responsiveWidget({
     required BuildContext context,
     required Widget mobile,
     Widget? tablet,
     Widget? desktop,
   }) {
-    return responsiveValue<Widget>(
+    return YoAdaptive.value<Widget>(
       context,
       mobile: mobile,
       tablet: tablet,

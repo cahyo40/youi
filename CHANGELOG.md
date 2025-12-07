@@ -5,6 +5,57 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2024-12-07
+
+### Added - New Components
+- **Charts** (`YoLineChart`, `YoBarChart`, `YoPieChart`, `YoSparkLine`) - using fl_chart
+- **YoProductCard** - E-commerce/POS card with grid, list, and pos variants
+- **YoDestinationCard** - Travel app card with default, featured, and compact variants
+- **YoProfileCard** - Social app card with default, compact, and cover variants
+- **YoArticleCard** - Blog/news card with default, horizontal, and featured variants
+- **YoBottomNav** - Animated bottom navigation with badge support
+- **YoSidebar** - Collapsible sidebar with expanded/collapsed modes
+- **YoDrawerFooter** - Footer widget for drawer
+
+### Added - Features
+- **YoAdaptive** - Comprehensive adaptive design system with breakpoints
+- **YoTimeline.stepper()** - Stepper-style timeline factory
+- **YoDropDown** - Improved with label, error/helper text, outlined/filled variants
+- **Stock indicator** for YoProductCard (for POS systems)
+- **Edit/Delete actions** for YoProductCard
+
+### Improved
+- **YoCalendar** - Simplified from 927 to ~420 lines, removed YoCalendarTheme
+- **YoKanbanBoard** - Added didUpdateWidget sync, removed duplicate YoKanbanBoardSimple
+- **YoComment** - Simplified from 805 to ~280 lines
+- **YoChatBubble** - Cleaner code with switch expressions
+- **YoDrawer** - Added divider/header items, SafeArea wrapper
+- **YoTimeline** - Added isCompleted/isActive states, alternating layout
+- **YoEmptyState** - Merged YoErrorState functionality
+- **YoDialog** - Simplified with static methods (info, success, error, warning)
+- **YoConfirmDialog** - Added showDestructive, showWithIcon methods
+- **YoBottomSheet** - Added showList helper, fixed Expanded error
+- **YoSnackBar** - Added shortcut methods (success, error, warning, info)
+- **YoAvatar** - Added border support, simplified with static maps
+- **YoChip** - Added preset variants (success, error, warning, info)
+
+### Fixed
+- Replaced all deprecated `withOpacity()` with `withAlpha()`
+- Replaced deprecated `textScaleFactor` with `textScaler.scale()`
+- Fixed doc comments with unintended HTML (`<T>` → `` `T` ``)
+- Fixed recursive build issues in dialogs
+- Removed duplicate responsive code (consolidated to YoAdaptive)
+- Fixed `YoDeviceHelper` screen size checks
+
+### Deprecated
+- `YoResponsive` - Use `YoAdaptive` instead
+- Old responsive extensions in `context_extension.dart` and `device_extensions.dart`
+
+### Dependencies
+- Added `fl_chart: ^0.69.2` for chart components
+
+---
+
 ## [1.0.3+1] - 2024-12-07
 
 ### Fixed

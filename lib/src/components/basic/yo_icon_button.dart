@@ -126,7 +126,7 @@ class YoButtonIcon extends StatelessWidget {
               borderRadius: shape == YoIconButtonShape.rounded
                   ? BorderRadius.circular(8)
                   : null,
-              boxShadow: YoBoxShadow.neuRaisedYo(context),
+              boxShadow: YoBoxShadow.button(context),
             )
           : null,
       child: variant == YoIconButtonVariant.neumorphism

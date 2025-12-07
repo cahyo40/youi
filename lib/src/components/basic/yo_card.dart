@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+/// Card variant types
+enum YoCardVariant { filled, elevated, outlined }
+
 class YoCard extends StatelessWidget {
   final Widget child;
   final EdgeInsets padding;
@@ -10,6 +13,7 @@ class YoCard extends StatelessWidget {
   final List<BoxShadow>? shadows;
   final bool interactive;
   final Border? border;
+  final YoCardVariant _variant;
 
   const YoCard({
     super.key,
@@ -22,7 +26,7 @@ class YoCard extends StatelessWidget {
     this.shadows,
     this.interactive = true,
     this.border,
-  });
+  }) : _variant = YoCardVariant.filled;
 
   /// Kartu "filled" – warna otomatis ikut surface tema (light/dark)
   const YoCard.filled({
@@ -35,7 +39,8 @@ class YoCard extends StatelessWidget {
     this.interactive = true,
   }) : backgroundColor = null,
        shadows = null,
-       border = null;
+       border = null,
+       _variant = YoCardVariant.filled;
 
   /// Kartu "elevated" – punya bayangan + surface tema
   const YoCard.elevated({
@@ -48,7 +53,8 @@ class YoCard extends StatelessWidget {
     this.interactive = true,
   }) : backgroundColor = null,
        shadows = null,
-       border = null;
+       border = null,
+       _variant = YoCardVariant.elevated;
 
   /// Kartu "outlined" – dengan border
   const YoCard.outlined({
@@ -61,7 +67,8 @@ class YoCard extends StatelessWidget {
   }) : backgroundColor = null,
        elevation = 0,
        shadows = null,
-       border = null;
+       border = null,
+       _variant = YoCardVariant.outlined;
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +81,7 @@ class YoCard extends StatelessWidget {
     // Generate shadows based on elevation
     final defaultShadows = shadows ?? _generateShadows(theme, elevation);
 
-    // Determine border based on variant or use provided border
+    // Determine border based on variant
     final Border? effectiveBorder = border ?? _getBorder(theme);
 
     Widget content = Container(
@@ -112,19 +119,16 @@ class YoCard extends StatelessWidget {
   List<BoxShadow>? _generateShadows(ThemeData theme, double elevation) {
     if (elevation <= 0) return null;
 
+    final isDark = theme.brightness == Brightness.dark;
     return [
       BoxShadow(
-        color: theme.brightness == Brightness.dark
-            ? Colors.black.withValues(alpha: .3)
-            : Colors.black.withValues(alpha: .1),
+        color: Colors.black.withAlpha(isDark ? 77 : 26),
         blurRadius: elevation * 4,
         spreadRadius: elevation * 0.5,
         offset: Offset(0, elevation),
       ),
       BoxShadow(
-        color: theme.brightness == Brightness.dark
-            ? Colors.black.withValues(alpha: .2)
-            : Colors.black.withValues(alpha: .05),
+        color: Colors.black.withAlpha(isDark ? 51 : 13),
         blurRadius: elevation * 8,
         spreadRadius: elevation * 0.25,
         offset: Offset(0, elevation * 2),
@@ -133,13 +137,10 @@ class YoCard extends StatelessWidget {
   }
 
   Border? _getBorder(ThemeData theme) {
-    // For outlined variant, use outline color
-    if (backgroundColor == null &&
-        elevation == 0 &&
-        shadows == null &&
-        border == null) {
+    // Only add border for outlined variant
+    if (_variant == YoCardVariant.outlined) {
       return Border.all(
-        color: theme.colorScheme.outline.withValues(alpha: .2),
+        color: theme.colorScheme.outline.withAlpha(51),
         width: 1,
       );
     }

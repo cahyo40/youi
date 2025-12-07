@@ -1,8 +1,7 @@
-// File: yo_chat_bubble.dart
 import 'package:flutter/material.dart';
+import 'package:yo_ui/yo_ui.dart';
 
-import '../../../yo_ui.dart';
-
+/// Data model untuk chat message
 class YoChatMessage {
   final String id;
   final String text;
@@ -10,10 +9,10 @@ class YoChatMessage {
   final bool isSentByMe;
   final String? senderAvatar;
   final String? senderName;
-  final MessageStatus status;
-  final MessageType type;
+  final YoMessageStatus status;
+  final YoMessageType type;
   final String? attachmentUrl;
-  final String? attachmentType;
+  final String? attachmentName;
 
   const YoChatMessage({
     required this.id,
@@ -22,22 +21,22 @@ class YoChatMessage {
     required this.isSentByMe,
     this.senderAvatar,
     this.senderName,
-    this.status = MessageStatus.sent,
-    this.type = MessageType.text,
+    this.status = YoMessageStatus.sent,
+    this.type = YoMessageType.text,
     this.attachmentUrl,
-    this.attachmentType,
+    this.attachmentName,
   });
 }
 
-enum MessageStatus { sending, sent, delivered, read, failed }
+enum YoMessageStatus { sending, sent, delivered, read, failed }
 
-enum MessageType { text, image, file, system }
+enum YoMessageType { text, image, file, system }
 
+/// Chat bubble widget
 class YoChatBubble extends StatelessWidget {
   final YoChatMessage message;
   final Function(YoChatMessage)? onTap;
   final Function(YoChatMessage)? onLongPress;
-  final Function(YoChatMessage)? onReply;
   final bool showAvatar;
   final bool showTimestamp;
   final bool showStatus;
@@ -49,7 +48,6 @@ class YoChatBubble extends StatelessWidget {
     required this.message,
     this.onTap,
     this.onLongPress,
-    this.onReply,
     this.showAvatar = true,
     this.showTimestamp = true,
     this.showStatus = true,
@@ -59,92 +57,91 @@ class YoChatBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (message.type == MessageType.system) {
+    if (message.type == YoMessageType.system) {
       return _buildSystemMessage(context);
     }
 
+    final isSent = message.isSentByMe;
+
     return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: context.yoSpacingMd,
-        vertical: context.yoSpacingXs,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
-        mainAxisAlignment: message.isSentByMe
+        mainAxisAlignment: isSent
             ? MainAxisAlignment.end
             : MainAxisAlignment.start,
         children: [
-          if (!message.isSentByMe && showAvatar && message.senderAvatar != null)
+          // Left avatar (received messages)
+          if (!isSent && showAvatar && message.senderAvatar != null)
             Padding(
-              padding: EdgeInsets.only(right: context.yoSpacingSm),
+              padding: const EdgeInsets.only(right: 8),
               child: YoAvatar.image(
                 imageUrl: message.senderAvatar!,
                 size: YoAvatarSize.sm,
               ),
             ),
 
+          // Message content
           Flexible(
             child: Column(
-              crossAxisAlignment: message.isSentByMe
+              crossAxisAlignment: isSent
                   ? CrossAxisAlignment.end
                   : CrossAxisAlignment.start,
               children: [
-                // Sender name (for group chats)
-                if (!message.isSentByMe && message.senderName != null)
+                // Sender name (group chat)
+                if (!isSent && message.senderName != null)
                   Padding(
-                    padding: EdgeInsets.only(
-                      left: context.yoSpacingSm,
-                      bottom: 2,
-                    ),
-                    child: YoText.bodySmall(
+                    padding: const EdgeInsets.only(left: 8, bottom: 2),
+                    child: Text(
                       message.senderName!,
-                      color: context.gray500,
+                      style: context.yoBodySmall.copyWith(
+                        color: context.gray500,
+                      ),
                     ),
                   ),
 
-                // Message bubble
+                // Bubble
                 GestureDetector(
                   onTap: () => onTap?.call(message),
                   onLongPress: () => onLongPress?.call(message),
                   child: Container(
-                    padding: EdgeInsets.all(context.yoSpacingMd),
+                    constraints: BoxConstraints(
+                      maxWidth: MediaQuery.of(context).size.width * 0.75,
+                    ),
+                    padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: message.isSentByMe
+                      color: isSent
                           ? (sentColor ?? context.primaryColor)
                           : (receivedColor ?? context.gray100),
-                      borderRadius: BorderRadius.circular(16).copyWith(
-                        bottomLeft: message.isSentByMe
-                            ? Radius.circular(16)
-                            : Radius.circular(4),
-                        bottomRight: message.isSentByMe
-                            ? Radius.circular(4)
-                            : Radius.circular(16),
+                      borderRadius: BorderRadius.only(
+                        topLeft: const Radius.circular(16),
+                        topRight: const Radius.circular(16),
+                        bottomLeft: Radius.circular(isSent ? 16 : 4),
+                        bottomRight: Radius.circular(isSent ? 4 : 16),
                       ),
                     ),
-                    child: _buildMessageContent(context),
+                    child: _buildContent(context),
                   ),
                 ),
 
-                // Timestamp and status
-                if (showTimestamp || (showStatus && message.isSentByMe))
+                // Timestamp & status
+                if (showTimestamp || (showStatus && isSent))
                   Padding(
-                    padding: EdgeInsets.only(
-                      top: 4,
-                      left: message.isSentByMe ? 0 : context.yoSpacingSm,
-                      right: message.isSentByMe ? context.yoSpacingSm : 0,
-                    ),
+                    padding: const EdgeInsets.only(top: 4),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         if (showTimestamp)
-                          YoText.bodySmall(
+                          Text(
                             _formatTime(message.timestamp),
-                            color: context.gray400,
+                            style: context.yoBodySmall.copyWith(
+                              color: context.gray400,
+                            ),
                           ),
-                        if (showTimestamp && showStatus && message.isSentByMe)
-                          SizedBox(width: 4),
-                        if (showStatus && message.isSentByMe)
+                        if (showStatus && isSent) ...[
+                          const SizedBox(width: 4),
                           _buildStatusIcon(context),
+                        ],
                       ],
                     ),
                   ),
@@ -152,9 +149,10 @@ class YoChatBubble extends StatelessWidget {
             ),
           ),
 
-          if (message.isSentByMe && showAvatar && message.senderAvatar != null)
+          // Right avatar (sent messages)
+          if (isSent && showAvatar && message.senderAvatar != null)
             Padding(
-              padding: EdgeInsets.only(left: context.yoSpacingSm),
+              padding: const EdgeInsets.only(left: 8),
               child: YoAvatar.image(
                 imageUrl: message.senderAvatar!,
                 size: YoAvatarSize.sm,
@@ -165,17 +163,19 @@ class YoChatBubble extends StatelessWidget {
     );
   }
 
-  Widget _buildMessageContent(BuildContext context) {
+  Widget _buildContent(BuildContext context) {
+    final textColor = message.isSentByMe
+        ? context.onPrimaryColor
+        : context.textColor;
+
     switch (message.type) {
-      case MessageType.text:
-        return YoText.bodyMedium(
+      case YoMessageType.text:
+        return Text(
           message.text,
-          color: message.isSentByMe
-              ? context.onPrimaryColor
-              : context.textColor,
+          style: context.yoBodyMedium.copyWith(color: textColor),
         );
 
-      case MessageType.image:
+      case YoMessageType.image:
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -186,57 +186,51 @@ class YoChatBubble extends StatelessWidget {
                 width: 200,
                 height: 150,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    width: 200,
-                    height: 150,
-                    color: context.gray200,
-                    child: Icon(Icons.broken_image, color: context.gray400),
-                  );
-                },
+                errorBuilder: (_, __, ___) => Container(
+                  width: 200,
+                  height: 150,
+                  color: context.gray200,
+                  child: Icon(Icons.broken_image, color: context.gray400),
+                ),
               ),
             ),
             if (message.text.isNotEmpty) ...[
-              SizedBox(height: context.yoSpacingSm),
-              YoText.bodyMedium(
+              const SizedBox(height: 8),
+              Text(
                 message.text,
-                color: message.isSentByMe
-                    ? context.onPrimaryColor
-                    : context.textColor,
+                style: context.yoBodyMedium.copyWith(color: textColor),
               ),
             ],
           ],
         );
 
-      case MessageType.file:
+      case YoMessageType.file:
         return Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              _getFileIcon(message.attachmentType),
+              _getFileIcon(),
               color: message.isSentByMe
                   ? context.onPrimaryColor
                   : context.primaryColor,
             ),
-            SizedBox(width: context.yoSpacingSm),
+            const SizedBox(width: 8),
             Flexible(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  YoText.bodyMedium(
-                    message.text,
-                    color: message.isSentByMe
-                        ? context.onPrimaryColor
-                        : context.textColor,
+                  Text(
+                    message.attachmentName ?? 'File',
+                    style: context.yoBodyMedium.copyWith(color: textColor),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  if (message.attachmentType != null)
-                    YoText.bodySmall(
-                      message.attachmentType!.toUpperCase(),
-                      color: message.isSentByMe
-                          ? context.onPrimaryColor.withOpacity(0.8)
-                          : context.gray500,
+                  if (message.text.isNotEmpty)
+                    Text(
+                      message.text,
+                      style: context.yoBodySmall.copyWith(
+                        color: textColor.withAlpha(178),
+                      ),
                     ),
                 ],
               ),
@@ -245,30 +239,27 @@ class YoChatBubble extends StatelessWidget {
         );
 
       default:
-        return YoText.bodyMedium(message.text);
+        return Text(
+          message.text,
+          style: context.yoBodyMedium.copyWith(color: textColor),
+        );
     }
   }
 
   Widget _buildSystemMessage(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: context.yoSpacingMd,
-        vertical: context.yoSpacingSm,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Center(
         child: Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: context.yoSpacingMd,
-            vertical: context.yoSpacingSm,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
             color: context.gray100,
             borderRadius: BorderRadius.circular(12),
           ),
-          child: YoText.bodySmall(
+          child: Text(
             message.text,
-            color: context.gray600,
-            align: TextAlign.center,
+            style: context.yoBodySmall.copyWith(color: context.gray600),
+            textAlign: TextAlign.center,
           ),
         ),
       ),
@@ -276,60 +267,32 @@ class YoChatBubble extends StatelessWidget {
   }
 
   Widget _buildStatusIcon(BuildContext context) {
-    IconData icon;
-    Color color;
-
-    switch (message.status) {
-      case MessageStatus.sending:
-        icon = Icons.access_time;
-        color = context.gray400;
-        break;
-      case MessageStatus.sent:
-        icon = Icons.done;
-        color = context.gray400;
-        break;
-      case MessageStatus.delivered:
-        icon = Icons.done_all;
-        color = context.gray400;
-        break;
-      case MessageStatus.read:
-        icon = Icons.done_all;
-        color = context.primaryColor;
-        break;
-      case MessageStatus.failed:
-        icon = Icons.error_outline;
-        color = context.errorColor;
-        break;
-    }
-
+    final (icon, color) = switch (message.status) {
+      YoMessageStatus.sending => (Icons.access_time, context.gray400),
+      YoMessageStatus.sent => (Icons.done, context.gray400),
+      YoMessageStatus.delivered => (Icons.done_all, context.gray400),
+      YoMessageStatus.read => (Icons.done_all, context.primaryColor),
+      YoMessageStatus.failed => (Icons.error_outline, context.errorColor),
+    };
     return Icon(icon, size: 12, color: color);
   }
 
-  IconData _getFileIcon(String? fileType) {
-    if (fileType == null) return Icons.insert_drive_file;
-
-    switch (fileType.toLowerCase()) {
-      case 'pdf':
-        return Icons.picture_as_pdf;
-      case 'doc':
-      case 'docx':
-        return Icons.description;
-      case 'xls':
-      case 'xlsx':
-        return Icons.table_chart;
-      case 'zip':
-      case 'rar':
-        return Icons.folder_zip;
-      default:
-        return Icons.insert_drive_file;
-    }
+  IconData _getFileIcon() {
+    final ext = message.attachmentName?.split('.').lastOrNull?.toLowerCase();
+    return switch (ext) {
+      'pdf' => Icons.picture_as_pdf,
+      'doc' || 'docx' => Icons.description,
+      'xls' || 'xlsx' => Icons.table_chart,
+      'zip' || 'rar' => Icons.folder_zip,
+      _ => Icons.insert_drive_file,
+    };
   }
 
-  String _formatTime(DateTime timestamp) {
-    return '${timestamp.hour.toString().padLeft(2, '0')}:${timestamp.minute.toString().padLeft(2, '0')}';
-  }
+  String _formatTime(DateTime t) =>
+      '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
 }
 
+/// List of chat messages
 class YoChatList extends StatelessWidget {
   final List<YoChatMessage> messages;
   final ScrollController? scrollController;
@@ -340,7 +303,6 @@ class YoChatList extends StatelessWidget {
   final bool showStatus;
   final Color? sentColor;
   final Color? receivedColor;
-  final Widget? loadingWidget;
   final bool isLoading;
 
   const YoChatList({
@@ -354,49 +316,38 @@ class YoChatList extends StatelessWidget {
     this.showStatus = true,
     this.sentColor,
     this.receivedColor,
-    this.loadingWidget,
     this.isLoading = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          child: ListView.builder(
-            controller: scrollController,
-            reverse: true,
-            padding: EdgeInsets.all(context.yoSpacingSm),
-            itemCount: messages.length + (isLoading ? 1 : 0),
-            itemBuilder: (context, index) {
-              if (isLoading && index == 0) {
-                return loadingWidget ?? _buildLoadingWidget(context);
-              }
+    return ListView.builder(
+      controller: scrollController,
+      reverse: true,
+      padding: const EdgeInsets.all(8),
+      itemCount: messages.length + (isLoading ? 1 : 0),
+      itemBuilder: (context, index) {
+        if (isLoading && index == 0) {
+          return Padding(
+            padding: const EdgeInsets.all(16),
+            child: Center(
+              child: YoProgress.circular(size: YoProgressSize.small),
+            ),
+          );
+        }
 
-              final messageIndex = isLoading ? index - 1 : index;
-              final message = messages[messageIndex];
-
-              return YoChatBubble(
-                message: message,
-                onTap: onMessageTap,
-                onLongPress: onMessageLongPress,
-                showAvatar: showAvatars,
-                showTimestamp: showTimestamps,
-                showStatus: showStatus,
-                sentColor: sentColor,
-                receivedColor: receivedColor,
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildLoadingWidget(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(context.yoSpacingMd),
-      child: Center(child: YoProgress.circular(size: YoProgressSize.small)),
+        final msg = messages[isLoading ? index - 1 : index];
+        return YoChatBubble(
+          message: msg,
+          onTap: onMessageTap,
+          onLongPress: onMessageLongPress,
+          showAvatar: showAvatars,
+          showTimestamp: showTimestamps,
+          showStatus: showStatus,
+          sentColor: sentColor,
+          receivedColor: receivedColor,
+        );
+      },
     );
   }
 }
