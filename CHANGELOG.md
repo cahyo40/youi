@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.0] - 2024-12-07
+## [1.1.0] - 2025-12-07
 
 ### Added - New Components
 - **Charts** (`YoLineChart`, `YoBarChart`, `YoPieChart`, `YoSparkLine`) - using fl_chart
@@ -56,12 +56,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.0.3+1] - 2024-12-07
+## [1.0.3+1] - 2025-12-07
 
 ### Fixed
 - Fixed `onBackground` getter in `YoCorePalette` - now correctly uses `background.computeLuminance()` instead of `primary.computeLuminance()`
 
-## [1.0.3] - 2024-12-01
+## [1.0.3] - 2025-12-01
 
 ### Added
 - 30 industry-specific color schemes with light/dark mode support
@@ -78,7 +78,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated to Material 3 design system
 - Improved theme customization options
 
-## [1.0.2] - 2024-11-15
+## [1.0.2] - 2025-11-15
 
 ### Added
 - `YoConnectivity` for network state management
@@ -92,7 +92,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Card elevation options
 - Image caching with `cached_network_image`
 
-## [1.0.1] - 2024-10-20
+## [1.0.1] - 2025-10-20
 
 ### Added
 - Context extensions for easy access to theme styles
@@ -103,7 +103,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Theme color consistency across components
 
-## [1.0.0] - 2024-10-01
+## [1.0.0] - 2025-10-01
 
 ### Added
 - Initial release
