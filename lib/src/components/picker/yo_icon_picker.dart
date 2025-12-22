@@ -1,5 +1,6 @@
 // File: yo_icon_picker.dart
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:yo_ui/yo_ui.dart';
 
 /// Icon category for organizing icons
@@ -8,6 +9,8 @@ enum YoIconCategory {
   action('Action', Icons.touch_app),
   alert('Alert', Icons.warning),
   av('Audio/Video', Icons.play_circle),
+  brand('Brand', Icons.branding_watermark),
+  card('Card', Icons.credit_card),
   communication('Communication', Icons.chat),
   content('Content', Icons.edit),
   device('Device', Icons.devices),
@@ -21,6 +24,7 @@ enum YoIconCategory {
   notification('Notification', Icons.notifications),
   places('Places', Icons.place),
   social('Social', Icons.people),
+  subscription('Subscription', Icons.subscriptions),
   toggle('Toggle', Icons.toggle_on);
 
   final String label;
@@ -188,6 +192,151 @@ class YoIcons {
         category: YoIconCategory.av),
     YoIconData(icon: Icons.radio, name: 'radio', category: YoIconCategory.av),
     YoIconData(icon: Icons.album, name: 'album', category: YoIconCategory.av),
+
+    // Brand icons
+
+    YoIconData(
+        icon: FontAwesomeIcons.spotify,
+        name: 'spotify',
+        category: YoIconCategory.brand),
+    YoIconData(
+        icon: FontAwesomeIcons.amazon,
+        name: 'amazon',
+        category: YoIconCategory.brand),
+    YoIconData(
+        icon: FontAwesomeIcons.google,
+        name: 'google',
+        category: YoIconCategory.brand),
+    YoIconData(
+        icon: FontAwesomeIcons.apple,
+        name: 'apple',
+        category: YoIconCategory.brand),
+    YoIconData(
+        icon: FontAwesomeIcons.microsoft,
+        name: 'microsoft',
+        category: YoIconCategory.brand),
+    YoIconData(
+        icon: FontAwesomeIcons.facebook,
+        name: 'facebook',
+        category: YoIconCategory.brand),
+    YoIconData(
+        icon: FontAwesomeIcons.twitter,
+        name: 'twitter',
+        category: YoIconCategory.brand),
+    YoIconData(
+        icon: FontAwesomeIcons.instagram,
+        name: 'instagram',
+        category: YoIconCategory.brand),
+    YoIconData(
+        icon: FontAwesomeIcons.youtube,
+        name: 'youtube',
+        category: YoIconCategory.brand),
+    YoIconData(
+        icon: FontAwesomeIcons.linkedin,
+        name: 'linkedin',
+        category: YoIconCategory.brand),
+    YoIconData(
+        icon: FontAwesomeIcons.github,
+        name: 'github',
+        category: YoIconCategory.brand),
+    YoIconData(
+        icon: FontAwesomeIcons.discord,
+        name: 'discord',
+        category: YoIconCategory.brand),
+    YoIconData(
+        icon: FontAwesomeIcons.slack,
+        name: 'slack',
+        category: YoIconCategory.brand),
+    YoIconData(
+        icon: FontAwesomeIcons.whatsapp,
+        name: 'whatsapp',
+        category: YoIconCategory.brand),
+    YoIconData(
+        icon: FontAwesomeIcons.telegram,
+        name: 'telegram',
+        category: YoIconCategory.brand),
+    YoIconData(
+        icon: FontAwesomeIcons.twitch,
+        name: 'twitch',
+        category: YoIconCategory.brand),
+    YoIconData(
+        icon: FontAwesomeIcons.steam,
+        name: 'steam',
+        category: YoIconCategory.brand),
+    YoIconData(
+        icon: FontAwesomeIcons.snapchat,
+        name: 'snapchat',
+        category: YoIconCategory.brand),
+    YoIconData(
+        icon: FontAwesomeIcons.tiktok,
+        name: 'tiktok',
+        category: YoIconCategory.brand),
+
+    // Card icons
+    YoIconData(
+        icon: FontAwesomeIcons.ccVisa,
+        name: 'visa',
+        category: YoIconCategory.card),
+    YoIconData(
+        icon: FontAwesomeIcons.ccMastercard,
+        name: 'mastercard',
+        category: YoIconCategory.card),
+    YoIconData(
+        icon: FontAwesomeIcons.ccAmex,
+        name: 'amex',
+        category: YoIconCategory.card),
+    YoIconData(
+        icon: FontAwesomeIcons.ccDiscover,
+        name: 'discover',
+        category: YoIconCategory.card),
+    YoIconData(
+        icon: FontAwesomeIcons.ccDinersClub,
+        name: 'diners_club',
+        category: YoIconCategory.card),
+    YoIconData(
+        icon: FontAwesomeIcons.ccJcb,
+        name: 'jcb',
+        category: YoIconCategory.card),
+    YoIconData(
+        icon: FontAwesomeIcons.ccPaypal,
+        name: 'paypal',
+        category: YoIconCategory.card),
+    YoIconData(
+        icon: FontAwesomeIcons.ccStripe,
+        name: 'stripe',
+        category: YoIconCategory.card),
+    YoIconData(
+        icon: FontAwesomeIcons.creditCard,
+        name: 'credit_card',
+        category: YoIconCategory.card),
+    YoIconData(
+        icon: FontAwesomeIcons.wallet,
+        name: 'wallet',
+        category: YoIconCategory.card),
+    YoIconData(
+        icon: FontAwesomeIcons.moneyBill,
+        name: 'cash',
+        category: YoIconCategory.card),
+    YoIconData(
+        icon: FontAwesomeIcons.moneyBillWave,
+        name: 'money',
+        category: YoIconCategory.card),
+    YoIconData(
+        icon: FontAwesomeIcons.donate,
+        name: 'donate',
+        category: YoIconCategory.card),
+    YoIconData(
+        icon: FontAwesomeIcons.handHoldingUsd,
+        name: 'payment',
+        category: YoIconCategory.card),
+    YoIconData(
+        icon: FontAwesomeIcons.bitcoin,
+        name: 'bitcoin',
+        category: YoIconCategory.card),
+    YoIconData(
+        icon: FontAwesomeIcons.ethereum,
+        name: 'ethereum',
+        category: YoIconCategory.card),
 
     // Communication icons
     YoIconData(
@@ -768,6 +917,88 @@ class YoIcons {
     YoIconData(icon: Icons.cake, name: 'cake', category: YoIconCategory.social),
     YoIconData(
         icon: Icons.party_mode, name: 'party', category: YoIconCategory.social),
+
+    // Subscription icons
+    YoIconData(
+        icon: FontAwesomeIcons.podcast,
+        name: 'podcast',
+        category: YoIconCategory.subscription),
+    YoIconData(
+        icon: FontAwesomeIcons.newspaper,
+        name: 'news',
+        category: YoIconCategory.subscription),
+    YoIconData(
+        icon: FontAwesomeIcons.book,
+        name: 'book',
+        category: YoIconCategory.subscription),
+    YoIconData(
+        icon: FontAwesomeIcons.tv,
+        name: 'streaming',
+        category: YoIconCategory.subscription),
+    YoIconData(
+        icon: FontAwesomeIcons.gamepad,
+        name: 'gaming',
+        category: YoIconCategory.subscription),
+    YoIconData(
+        icon: FontAwesomeIcons.music,
+        name: 'music',
+        category: YoIconCategory.subscription),
+    YoIconData(
+        icon: FontAwesomeIcons.film,
+        name: 'movie',
+        category: YoIconCategory.subscription),
+    YoIconData(
+        icon: FontAwesomeIcons.cloud,
+        name: 'cloud_service',
+        category: YoIconCategory.subscription),
+    YoIconData(
+        icon: FontAwesomeIcons.server,
+        name: 'hosting',
+        category: YoIconCategory.subscription),
+    YoIconData(
+        icon: FontAwesomeIcons.database,
+        name: 'storage',
+        category: YoIconCategory.subscription),
+    YoIconData(
+        icon: FontAwesomeIcons.cogs,
+        name: 'software',
+        category: YoIconCategory.subscription),
+    YoIconData(
+        icon: FontAwesomeIcons.mobileAlt,
+        name: 'mobile_app',
+        category: YoIconCategory.subscription),
+    YoIconData(
+        icon: FontAwesomeIcons.bell,
+        name: 'notifications',
+        category: YoIconCategory.subscription),
+    YoIconData(
+        icon: FontAwesomeIcons.envelope,
+        name: 'email_service',
+        category: YoIconCategory.subscription),
+    YoIconData(
+        icon: FontAwesomeIcons.calendarAlt,
+        name: 'calendar',
+        category: YoIconCategory.subscription),
+    YoIconData(
+        icon: FontAwesomeIcons.photoVideo,
+        name: 'media',
+        category: YoIconCategory.subscription),
+    YoIconData(
+        icon: FontAwesomeIcons.graduationCap,
+        name: 'education',
+        category: YoIconCategory.subscription),
+    YoIconData(
+        icon: FontAwesomeIcons.dumbbell,
+        name: 'fitness',
+        category: YoIconCategory.subscription),
+    YoIconData(
+        icon: FontAwesomeIcons.utensils,
+        name: 'food',
+        category: YoIconCategory.subscription),
+    YoIconData(
+        icon: FontAwesomeIcons.shoppingBag,
+        name: 'shopping',
+        category: YoIconCategory.subscription),
 
     // Toggle icons
     YoIconData(
