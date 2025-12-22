@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../../yo_ui.dart';
-import 'yo_skeleton_card.dart';
 
 class YoSkeletonGrid extends StatelessWidget {
   final int itemCount;

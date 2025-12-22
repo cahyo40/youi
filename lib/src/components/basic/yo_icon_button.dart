@@ -47,8 +47,8 @@ class YoButtonIcon extends StatelessWidget {
     this.iconColor,
     this.isLoading = false,
     this.tooltip,
-  }) : variant = YoIconButtonVariant.primary,
-       backgroundColor = null;
+  })  : variant = YoIconButtonVariant.primary,
+        backgroundColor = null;
 
   const YoButtonIcon.secondary({
     super.key,
@@ -59,8 +59,8 @@ class YoButtonIcon extends StatelessWidget {
     this.iconColor,
     this.isLoading = false,
     this.tooltip,
-  }) : variant = YoIconButtonVariant.secondary,
-       backgroundColor = null;
+  })  : variant = YoIconButtonVariant.secondary,
+        backgroundColor = null;
 
   const YoButtonIcon.outline({
     super.key,
@@ -71,8 +71,8 @@ class YoButtonIcon extends StatelessWidget {
     this.iconColor,
     this.isLoading = false,
     this.tooltip,
-  }) : variant = YoIconButtonVariant.outline,
-       backgroundColor = null;
+  })  : variant = YoIconButtonVariant.outline,
+        backgroundColor = null;
 
   const YoButtonIcon.ghost({
     super.key,
@@ -83,8 +83,8 @@ class YoButtonIcon extends StatelessWidget {
     this.iconColor,
     this.isLoading = false,
     this.tooltip,
-  }) : variant = YoIconButtonVariant.ghost,
-       backgroundColor = null;
+  })  : variant = YoIconButtonVariant.ghost,
+        backgroundColor = null;
 
   const YoButtonIcon.custom({
     super.key,
@@ -107,8 +107,8 @@ class YoButtonIcon extends StatelessWidget {
     this.iconColor,
     this.isLoading = false,
     this.tooltip,
-  }) : variant = YoIconButtonVariant.neumorphism,
-       backgroundColor = null;
+  })  : variant = YoIconButtonVariant.neumorphism,
+        backgroundColor = null;
 
   @override
   Widget build(BuildContext context) {
@@ -331,10 +331,12 @@ class YoButtonIcon extends StatelessWidget {
             if (states.contains(WidgetState.disabled)) {
               return bgColor.withOpacity(0.32);
             }
-            if (states.contains(WidgetState.pressed))
+            if (states.contains(WidgetState.pressed)) {
               return bgColor.withOpacity(0.8);
-            if (states.contains(WidgetState.hovered))
+            }
+            if (states.contains(WidgetState.hovered)) {
               return bgColor.withOpacity(0.9);
+            }
             return bgColor;
           }),
         );

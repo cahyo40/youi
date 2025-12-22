@@ -179,15 +179,16 @@ class YoDateFormatter {
 
   // === DURATION FORMATTING ===
 
-static String formatDuration(Duration duration) {
-  if (duration.inHours > 0) {
-    return _texts.durationHm(duration.inHours, duration.inMinutes.remainder(60));
-  } else if (duration.inMinutes > 0) {
-    return _texts.durationM(duration.inMinutes);
-  } else {
-    return _texts.durationS(duration.inSeconds);
+  static String formatDuration(Duration duration) {
+    if (duration.inHours > 0) {
+      return _texts.durationHm(
+          duration.inHours, duration.inMinutes.remainder(60));
+    } else if (duration.inMinutes > 0) {
+      return _texts.durationM(duration.inMinutes);
+    } else {
+      return _texts.durationS(duration.inSeconds);
+    }
   }
-}
 
   static String formatDurationShort(Duration duration) {
     if (duration.inHours > 0) {
@@ -217,12 +218,12 @@ static String formatDuration(Duration duration) {
     return format.format(date);
   }
 
-static String getRelativeDay(DateTime date) {
-  if (isToday(date)) return _texts.today;
-  if (isYesterday(date)) return _texts.yesterday;
-  if (isTomorrow(date)) return _texts.tomorrow;
-  return formatDate(date);
-}
+  static String getRelativeDay(DateTime date) {
+    if (isToday(date)) return _texts.today;
+    if (isYesterday(date)) return _texts.yesterday;
+    if (isTomorrow(date)) return _texts.tomorrow;
+    return formatDate(date);
+  }
 
   // === LIST GENERATORS ===
 
@@ -374,7 +375,7 @@ class DateTexts {
   static final english = DateTexts(
     justNow: 'Now',
     durationHm: (h, m) => '${h}h ${m}m',
-    durationM: (m) => '${m} min',
+    durationM: (m) => '$m min',
     durationS: (s) => '${s}s',
     today: 'Today',
     tomorrow: 'Tomorrow',

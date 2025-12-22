@@ -1,4 +1,4 @@
-library yo_ui;
+library;
 
 // Optional: Export specific components if needed
 export 'src/colors/yo_colors.dart' show YoColors;

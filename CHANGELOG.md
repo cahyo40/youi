@@ -5,6 +5,75 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.3] - 2025-12-22
+
+### Added
+- **YoImagePicker** - Comprehensive image picker utility
+  - Pick from camera or gallery
+  - Multiple image selection support
+  - Video and media picking
+  - Source picker dialogs (bottom sheet & dialog)
+  - **YoImagePickerConfig** presets: `defaultConfig`, `compressed`, `highQuality`, `thumbnail`, `avatar`
+  - **YoImagePickerButton** - Button widget with image preview
+  - **YoAvatarPicker** - Circular avatar picker with edit indicator
+
+- **YoFilePicker** - Complete file picker utility
+  - Pick any file type (images, videos, audio, documents)
+  - Multiple file selection
+  - Directory picking (desktop/mobile)
+  - Save file dialog
+  - **YoFileType** enum: `any`, `media`, `image`, `video`, `audio`, `custom`
+  - **YoFileHelper** - File utilities (format size, get icon/color by extension)
+  - **YoFilePickerButton** - Button widget with file info display
+  - **YoFileDropZone** - Drag & drop zone for file uploads
+  - **YoFileListTile** - List tile for displaying picked files
+
+### Dependencies
+- Added `image_picker: ^1.1.2` for camera/gallery picking
+- Added `file_picker: ^8.1.7` for file system picking
+
+---
+
+## [1.1.2] - 2025-12-22
+
+### Added
+- **YoIconPicker** - Comprehensive icon picker component with 200+ categorized Material icons
+  - **18 Categories**: Action, Alert, Audio/Video, Communication, Content, Device, Editor, File, Hardware, Home, Image, Maps, Navigation, Notification, Places, Social, Toggle
+  - **Search functionality** for quick icon lookup
+  - **Category tabs** for organized browsing
+  - **Multiple display modes**:
+    - Inline widget (`YoIconPicker`)
+    - Bottom sheet (`YoIconPicker.showAsBottomSheet()`)
+    - Dialog (`YoIconPicker.showAsDialog()`)
+  - **YoIconPickerButton** - Button that triggers picker on tap
+  - **YoIcons** - Static icon library with category filtering and search
+  - **YoIconCategory** enum for icon categorization
+  - **YoIconData** model with icon, name, and category
+
+---
+
+## [1.1.1] - 2025-12-22
+
+### Added
+- **YoDateRangePicker** - New date range picker component with default and compact layout variants
+  - Default layout with single-field date range display
+  - Compact layout with separate start/end date fields
+  - Integration with `YoDialogPicker.dateRange()`
+
+### Fixed
+- Added missing `crypto` package dependency for `YoIdGenerator` hash functions (MD5, SHA1, SHA256)
+- Fixed lint issues:
+  - Removed deprecated `library yo_ui;` statement (now uses `library;`)
+  - Fixed curly braces in flow control structures in `yo_icon_button.dart`
+  - Removed unnecessary string interpolation in `yo_chart.dart`
+  - Removed unnecessary imports in `yo_skeleton_grid.dart` and `yo_progress.dart`
+  - Fixed unnecessary brace in string interpolation in `yo_date_formatter.dart`
+
+### Dependencies
+- Added `crypto: ^3.0.6` for hash ID generation
+
+---
+
 ## [1.1.0] - 2025-12-07
 
 ### Added - New Components

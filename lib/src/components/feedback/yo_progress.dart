@@ -1,6 +1,5 @@
 // File: yo_progress.dart
 import 'package:flutter/material.dart';
-import 'package:yo_ui/src/components/layout/yo_space.dart';
 import 'package:yo_ui/yo_ui.dart' hide YoSpacing;
 
 enum YoProgressType { linear, circular, circularWithValue }
@@ -37,8 +36,8 @@ class YoProgress extends StatelessWidget {
     this.backgroundColor,
     this.label,
     this.labelStyle,
-  }) : type = YoProgressType.linear,
-       strokeWidth = _getLinearHeight(size);
+  })  : type = YoProgressType.linear,
+        strokeWidth = _getLinearHeight(size);
 
   YoProgress.circular({
     super.key,
@@ -49,8 +48,8 @@ class YoProgress extends StatelessWidget {
     double? strokeWidth,
     this.label,
     this.labelStyle,
-  }) : type = YoProgressType.circular,
-       strokeWidth = strokeWidth ?? _getStrokeWidth(size);
+  })  : type = YoProgressType.circular,
+        strokeWidth = strokeWidth ?? _getStrokeWidth(size);
 
   YoProgress.circularWithValue({
     super.key,
@@ -61,8 +60,8 @@ class YoProgress extends StatelessWidget {
     double? strokeWidth,
     this.label,
     this.labelStyle,
-  }) : type = YoProgressType.circularWithValue,
-       strokeWidth = strokeWidth ?? _getStrokeWidth(size);
+  })  : type = YoProgressType.circularWithValue,
+        strokeWidth = strokeWidth ?? _getStrokeWidth(size);
 
   static double _getStrokeWidth(YoProgressSize size) {
     switch (size) {
@@ -211,8 +210,8 @@ class YoProgress extends StatelessWidget {
                   fontSize: size == YoProgressSize.small
                       ? 8
                       : size == YoProgressSize.medium
-                      ? 10
-                      : 12,
+                          ? 10
+                          : 12,
                 ),
               ),
             ],

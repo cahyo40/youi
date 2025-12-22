@@ -81,8 +81,7 @@ class YoLineChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors =
-        lineColors ??
+    final colors = lineColors ??
         [
           context.primaryColor,
           context.successColor,
@@ -146,7 +145,7 @@ class YoLineChart extends StatelessWidget {
                     getTooltipColor: (_) => context.gray800,
                     getTooltipItems: (spots) => spots.map((spot) {
                       return LineTooltipItem(
-                        '${formatY?.call(spot.y) ?? spot.y.toStringAsFixed(1)}',
+                        formatY?.call(spot.y) ?? spot.y.toStringAsFixed(1),
                         TextStyle(color: Colors.white, fontSize: 12),
                       );
                     }).toList(),
@@ -401,8 +400,7 @@ class YoPieChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final chartColors =
-        colors ??
+    final chartColors = colors ??
         [
           context.primaryColor,
           context.successColor,
@@ -440,20 +438,18 @@ class YoPieChart extends StatelessWidget {
                     PieChartData(
                       sections: data.asMap().entries.map((entry) {
                         final d = entry.value;
-                        final color =
-                            d.color ??
+                        final color = d.color ??
                             chartColors[entry.key % chartColors.length];
                         final percentage = (d.value / total * 100);
                         return PieChartSectionData(
                           value: d.value,
                           color: color,
-                          radius: donut
-                              ? (size / 2 - donutRadius)
-                              : size / 2 - 10,
+                          radius:
+                              donut ? (size / 2 - donutRadius) : size / 2 - 10,
                           title: showLabels
                               ? (showPercentage
-                                    ? '${percentage.toStringAsFixed(0)}%'
-                                    : d.label)
+                                  ? '${percentage.toStringAsFixed(0)}%'
+                                  : d.label)
                               : '',
                           titleStyle: const TextStyle(
                             color: Colors.white,

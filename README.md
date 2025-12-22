@@ -3,7 +3,7 @@
 [![Flutter](https://img.shields.io/badge/Flutter-3.19+-02569B?logo=flutter)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/Dart-3.5+-0175C2?logo=dart)](https://dart.dev)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![pub package](https://img.shields.io/badge/pub-v1.1.0-blue)](https://github.com/cahyo40/youi)
+[![pub package](https://img.shields.io/badge/pub-v1.1.3-blue)](https://github.com/cahyo40/youi)
 
 A comprehensive, production-ready Flutter UI library with **70+ components**, **36 color schemes**, **51 fonts**, charts, and a complete design system for building beautiful, consistent applications.
 
@@ -337,6 +337,206 @@ YoDropDown<String>(
 )
 ```
 
+### Pickers
+
+```dart
+// Date Picker
+YoDatePicker(
+  selectedDate: selectedDate,
+  labelText: 'Birth Date',
+  onDateChanged: (date) => setState(() => selectedDate = date),
+)
+
+// Time Picker
+YoTimePicker(
+  selectedTime: selectedTime,
+  labelText: 'Appointment Time',
+  onTimeChanged: (time) => setState(() => selectedTime = time),
+)
+
+// Date Time Picker
+YoDateTimePicker(
+  selectedDateTime: selectedDateTime,
+  labelText: 'Event Date & Time',
+  onDateTimeChanged: (dt) => setState(() => selectedDateTime = dt),
+)
+
+// Date Range Picker
+YoDateRangePicker(
+  selectedRange: dateRange,
+  labelText: 'Booking Period',
+  onRangeChanged: (range) => setState(() => dateRange = range),
+)
+
+// Compact Date Range Picker
+YoDateRangePicker.compact(
+  selectedRange: dateRange,
+  labelText: 'Filter by Date',
+  startLabel: 'From',
+  endLabel: 'To',
+  onRangeChanged: (range) => setState(() => dateRange = range),
+)
+
+// Dialog Pickers (programmatic)
+final date = await YoDialogPicker.date(context: context);
+final time = await YoDialogPicker.time(context: context);
+final dateTime = await YoDialogPicker.dateTime(context: context);
+final dateRange = await YoDialogPicker.dateRange(context: context);
+```
+
+### Icon Picker
+
+```dart
+// Inline Icon Picker
+YoIconPicker(
+  selectedIcon: selectedIcon,
+  onIconSelected: (icon) => setState(() => selectedIcon = icon),
+  initialCategory: YoIconCategory.action,
+  showSearch: true,
+  showCategories: true,
+)
+
+// Icon Picker Button (triggers picker on tap)
+YoIconPickerButton(
+  selectedIcon: selectedIcon,
+  labelText: 'App Icon',
+  hintText: 'Choose an icon',
+  onIconSelected: (icon) => setState(() => selectedIcon = icon),
+)
+
+// Show as Bottom Sheet
+final icon = await YoIconPicker.showAsBottomSheet(
+  context: context,
+  selectedIcon: currentIcon,
+  title: 'Select Icon',
+);
+
+// Show as Dialog
+final icon = await YoIconPicker.showAsDialog(
+  context: context,
+  selectedIcon: currentIcon,
+  title: 'Choose Icon',
+);
+
+// Get icons by category
+final actionIcons = YoIcons.byCategory(YoIconCategory.action);
+final socialIcons = YoIcons.byCategory(YoIconCategory.social);
+
+// Search icons
+final searchResults = YoIcons.search('home');
+```
+
+**Available Categories (18):**
+- Action, Alert, Audio/Video, Communication, Content
+- Device, Editor, File, Hardware, Home
+- Image, Maps, Navigation, Notification
+- Places, Social, Toggle
+
+### Image Picker
+
+```dart
+// Pick from gallery
+final result = await YoImagePicker.pickFromGallery();
+if (result != null) {
+  print('Selected: ${result.path}');
+}
+
+// Pick from camera
+final photo = await YoImagePicker.pickFromCamera();
+
+// Show source picker (camera/gallery chooser)
+final image = await YoImagePicker.showSourcePicker(
+  context: context,
+  config: YoImagePickerConfig.compressed,
+);
+
+// Pick multiple images
+final images = await YoImagePicker.pickMultiple(limit: 5);
+
+// Pick video
+final video = await YoImagePicker.pickVideoFromGallery();
+
+// Avatar Picker Widget
+YoAvatarPicker(
+  imagePath: avatarPath,
+  imageUrl: avatarUrl,
+  size: 100,
+  onImageSelected: (result) => setState(() => avatarPath = result.path),
+)
+
+// Image Picker Button
+YoImagePickerButton(
+  imagePath: imagePath,
+  labelText: 'Profile Photo',
+  onImageSelected: (result) => setState(() => imagePath = result.path),
+)
+```
+
+**Config Presets:**
+- `YoImagePickerConfig.defaultConfig` - Default settings
+- `YoImagePickerConfig.compressed` - 1024x1024, 80% quality
+- `YoImagePickerConfig.highQuality` - 100% quality
+- `YoImagePickerConfig.thumbnail` - 256x256, 70% quality
+- `YoImagePickerConfig.avatar` - 512x512, 85% quality
+
+### File Picker
+
+```dart
+// Pick any file
+final file = await YoFilePicker.pickAny();
+if (file != null) {
+  print('File: ${file.name}, Size: ${file.formattedSize}');
+}
+
+// Pick specific types
+final image = await YoFilePicker.pickImage();
+final pdf = await YoFilePicker.pickPdf();
+final doc = await YoFilePicker.pickDocument();
+final video = await YoFilePicker.pickVideo();
+
+// Pick with custom extensions
+final csv = await YoFilePicker.pickCustom(
+  extensions: ['csv', 'xlsx'],
+);
+
+// Pick multiple files
+final files = await YoFilePicker.pickMultiple(
+  type: YoFileType.image,
+);
+
+// Pick directory (desktop/mobile)
+final directory = await YoFilePicker.pickDirectory();
+
+// File Picker Button
+YoFilePickerButton(
+  selectedFile: selectedFile,
+  labelText: 'Attachment',
+  fileType: YoFileType.any,
+  onFileSelected: (file) => setState(() => selectedFile = file),
+)
+
+// Drop Zone
+YoFileDropZone(
+  multiple: true,
+  fileType: YoFileType.image,
+  onFilesSelected: (files) => print('Dropped ${files.length} files'),
+)
+
+// File List Tile
+YoFileListTile(
+  file: selectedFile,
+  onRemove: () => setState(() => selectedFile = null),
+)
+```
+
+**File Types:**
+- `YoFileType.any` - All files
+- `YoFileType.image` - Images only
+- `YoFileType.video` - Videos only
+- `YoFileType.audio` - Audio files
+- `YoFileType.media` - Images & videos
+- `YoFileType.custom` - Custom extensions
+
 ### Feedback
 
 ```dart
@@ -473,7 +673,10 @@ context.yoSpacingXl   // 32
 | `google_fonts` | Typography |
 | `cached_network_image` | Image caching |
 | `connectivity_plus` | Network state |
+| `crypto` | Hash ID generation |
 | `device_info_plus` | Device information |
+| `file_picker` | File system picking |
+| `image_picker` | Camera/gallery picker |
 | `intl` | Date/number formatting |
 | `photo_view` | Image viewer |
 | `fl_chart` | Charts & graphs |
