@@ -11,6 +11,7 @@ class YoColumn extends StatelessWidget {
   final TextDirection? textDirection;
   final VerticalDirection verticalDirection;
   final TextBaseline? textBaseline;
+  final double spacing;
 
   const YoColumn({
     super.key,
@@ -23,6 +24,7 @@ class YoColumn extends StatelessWidget {
     this.textDirection,
     this.verticalDirection = VerticalDirection.down,
     this.textBaseline,
+    this.spacing = 0,
   });
 
   @override
@@ -32,6 +34,7 @@ class YoColumn extends StatelessWidget {
       crossAxisAlignment: crossAxisAlignment,
       mainAxisSize: mainAxisSize,
       textDirection: textDirection,
+      spacing: spacing,
       verticalDirection: verticalDirection,
       textBaseline: textBaseline,
       children: children,

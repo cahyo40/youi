@@ -11,6 +11,7 @@ class YoRow extends StatelessWidget {
   final TextDirection? textDirection;
   final VerticalDirection verticalDirection;
   final TextBaseline? textBaseline;
+  final double spacing;
 
   const YoRow({
     super.key,
@@ -23,6 +24,7 @@ class YoRow extends StatelessWidget {
     this.textDirection,
     this.verticalDirection = VerticalDirection.down,
     this.textBaseline,
+    this.spacing = 0,
   });
 
   @override
@@ -30,6 +32,7 @@ class YoRow extends StatelessWidget {
     Widget row = Row(
       mainAxisAlignment: mainAxisAlignment,
       crossAxisAlignment: crossAxisAlignment,
+      spacing: spacing,
       mainAxisSize: mainAxisSize,
       textDirection: textDirection,
       verticalDirection: verticalDirection,
