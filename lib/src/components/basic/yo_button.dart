@@ -1,30 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:yo_ui/yo_ui.dart';
 
-/// Button variants for different visual emphasis
-enum YoButtonVariant { primary, secondary, outline, ghost, custom }
-
-/// Button sizes
-enum YoButtonSize { small, medium, large }
-
-/// Button style presets
-enum YoButtonStyle {
-  /// Modern style with subtle gradients and shadows
-  modern,
-
-  /// Minimalist flat design
-  minimalist,
-
-  /// Rounded pill-shaped buttons
-  pill,
-
-  /// Sharp corners, bold look
-  sharp,
-
-  /// Soft rounded corners (default)
-  rounded,
-}
-
 /// Icon position relative to text
 enum IconPosition { left, right }
 
@@ -38,6 +14,8 @@ class YoButton extends StatelessWidget {
   final IconPosition iconPosition;
   final Color? textColor;
   final Color? backgroundColor;
+  final Color? borderColor;
+  final bool borderColorFollowsText;
   final bool isLoading;
   final bool expanded;
   final double? width;
@@ -55,82 +33,14 @@ class YoButton extends StatelessWidget {
     this.iconPosition = IconPosition.left,
     this.textColor,
     this.backgroundColor,
+    this.borderColor,
+    this.borderColorFollowsText = false,
     this.isLoading = false,
     this.expanded = false,
     this.width,
     this.height,
     this.borderRadius,
   });
-
-  // ===== FACTORY CONSTRUCTORS =====
-
-  const YoButton.primary({
-    super.key,
-    required this.text,
-    required this.onPressed,
-    this.size = YoButtonSize.medium,
-    this.buttonStyle = YoButtonStyle.rounded,
-    this.icon,
-    this.iconPosition = IconPosition.left,
-    this.textColor,
-    this.isLoading = false,
-    this.expanded = false,
-    this.width,
-    this.height,
-    this.borderRadius,
-  }) : variant = YoButtonVariant.primary,
-       backgroundColor = null;
-
-  const YoButton.secondary({
-    super.key,
-    required this.text,
-    required this.onPressed,
-    this.size = YoButtonSize.medium,
-    this.buttonStyle = YoButtonStyle.rounded,
-    this.icon,
-    this.iconPosition = IconPosition.left,
-    this.textColor,
-    this.isLoading = false,
-    this.expanded = false,
-    this.width,
-    this.height,
-    this.borderRadius,
-  }) : variant = YoButtonVariant.secondary,
-       backgroundColor = null;
-
-  const YoButton.outline({
-    super.key,
-    required this.text,
-    required this.onPressed,
-    this.size = YoButtonSize.medium,
-    this.buttonStyle = YoButtonStyle.rounded,
-    this.icon,
-    this.iconPosition = IconPosition.left,
-    this.textColor,
-    this.isLoading = false,
-    this.expanded = false,
-    this.width,
-    this.height,
-    this.borderRadius,
-  }) : variant = YoButtonVariant.outline,
-       backgroundColor = null;
-
-  const YoButton.ghost({
-    super.key,
-    required this.text,
-    required this.onPressed,
-    this.size = YoButtonSize.medium,
-    this.buttonStyle = YoButtonStyle.rounded,
-    this.icon,
-    this.iconPosition = IconPosition.left,
-    this.textColor,
-    this.isLoading = false,
-    this.expanded = false,
-    this.width,
-    this.height,
-    this.borderRadius,
-  }) : variant = YoButtonVariant.ghost,
-       backgroundColor = null;
 
   const YoButton.custom({
     super.key,
@@ -147,27 +57,28 @@ class YoButton extends StatelessWidget {
     this.width,
     this.height,
     this.borderRadius,
-  }) : variant = YoButtonVariant.custom;
+  })  : variant = YoButtonVariant.custom,
+        borderColor = null,
+        borderColorFollowsText = false;
 
-  // ===== STYLE-BASED CONSTRUCTORS =====
-
-  /// Modern button with gradient and shadow
-  const YoButton.modern({
+  const YoButton.ghost({
     super.key,
     required this.text,
     required this.onPressed,
-    this.variant = YoButtonVariant.primary,
     this.size = YoButtonSize.medium,
+    this.buttonStyle = YoButtonStyle.rounded,
     this.icon,
     this.iconPosition = IconPosition.left,
     this.textColor,
-    this.backgroundColor,
     this.isLoading = false,
     this.expanded = false,
     this.width,
     this.height,
     this.borderRadius,
-  }) : buttonStyle = YoButtonStyle.modern;
+  })  : variant = YoButtonVariant.ghost,
+        backgroundColor = null,
+        borderColor = null,
+        borderColorFollowsText = false;
 
   /// Minimalist flat button
   const YoButton.minimalist({
@@ -185,7 +96,50 @@ class YoButton extends StatelessWidget {
     this.width,
     this.height,
     this.borderRadius,
-  }) : buttonStyle = YoButtonStyle.minimalist;
+  })  : buttonStyle = YoButtonStyle.minimalist,
+        borderColor = null,
+        borderColorFollowsText = false;
+
+  /// Modern button with gradient and shadow
+  const YoButton.modern({
+    super.key,
+    required this.text,
+    required this.onPressed,
+    this.variant = YoButtonVariant.primary,
+    this.size = YoButtonSize.medium,
+    this.icon,
+    this.iconPosition = IconPosition.left,
+    this.textColor,
+    this.backgroundColor,
+    this.isLoading = false,
+    this.expanded = false,
+    this.width,
+    this.height,
+    this.borderRadius,
+  })  : buttonStyle = YoButtonStyle.modern,
+        borderColor = null,
+        borderColorFollowsText = false;
+
+  const YoButton.outline({
+    super.key,
+    required this.text,
+    required this.onPressed,
+    this.size = YoButtonSize.medium,
+    this.buttonStyle = YoButtonStyle.rounded,
+    this.icon,
+    this.iconPosition = IconPosition.left,
+    this.textColor,
+    this.borderColor,
+    this.borderColorFollowsText = false,
+    this.isLoading = false,
+    this.expanded = false,
+    this.width,
+    this.height,
+    this.borderRadius,
+  })  : variant = YoButtonVariant.outline,
+        backgroundColor = null;
+
+  // ===== STYLE-BASED CONSTRUCTORS =====
 
   /// Pill-shaped button
   const YoButton.pill({
@@ -202,8 +156,50 @@ class YoButton extends StatelessWidget {
     this.expanded = false,
     this.width,
     this.height,
-  }) : buttonStyle = YoButtonStyle.pill,
-       borderRadius = null;
+  })  : buttonStyle = YoButtonStyle.pill,
+        borderRadius = null,
+        borderColor = null,
+        borderColorFollowsText = false;
+
+  // ===== FACTORY CONSTRUCTORS =====
+
+  const YoButton.primary({
+    super.key,
+    required this.text,
+    required this.onPressed,
+    this.size = YoButtonSize.medium,
+    this.buttonStyle = YoButtonStyle.rounded,
+    this.icon,
+    this.iconPosition = IconPosition.left,
+    this.textColor,
+    this.isLoading = false,
+    this.expanded = false,
+    this.width,
+    this.height,
+    this.borderRadius,
+  })  : variant = YoButtonVariant.primary,
+        backgroundColor = null,
+        borderColor = null,
+        borderColorFollowsText = false;
+
+  const YoButton.secondary({
+    super.key,
+    required this.text,
+    required this.onPressed,
+    this.size = YoButtonSize.medium,
+    this.buttonStyle = YoButtonStyle.rounded,
+    this.icon,
+    this.iconPosition = IconPosition.left,
+    this.textColor,
+    this.isLoading = false,
+    this.expanded = false,
+    this.width,
+    this.height,
+    this.borderRadius,
+  })  : variant = YoButtonVariant.secondary,
+        backgroundColor = null,
+        borderColor = null,
+        borderColorFollowsText = false;
 
   /// Sharp-cornered button
   const YoButton.sharp({
@@ -220,8 +216,10 @@ class YoButton extends StatelessWidget {
     this.expanded = false,
     this.width,
     this.height,
-  }) : buttonStyle = YoButtonStyle.sharp,
-       borderRadius = null;
+  })  : buttonStyle = YoButtonStyle.sharp,
+        borderRadius = null,
+        borderColor = null,
+        borderColorFollowsText = false;
 
   @override
   Widget build(BuildContext context) {
@@ -271,6 +269,29 @@ class YoButton extends StatelessWidget {
     return button;
   }
 
+  List<Widget> _buildContent(TextStyle textStyle) {
+    final textWidget = Flexible(
+      child: Text(
+        text,
+        style: textStyle,
+        textAlign: TextAlign.center,
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
+
+    if (icon == null) return [textWidget];
+
+    final gap = SizedBox(width: _getIconSpacing());
+    final iconWidget = IconTheme(
+      data: IconThemeData(size: _getIconSize(), color: textStyle.color),
+      child: icon!,
+    );
+
+    return iconPosition == IconPosition.right
+        ? [textWidget, gap, iconWidget]
+        : [iconWidget, gap, textWidget];
+  }
+
   Widget _buildModernButton(BuildContext context, Widget child, double radius) {
     final colorScheme = Theme.of(context).colorScheme;
     final bgColor = backgroundColor ?? colorScheme.primary;
@@ -304,29 +325,6 @@ class YoButton extends StatelessWidget {
       return SizedBox(width: double.infinity, child: button);
     }
     return button;
-  }
-
-  List<Widget> _buildContent(TextStyle textStyle) {
-    final textWidget = Flexible(
-      child: Text(
-        text,
-        style: textStyle,
-        textAlign: TextAlign.center,
-        overflow: TextOverflow.ellipsis,
-      ),
-    );
-
-    if (icon == null) return [textWidget];
-
-    final gap = SizedBox(width: _getIconSpacing());
-    final iconWidget = IconTheme(
-      data: IconThemeData(size: _getIconSize(), color: textStyle.color),
-      child: icon!,
-    );
-
-    return iconPosition == IconPosition.right
-        ? [textWidget, gap, iconWidget]
-        : [iconWidget, gap, textWidget];
   }
 
   double _getBorderRadius() {
@@ -415,14 +413,19 @@ class YoButton extends StatelessWidget {
 
       case YoButtonVariant.outline:
         final borderWidth = buttonStyle == YoButtonStyle.minimalist ? 1.0 : 1.5;
+        // Determine border color: custom > followsText > primary
+        final effectiveBorderColor = borderColor ??
+            (borderColorFollowsText
+                ? (textColor ?? colorScheme.primary)
+                : colorScheme.primary);
         return ElevatedButton.styleFrom(
           backgroundColor: Colors.transparent,
-          foregroundColor: colorScheme.primary,
+          foregroundColor: textColor ?? colorScheme.primary,
           disabledBackgroundColor: Colors.transparent,
           disabledForegroundColor: colorScheme.onSurface.withAlpha(97),
           side: BorderSide(
             color: onPressed != null
-                ? colorScheme.outline
+                ? effectiveBorderColor
                 : colorScheme.onSurface.withAlpha(97),
             width: borderWidth,
           ),
@@ -432,10 +435,10 @@ class YoButton extends StatelessWidget {
         ).copyWith(
           backgroundColor: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.hovered)) {
-              return colorScheme.primary.withAlpha(20);
+              return (textColor ?? colorScheme.primary).withAlpha(20);
             }
             if (states.contains(WidgetState.pressed)) {
-              return colorScheme.primary.withAlpha(31);
+              return (textColor ?? colorScheme.primary).withAlpha(31);
             }
             return Colors.transparent;
           }),
@@ -494,8 +497,33 @@ class YoButton extends StatelessWidget {
     }
   }
 
-  OutlinedBorder _getShape(double radius) =>
-      RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius));
+  Color _getCustomTextColor(BuildContext context, Color bgColor) {
+    if (textColor != null) return textColor!;
+    final luminance = bgColor.computeLuminance();
+    return luminance > 0.5 ? Colors.black : Colors.white;
+  }
+
+  double _getIconSize() {
+    switch (size) {
+      case YoButtonSize.small:
+        return 16;
+      case YoButtonSize.medium:
+        return 18;
+      case YoButtonSize.large:
+        return 20;
+    }
+  }
+
+  double _getIconSpacing() {
+    switch (size) {
+      case YoButtonSize.small:
+        return 8;
+      case YoButtonSize.medium:
+        return 10;
+      case YoButtonSize.large:
+        return 12;
+    }
+  }
 
   EdgeInsets _getPadding() {
     // Adjust padding based on style
@@ -520,12 +548,6 @@ class YoButton extends StatelessWidget {
     }
   }
 
-  Color _getCustomTextColor(BuildContext context, Color bgColor) {
-    if (textColor != null) return textColor!;
-    final luminance = bgColor.computeLuminance();
-    return luminance > 0.5 ? Colors.black : Colors.white;
-  }
-
   Color _getProgressIndicatorColor(BuildContext context) {
     switch (variant) {
       case YoButtonVariant.primary:
@@ -537,6 +559,9 @@ class YoButton extends StatelessWidget {
         return Theme.of(context).colorScheme.primary;
     }
   }
+
+  OutlinedBorder _getShape(double radius) =>
+      RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius));
 
   TextStyle _getTextStyle(BuildContext context) {
     final theme = Theme.of(context);
@@ -583,26 +608,28 @@ class YoButton extends StatelessWidget {
         );
     }
   }
-
-  double _getIconSpacing() {
-    switch (size) {
-      case YoButtonSize.small:
-        return 8;
-      case YoButtonSize.medium:
-        return 10;
-      case YoButtonSize.large:
-        return 12;
-    }
-  }
-
-  double _getIconSize() {
-    switch (size) {
-      case YoButtonSize.small:
-        return 16;
-      case YoButtonSize.medium:
-        return 18;
-      case YoButtonSize.large:
-        return 20;
-    }
-  }
 }
+
+/// Button sizes
+enum YoButtonSize { small, medium, large }
+
+/// Button style presets
+enum YoButtonStyle {
+  /// Modern style with subtle gradients and shadows
+  modern,
+
+  /// Minimalist flat design
+  minimalist,
+
+  /// Rounded pill-shaped buttons
+  pill,
+
+  /// Sharp corners, bold look
+  sharp,
+
+  /// Soft rounded corners (default)
+  rounded,
+}
+
+/// Button variants for different visual emphasis
+enum YoButtonVariant { primary, secondary, outline, ghost, custom }

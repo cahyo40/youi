@@ -3,7 +3,7 @@
 [![Flutter](https://img.shields.io/badge/Flutter-3.19+-02569B?logo=flutter)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/Dart-3.5+-0175C2?logo=dart)](https://dart.dev)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![pub package](https://img.shields.io/badge/pub-v1.1.3-blue)](https://github.com/cahyo40/youi)
+[![pub package](https://img.shields.io/badge/pub-v1.1.4-blue)](https://github.com/cahyo40/youi)
 
 A comprehensive, production-ready Flutter UI library with **70+ components**, **36 color schemes**, **51 fonts**, charts, and a complete design system for building beautiful, consistent applications.
 
@@ -214,6 +214,48 @@ class MyApp extends StatelessWidget {
 ---
 
 ## 🧩 Components
+
+### Buttons
+
+```dart
+// Primary button
+YoButton.primary(text: 'Primary', onPressed: () {})
+
+// Secondary button
+YoButton.secondary(text: 'Secondary', onPressed: () {})
+
+// Outline button (default: primary border)
+YoButton.outline(text: 'Outline', onPressed: () {})
+
+// Outline with custom border color
+YoButton.outline(
+  text: 'Custom Border',
+  onPressed: () {},
+  borderColor: Colors.red,
+)
+
+// Outline border follows text color
+YoButton.outline(
+  text: 'Follow Text',
+  onPressed: () {},
+  textColor: Colors.green,
+  borderColorFollowsText: true,
+)
+
+// Ghost button (no background)
+YoButton.ghost(text: 'Ghost', onPressed: () {})
+
+// Custom styled button
+YoButton.custom(
+  text: 'Custom',
+  onPressed: () {},
+  backgroundColor: Colors.purple,
+)
+
+// Button styles: modern, minimalist, pill, sharp
+YoButton.pill(text: 'Pill Button', onPressed: () {})
+YoButton.modern(text: 'Modern Button', onPressed: () {})
+```
 
 ### Display Cards
 
@@ -631,9 +673,64 @@ YoConnectivity.addListener((connected) {
 });
 ```
 
+### Text Input Formatters
+
+Format user input in TextFormFields with pre-built formatters:
+
+```dart
+// Currency formatter (generic)
+TextFormField(
+  inputFormatters: [CurrencyTextInputFormatter()],
+  // Input: 1000000 -> Output: 1.000.000
+)
+
+// Indonesian Currency with Rp prefix
+TextFormField(
+  inputFormatters: [IndonesiaCurrencyFormatter()],
+  // Input: 1000000 -> Output: Rp 1.000.000
+)
+
+// Phone number formatter (configurable)
+TextFormField(
+  inputFormatters: [PhoneNumberFormatter(separator: '-')],
+  // Input: 081234567890 -> Output: 0812-3456-7890
+)
+
+// Indonesian phone number (auto-detect +62 or 0xxx)
+TextFormField(
+  inputFormatters: [IndonesiaPhoneFormatter()],
+  // Input: 6281234567890 -> Output: +62 812 3456 7890
+  // Input: 081234567890 -> Output: 0812 3456 7890
+)
+
+// Credit card number
+TextFormField(
+  inputFormatters: [CreditCardFormatter()],
+  // Input: 1234567890123456 -> Output: 1234 5678 9012 3456
+)
+
+// Decimal number with configurable decimal places
+TextFormField(
+  inputFormatters: [DecimalTextInputFormatter(decimalPlaces: 2)],
+  // Input: 123.456 -> Output: 123,45
+)
+
+// Case formatters
+TextFormField(
+  inputFormatters: [UpperCaseTextFormatter()],
+  // Input: hello -> Output: HELLO
+)
+
+TextFormField(
+  inputFormatters: [LowerCaseTextFormatter()],
+  // Input: HELLO -> Output: hello
+)
+```
+
 ---
 
 ## 🔧 Context Extensions
+
 
 Quick access to theme values via BuildContext:
 

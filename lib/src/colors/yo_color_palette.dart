@@ -15,8 +15,22 @@ class YoCorePalette {
     required this.accent,
   });
 
-  Color get onPrimary =>
-      primary.computeLuminance() > 0.5 ? Colors.black : Colors.white;
+  /// Card border color based on primary
+  Color get cardBorderColor => primary.withValues(alpha: 0.12);
+
+  /// Card color with subtle primary tint
+  Color get cardColor => Color.alphaBlend(
+        primary.withValues(alpha: 0.05),
+        background,
+      );
+
   Color get onBackground =>
       background.computeLuminance() > 0.5 ? Colors.black : Colors.white;
+
+  /// Text color for content on cards
+  Color get onCard =>
+      cardColor.computeLuminance() > 0.5 ? Colors.black : Colors.white;
+
+  Color get onPrimary =>
+      primary.computeLuminance() > 0.5 ? Colors.black : Colors.white;
 }
