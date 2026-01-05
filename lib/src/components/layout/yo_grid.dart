@@ -33,25 +33,36 @@ class YoGrid extends StatelessWidget {
     int? desktopColumns,
     double? crossAxisSpacing,
     double? mainAxisSpacing,
-    double childAspectRatio = 1.0,
-    required List<Widget> children,
+    this.childAspectRatio = 1.0,
+    required this.children,
     EdgeInsets? padding,
-    bool shrinkWrap = false,
-    ScrollPhysics? physics,
-  }) : crossAxisCount = context
-           .responsiveValue(
-             phone: phoneColumns?.toDouble() ?? 2,
-             tablet: tabletColumns?.toDouble() ?? 3,
-             desktop: desktopColumns?.toDouble() ?? 4,
-           )
-           .toInt(),
-       crossAxisSpacing = crossAxisSpacing ?? context.yoSpacingSm,
-       mainAxisSpacing = mainAxisSpacing ?? context.yoSpacingSm,
-       childAspectRatio = childAspectRatio,
-       children = children,
-       padding = padding ?? EdgeInsets.all(context.yoSpacingMd),
-       shrinkWrap = shrinkWrap,
-       physics = physics;
+    this.shrinkWrap = false,
+    this.physics,
+  })  : crossAxisCount = context
+            .responsiveValue(
+              phone: phoneColumns?.toDouble() ?? 2,
+              tablet: tabletColumns?.toDouble() ?? 3,
+              desktop: desktopColumns?.toDouble() ?? 4,
+            )
+            .toInt(),
+        crossAxisSpacing = crossAxisSpacing ?? context.yoSpacingSm,
+        mainAxisSpacing = mainAxisSpacing ?? context.yoSpacingSm,
+        padding = padding ?? EdgeInsets.all(context.yoSpacingMd);
+
+  YoGrid.threeColumn({
+    super.key,
+    required BuildContext context,
+    double? crossAxisSpacing,
+    double? mainAxisSpacing,
+    this.childAspectRatio = 1.0,
+    required this.children,
+    EdgeInsets? padding,
+    this.shrinkWrap = false,
+    this.physics,
+  })  : crossAxisCount = 3,
+        crossAxisSpacing = crossAxisSpacing ?? context.yoSpacingSm,
+        mainAxisSpacing = mainAxisSpacing ?? context.yoSpacingSm,
+        padding = padding ?? EdgeInsets.all(context.yoSpacingMd);
 
   // Common grid layouts using context spacing
   YoGrid.twoColumn({
@@ -59,38 +70,15 @@ class YoGrid extends StatelessWidget {
     required BuildContext context,
     double? crossAxisSpacing,
     double? mainAxisSpacing,
-    double childAspectRatio = 1.0,
-    required List<Widget> children,
+    this.childAspectRatio = 1.0,
+    required this.children,
     EdgeInsets? padding,
-    bool shrinkWrap = false,
-    ScrollPhysics? physics,
-  }) : crossAxisCount = 2,
-       crossAxisSpacing = crossAxisSpacing ?? context.yoSpacingMd,
-       mainAxisSpacing = mainAxisSpacing ?? context.yoSpacingMd,
-       childAspectRatio = childAspectRatio,
-       children = children,
-       padding = padding ?? EdgeInsets.all(context.yoSpacingMd),
-       shrinkWrap = shrinkWrap,
-       physics = physics;
-
-  YoGrid.threeColumn({
-    super.key,
-    required BuildContext context,
-    double? crossAxisSpacing,
-    double? mainAxisSpacing,
-    double childAspectRatio = 1.0,
-    required List<Widget> children,
-    EdgeInsets? padding,
-    bool shrinkWrap = false,
-    ScrollPhysics? physics,
-  }) : crossAxisCount = 3,
-       crossAxisSpacing = crossAxisSpacing ?? context.yoSpacingSm,
-       mainAxisSpacing = mainAxisSpacing ?? context.yoSpacingSm,
-       childAspectRatio = childAspectRatio,
-       children = children,
-       padding = padding ?? EdgeInsets.all(context.yoSpacingMd),
-       shrinkWrap = shrinkWrap,
-       physics = physics;
+    this.shrinkWrap = false,
+    this.physics,
+  })  : crossAxisCount = 2,
+        crossAxisSpacing = crossAxisSpacing ?? context.yoSpacingMd,
+        mainAxisSpacing = mainAxisSpacing ?? context.yoSpacingMd,
+        padding = padding ?? EdgeInsets.all(context.yoSpacingMd);
 
   @override
   Widget build(BuildContext context) {
@@ -129,21 +117,20 @@ class YoGridItem extends StatelessWidget {
   YoGridItem.card({
     super.key,
     required BuildContext context,
-    required Widget child,
+    required this.child,
     EdgeInsets? padding,
     BorderRadius? borderRadius,
-  }) : backgroundColor = context.backgroundColor,
-       child = child,
-       padding = padding ?? EdgeInsets.all(context.yoSpacingMd),
-       borderRadius = borderRadius ?? BorderRadius.circular(12),
-       border = null,
-       shadow = [
-         BoxShadow(
-           color: context.gray300.withOpacity(0.3),
-           blurRadius: 8,
-           offset: const Offset(0, 2),
-         ),
-       ];
+  })  : backgroundColor = context.backgroundColor,
+        padding = padding ?? EdgeInsets.all(context.yoSpacingMd),
+        borderRadius = borderRadius ?? BorderRadius.circular(12),
+        border = null,
+        shadow = [
+          BoxShadow(
+            color: context.gray300.withOpacity(0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ];
 
   @override
   Widget build(BuildContext context) {
