@@ -59,6 +59,7 @@ export 'src/components/navigation/yo_bottom_nav.dart';
 export 'src/components/navigation/yo_drawer.dart';
 export 'src/components/navigation/yo_sidebar.dart';
 export 'src/components/navigation/yo_tabbar.dart';
+export 'src/components/picker/yo_color_picker.dart';
 export 'src/components/picker/yo_date_picker.dart';
 export 'src/components/picker/yo_date_picker_inline.dart';
 export 'src/components/picker/yo_date_range_picker.dart';

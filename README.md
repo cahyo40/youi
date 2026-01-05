@@ -474,6 +474,62 @@ final searchResults = YoIcons.search('home');
 - Image, Maps, Navigation, Notification
 - Places, Social, Toggle
 
+### Color Picker
+
+```dart
+// Inline Color Picker
+YoColorPicker(
+  selectedColor: selectedColor,
+  onColorSelected: (color) => setState(() => selectedColor = color),
+  initialPalette: YoColorPalette.material,
+  showHexInput: true,
+  showRgbSliders: true,
+  showOpacity: false,
+)
+
+// Color Picker Button (triggers picker on tap)
+YoColorPickerButton(
+  selectedColor: selectedColor,
+  labelText: 'Theme Color',
+  hintText: 'Choose a color',
+  onColorSelected: (color) => setState(() => selectedColor = color),
+)
+
+// Show as Bottom Sheet
+final color = await YoColorPicker.showAsBottomSheet(
+  context: context,
+  selectedColor: currentColor,
+  title: 'Select Color',
+  showOpacity: true,
+);
+
+// Show as Dialog
+final color = await YoColorPicker.showAsDialog(
+  context: context,
+  selectedColor: currentColor,
+  title: 'Choose Color',
+);
+
+// Get colors by palette
+final materialColors = YoColorPresets.byPalette(YoColorPalette.material);
+final pastelColors = YoColorPresets.byPalette(YoColorPalette.pastel);
+
+// Search colors
+final searchResults = YoColorPresets.search('blue');
+```
+
+**Available Palettes (3):**
+- `YoColorPalette.material` - Material Design colors
+- `YoColorPalette.pastel` - Soft pastel colors
+- `YoColorPalette.grayscale` - Black to white gradients
+
+**Features:**
+- HSV color sliders (Hue, Saturation, Brightness)
+- Hex color input with live preview
+- Optional opacity/alpha slider
+- Predefined color palettes grid
+- Color preview with shadow effect
+
 ### Image Picker
 
 ```dart
