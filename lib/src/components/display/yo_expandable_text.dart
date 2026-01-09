@@ -33,44 +33,11 @@ class _YoExpandableTextState extends State<YoExpandableText> {
   bool _needsExpansion = false;
 
   @override
-  void initState() {
-    super.initState();
-    _isExpanded = widget.expanded;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _checkIfTextOverflows();
-    });
-  }
-
-  void _checkIfTextOverflows() {
-    final textPainter = TextPainter(
-      text: TextSpan(
-        text: widget.text,
-        style: widget.textStyle ?? Theme.of(context).textTheme.bodyMedium,
-      ),
-      maxLines: widget.maxLines,
-      textDirection: TextDirection.ltr,
-    );
-
-    textPainter.layout(maxWidth: MediaQuery.of(context).size.width - 32);
-    setState(() {
-      _needsExpansion = textPainter.didExceedMaxLines;
-    });
-  }
-
-  void _toggleExpansion() {
-    setState(() {
-      _isExpanded = !_isExpanded;
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final defaultTextStyle =
-        widget.textStyle ?? Theme.of(context).textTheme.bodyMedium;
-    final defaultLinkStyle =
-        widget.linkStyle ??
-        defaultTextStyle?.copyWith(
-          color: YoColors.primary(context),
+    final defaultTextStyle = widget.textStyle ?? context.yoBodyMedium;
+    final defaultLinkStyle = widget.linkStyle ??
+        defaultTextStyle.copyWith(
+          color: context.primaryColor,
           fontWeight: FontWeight.w600,
         );
 
@@ -84,6 +51,15 @@ class _YoExpandableTextState extends State<YoExpandableText> {
         ),
       ],
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _isExpanded = widget.expanded;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkIfTextOverflows();
+    });
   }
 
   Widget _buildTextContent(TextStyle? textStyle, TextStyle? linkStyle) {
@@ -113,5 +89,27 @@ class _YoExpandableTextState extends State<YoExpandableText> {
         ],
       ],
     );
+  }
+
+  void _checkIfTextOverflows() {
+    final textPainter = TextPainter(
+      text: TextSpan(
+        text: widget.text,
+        style: widget.textStyle ?? context.yoBodyMedium,
+      ),
+      maxLines: widget.maxLines,
+      textDirection: TextDirection.ltr,
+    );
+
+    textPainter.layout(maxWidth: MediaQuery.of(context).size.width - 32);
+    setState(() {
+      _needsExpansion = textPainter.didExceedMaxLines;
+    });
+  }
+
+  void _toggleExpansion() {
+    setState(() {
+      _isExpanded = !_isExpanded;
+    });
   }
 }

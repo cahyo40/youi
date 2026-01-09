@@ -4,97 +4,54 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:yo_ui/yo_ui.dart';
 
-/// File type filter
-enum YoFileType {
-  /// Any file type
-  any,
+/// Drag and drop file zone
+class YoFileDropZone extends StatefulWidget {
+  /// Callback when files are dropped/selected
+  final ValueChanged<List<YoFilePickerResult>> onFilesSelected;
 
-  /// Media files (images and videos)
-  media,
+  /// File type filter
+  final YoFileType fileType;
 
-  /// Image files only
-  image,
+  /// Custom allowed extensions
+  final List<String>? allowedExtensions;
 
-  /// Video files only
-  video,
+  /// Allow multiple files
+  final bool multiple;
 
-  /// Audio files only
-  audio,
+  /// Zone height
+  final double height;
 
-  /// Custom extensions
-  custom,
-}
+  /// Border radius
+  final double borderRadius;
 
-/// File picker result
-class YoFilePickerResult {
-  /// The picked file
-  final PlatformFile file;
+  /// Icon
+  final IconData icon;
 
-  /// File path (may be null on web)
-  String? get path => file.path;
+  /// Title text
+  final String title;
 
-  /// File name
-  String get name => file.name;
+  /// Subtitle text
+  final String subtitle;
 
-  /// File extension
-  String? get extension => file.extension;
+  /// Load file data
+  final bool withData;
 
-  /// File size in bytes
-  int get size => file.size;
+  const YoFileDropZone({
+    super.key,
+    required this.onFilesSelected,
+    this.fileType = YoFileType.any,
+    this.allowedExtensions,
+    this.multiple = false,
+    this.height = 150,
+    this.borderRadius = 12,
+    this.icon = Icons.cloud_upload_outlined,
+    this.title = 'Drop files here',
+    this.subtitle = 'or click to browse',
+    this.withData = false,
+  });
 
-  /// File bytes (for web)
-  Uint8List? get bytes => file.bytes;
-
-  const YoFilePickerResult({required this.file});
-
-  /// Get file size as formatted string
-  String get formattedSize => YoFileHelper.formatFileSize(size);
-
-  /// Check if file is image
-  bool get isImage {
-    final ext = extension?.toLowerCase();
-    return ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg'].contains(ext);
-  }
-
-  /// Check if file is video
-  bool get isVideo {
-    final ext = extension?.toLowerCase();
-    return ['mp4', 'mov', 'avi', 'mkv', 'wmv', 'flv', 'webm'].contains(ext);
-  }
-
-  /// Check if file is audio
-  bool get isAudio {
-    final ext = extension?.toLowerCase();
-    return ['mp3', 'wav', 'aac', 'flac', 'ogg', 'm4a', 'wma'].contains(ext);
-  }
-
-  /// Check if file is document
-  bool get isDocument {
-    final ext = extension?.toLowerCase();
-    return ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'rtf']
-        .contains(ext);
-  }
-}
-
-/// Multiple file picker result
-class YoMultiFilePickerResult {
-  /// List of picked files
-  final List<PlatformFile> files;
-
-  /// Number of files
-  int get count => files.length;
-
-  /// Total size in bytes
-  int get totalSize => files.fold(0, (sum, f) => sum + f.size);
-
-  /// Formatted total size
-  String get formattedTotalSize => YoFileHelper.formatFileSize(totalSize);
-
-  const YoMultiFilePickerResult({required this.files});
-
-  /// Get as single results
-  List<YoFilePickerResult> get results =>
-      files.map((f) => YoFilePickerResult(file: f)).toList();
+  @override
+  State<YoFileDropZone> createState() => _YoFileDropZoneState();
 }
 
 /// File helper utilities
@@ -115,6 +72,39 @@ class YoFileHelper {
     }
 
     return '${size.toStringAsFixed(decimals)} ${suffixes[i]}';
+  }
+
+  /// Get color for file type
+  static Color getFileColor(String? extension, BuildContext context) {
+    final ext = extension?.toLowerCase();
+
+    // Images
+    if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg'].contains(ext)) {
+      return Colors.blue;
+    }
+
+    // Videos
+    if (['mp4', 'mov', 'avi', 'mkv', 'wmv', 'flv', 'webm'].contains(ext)) {
+      return Colors.purple;
+    }
+
+    // Audio
+    if (['mp3', 'wav', 'aac', 'flac', 'ogg', 'm4a', 'wma'].contains(ext)) {
+      return Colors.orange;
+    }
+
+    // PDF
+    if (ext == 'pdf') return Colors.red;
+
+    // Documents
+    if (['doc', 'docx'].contains(ext)) return Colors.blue;
+    if (['xls', 'xlsx'].contains(ext)) return Colors.green;
+    if (['ppt', 'pptx'].contains(ext)) return Colors.deepOrange;
+
+    // Archives
+    if (['zip', 'rar', '7z', 'tar', 'gz'].contains(ext)) return Colors.brown;
+
+    return context.gray600;
   }
 
   /// Get icon for file extension
@@ -168,38 +158,61 @@ class YoFileHelper {
 
     return Icons.insert_drive_file;
   }
+}
 
-  /// Get color for file type
-  static Color getFileColor(String? extension, BuildContext context) {
-    final ext = extension?.toLowerCase();
+/// File list tile widget for displaying selected files
+class YoFileListTile extends StatelessWidget {
+  /// File result
+  final YoFilePickerResult file;
 
-    // Images
-    if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg'].contains(ext)) {
-      return Colors.blue;
-    }
+  /// On remove callback
+  final VoidCallback? onRemove;
 
-    // Videos
-    if (['mp4', 'mov', 'avi', 'mkv', 'wmv', 'flv', 'webm'].contains(ext)) {
-      return Colors.purple;
-    }
+  /// On tap callback
+  final VoidCallback? onTap;
 
-    // Audio
-    if (['mp3', 'wav', 'aac', 'flac', 'ogg', 'm4a', 'wma'].contains(ext)) {
-      return Colors.orange;
-    }
+  /// Show remove button
+  final bool showRemove;
 
-    // PDF
-    if (ext == 'pdf') return Colors.red;
+  const YoFileListTile({
+    super.key,
+    required this.file,
+    this.onRemove,
+    this.onTap,
+    this.showRemove = true,
+  });
 
-    // Documents
-    if (['doc', 'docx'].contains(ext)) return Colors.blue;
-    if (['xls', 'xlsx'].contains(ext)) return Colors.green;
-    if (['ppt', 'pptx'].contains(ext)) return Colors.deepOrange;
-
-    // Archives
-    if (['zip', 'rar', '7z', 'tar', 'gz'].contains(ext)) return Colors.brown;
-
-    return context.gray600;
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      onTap: onTap,
+      leading: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          color:
+              YoFileHelper.getFileColor(file.extension, context).withAlpha(30),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(
+          YoFileHelper.getFileIcon(file.extension),
+          color: YoFileHelper.getFileColor(file.extension, context),
+          size: 20,
+        ),
+      ),
+      title: Text(
+        file.name,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+      subtitle: Text(file.formattedSize),
+      trailing: showRemove && onRemove != null
+          ? IconButton(
+              onPressed: onRemove,
+              icon: Icon(Icons.close, color: context.gray500),
+            )
+          : null,
+    );
   }
 }
 
@@ -207,57 +220,16 @@ class YoFileHelper {
 class YoFilePicker {
   YoFilePicker._();
 
-  static FileType _mapFileType(YoFileType type) {
-    switch (type) {
-      case YoFileType.any:
-        return FileType.any;
-      case YoFileType.media:
-        return FileType.media;
-      case YoFileType.image:
-        return FileType.image;
-      case YoFileType.video:
-        return FileType.video;
-      case YoFileType.audio:
-        return FileType.audio;
-      case YoFileType.custom:
-        return FileType.custom;
-    }
+  /// Clear file picker cache
+  static Future<bool?> clearCache() {
+    return FilePicker.platform.clearTemporaryFiles();
   }
 
   // ==================== PICK SINGLE FILE ====================
 
-  /// Pick a single file
-  static Future<YoFilePickerResult?> pickFile({
-    YoFileType type = YoFileType.any,
-    List<String>? allowedExtensions,
-    bool withData = false,
-    bool withReadStream = false,
-  }) async {
-    final result = await FilePicker.platform.pickFiles(
-      type: _mapFileType(type),
-      allowedExtensions: type == YoFileType.custom ? allowedExtensions : null,
-      withData: withData,
-      withReadStream: withReadStream,
-      allowMultiple: false,
-    );
-
-    if (result == null || result.files.isEmpty) return null;
-    return YoFilePickerResult(file: result.files.first);
-  }
-
   /// Pick any file
   static Future<YoFilePickerResult?> pickAny({bool withData = false}) {
     return pickFile(type: YoFileType.any, withData: withData);
-  }
-
-  /// Pick image file
-  static Future<YoFilePickerResult?> pickImage({bool withData = false}) {
-    return pickFile(type: YoFileType.image, withData: withData);
-  }
-
-  /// Pick video file
-  static Future<YoFilePickerResult?> pickVideo({bool withData = false}) {
-    return pickFile(type: YoFileType.video, withData: withData);
   }
 
   /// Pick audio file
@@ -265,13 +237,22 @@ class YoFilePicker {
     return pickFile(type: YoFileType.audio, withData: withData);
   }
 
-  /// Pick PDF file
-  static Future<YoFilePickerResult?> pickPdf({bool withData = false}) {
+  /// Pick file with custom extensions
+  static Future<YoFilePickerResult?> pickCustom({
+    required List<String> extensions,
+    bool withData = false,
+  }) {
     return pickFile(
       type: YoFileType.custom,
-      allowedExtensions: ['pdf'],
+      allowedExtensions: extensions,
       withData: withData,
     );
+  }
+
+  /// Pick a directory (not supported on web)
+  static Future<String?> pickDirectory() async {
+    if (kIsWeb) return null;
+    return await FilePicker.platform.getDirectoryPath();
   }
 
   /// Pick document file
@@ -292,19 +273,29 @@ class YoFilePicker {
     );
   }
 
-  /// Pick file with custom extensions
-  static Future<YoFilePickerResult?> pickCustom({
-    required List<String> extensions,
+  /// Pick a single file
+  static Future<YoFilePickerResult?> pickFile({
+    YoFileType type = YoFileType.any,
+    List<String>? allowedExtensions,
     bool withData = false,
-  }) {
-    return pickFile(
-      type: YoFileType.custom,
-      allowedExtensions: extensions,
+    bool withReadStream = false,
+  }) async {
+    final result = await FilePicker.platform.pickFiles(
+      type: _mapFileType(type),
+      allowedExtensions: type == YoFileType.custom ? allowedExtensions : null,
       withData: withData,
+      withReadStream: withReadStream,
+      allowMultiple: false,
     );
+
+    if (result == null || result.files.isEmpty) return null;
+    return YoFilePickerResult(file: result.files.first);
   }
 
-  // ==================== PICK MULTIPLE FILES ====================
+  /// Pick image file
+  static Future<YoFilePickerResult?> pickImage({bool withData = false}) {
+    return pickFile(type: YoFileType.image, withData: withData);
+  }
 
   /// Pick multiple files
   static Future<YoMultiFilePickerResult?> pickMultiple({
@@ -325,6 +316,8 @@ class YoFilePicker {
     return YoMultiFilePickerResult(files: result.files);
   }
 
+  // ==================== PICK MULTIPLE FILES ====================
+
   /// Pick multiple images
   static Future<YoMultiFilePickerResult?> pickMultipleImages({
     bool withData = false,
@@ -332,12 +325,20 @@ class YoFilePicker {
     return pickMultiple(type: YoFileType.image, withData: withData);
   }
 
+  /// Pick PDF file
+  static Future<YoFilePickerResult?> pickPdf({bool withData = false}) {
+    return pickFile(
+      type: YoFileType.custom,
+      allowedExtensions: ['pdf'],
+      withData: withData,
+    );
+  }
+
   // ==================== DIRECTORY PICKING ====================
 
-  /// Pick a directory (not supported on web)
-  static Future<String?> pickDirectory() async {
-    if (kIsWeb) return null;
-    return await FilePicker.platform.getDirectoryPath();
+  /// Pick video file
+  static Future<YoFilePickerResult?> pickVideo({bool withData = false}) {
+    return pickFile(type: YoFileType.video, withData: withData);
   }
 
   // ==================== SAVE FILE ====================
@@ -359,9 +360,21 @@ class YoFilePicker {
 
   // ==================== CLEAR CACHE ====================
 
-  /// Clear file picker cache
-  static Future<bool?> clearCache() {
-    return FilePicker.platform.clearTemporaryFiles();
+  static FileType _mapFileType(YoFileType type) {
+    switch (type) {
+      case YoFileType.any:
+        return FileType.any;
+      case YoFileType.media:
+        return FileType.media;
+      case YoFileType.image:
+        return FileType.image;
+      case YoFileType.video:
+        return FileType.video;
+      case YoFileType.audio:
+        return FileType.audio;
+      case YoFileType.custom:
+        return FileType.custom;
+    }
   }
 }
 
@@ -406,18 +419,6 @@ class YoFilePickerButton extends StatelessWidget {
     this.borderRadius = 12,
     this.withData = false,
   });
-
-  Future<void> _pickFile(BuildContext context) async {
-    final result = await YoFilePicker.pickFile(
-      type: fileType,
-      allowedExtensions: allowedExtensions,
-      withData: withData,
-    );
-
-    if (result != null) {
-      onFileSelected(result);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -503,7 +504,7 @@ class YoFilePickerButton extends StatelessWidget {
                     ],
                   ),
                 ),
-                Icon(Icons.folder_open, color: context.gray400),
+                Icon(Icons.arrow_drop_down, color: context.gray500),
               ],
             ),
           ),
@@ -511,82 +512,115 @@ class YoFilePickerButton extends StatelessWidget {
       ],
     );
   }
+
+  Future<void> _pickFile(BuildContext context) async {
+    final result = await YoFilePicker.pickFile(
+      type: fileType,
+      allowedExtensions: allowedExtensions,
+      withData: withData,
+    );
+
+    if (result != null) {
+      onFileSelected(result);
+    }
+  }
 }
 
-/// Drag and drop file zone
-class YoFileDropZone extends StatefulWidget {
-  /// Callback when files are dropped/selected
-  final ValueChanged<List<YoFilePickerResult>> onFilesSelected;
+/// File picker result
+class YoFilePickerResult {
+  /// The picked file
+  final PlatformFile file;
 
-  /// File type filter
-  final YoFileType fileType;
+  const YoFilePickerResult({required this.file});
 
-  /// Custom allowed extensions
-  final List<String>? allowedExtensions;
+  /// File bytes (for web)
+  Uint8List? get bytes => file.bytes;
 
-  /// Allow multiple files
-  final bool multiple;
+  /// File extension
+  String? get extension => file.extension;
 
-  /// Zone height
-  final double height;
+  /// Get file size as formatted string
+  String get formattedSize => YoFileHelper.formatFileSize(size);
 
-  /// Border radius
-  final double borderRadius;
+  /// Check if file is audio
+  bool get isAudio {
+    final ext = extension?.toLowerCase();
+    return ['mp3', 'wav', 'aac', 'flac', 'ogg', 'm4a', 'wma'].contains(ext);
+  }
 
-  /// Icon
-  final IconData icon;
+  /// Check if file is document
+  bool get isDocument {
+    final ext = extension?.toLowerCase();
+    return ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'rtf']
+        .contains(ext);
+  }
 
-  /// Title text
-  final String title;
+  /// Check if file is image
+  bool get isImage {
+    final ext = extension?.toLowerCase();
+    return ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg'].contains(ext);
+  }
 
-  /// Subtitle text
-  final String subtitle;
+  /// Check if file is video
+  bool get isVideo {
+    final ext = extension?.toLowerCase();
+    return ['mp4', 'mov', 'avi', 'mkv', 'wmv', 'flv', 'webm'].contains(ext);
+  }
 
-  /// Load file data
-  final bool withData;
+  /// File name
+  String get name => file.name;
 
-  const YoFileDropZone({
-    super.key,
-    required this.onFilesSelected,
-    this.fileType = YoFileType.any,
-    this.allowedExtensions,
-    this.multiple = false,
-    this.height = 150,
-    this.borderRadius = 12,
-    this.icon = Icons.cloud_upload_outlined,
-    this.title = 'Drop files here',
-    this.subtitle = 'or click to browse',
-    this.withData = false,
-  });
+  /// File path (may be null on web)
+  String? get path => file.path;
 
-  @override
-  State<YoFileDropZone> createState() => _YoFileDropZoneState();
+  /// File size in bytes
+  int get size => file.size;
+}
+
+/// File type filter
+enum YoFileType {
+  /// Any file type
+  any,
+
+  /// Media files (images and videos)
+  media,
+
+  /// Image files only
+  image,
+
+  /// Video files only
+  video,
+
+  /// Audio files only
+  audio,
+
+  /// Custom extensions
+  custom,
+}
+
+/// Multiple file picker result
+class YoMultiFilePickerResult {
+  /// List of picked files
+  final List<PlatformFile> files;
+
+  const YoMultiFilePickerResult({required this.files});
+
+  /// Number of files
+  int get count => files.length;
+
+  /// Formatted total size
+  String get formattedTotalSize => YoFileHelper.formatFileSize(totalSize);
+
+  /// Get as single results
+  List<YoFilePickerResult> get results =>
+      files.map((f) => YoFilePickerResult(file: f)).toList();
+
+  /// Total size in bytes
+  int get totalSize => files.fold(0, (sum, f) => sum + f.size);
 }
 
 class _YoFileDropZoneState extends State<YoFileDropZone> {
   final bool _isDragging = false;
-
-  Future<void> _pickFiles() async {
-    if (widget.multiple) {
-      final result = await YoFilePicker.pickMultiple(
-        type: widget.fileType,
-        allowedExtensions: widget.allowedExtensions,
-        withData: widget.withData,
-      );
-      if (result != null) {
-        widget.onFilesSelected(result.results);
-      }
-    } else {
-      final result = await YoFilePicker.pickFile(
-        type: widget.fileType,
-        allowedExtensions: widget.allowedExtensions,
-        withData: widget.withData,
-      );
-      if (result != null) {
-        widget.onFilesSelected([result]);
-      }
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -633,60 +667,26 @@ class _YoFileDropZoneState extends State<YoFileDropZone> {
       ),
     );
   }
-}
 
-/// File list tile widget for displaying selected files
-class YoFileListTile extends StatelessWidget {
-  /// File result
-  final YoFilePickerResult file;
-
-  /// On remove callback
-  final VoidCallback? onRemove;
-
-  /// On tap callback
-  final VoidCallback? onTap;
-
-  /// Show remove button
-  final bool showRemove;
-
-  const YoFileListTile({
-    super.key,
-    required this.file,
-    this.onRemove,
-    this.onTap,
-    this.showRemove = true,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      onTap: onTap,
-      leading: Container(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(
-          color:
-              YoFileHelper.getFileColor(file.extension, context).withAlpha(30),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Icon(
-          YoFileHelper.getFileIcon(file.extension),
-          color: YoFileHelper.getFileColor(file.extension, context),
-          size: 20,
-        ),
-      ),
-      title: Text(
-        file.name,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      ),
-      subtitle: Text(file.formattedSize),
-      trailing: showRemove && onRemove != null
-          ? IconButton(
-              onPressed: onRemove,
-              icon: Icon(Icons.close, color: context.gray500),
-            )
-          : null,
-    );
+  Future<void> _pickFiles() async {
+    if (widget.multiple) {
+      final result = await YoFilePicker.pickMultiple(
+        type: widget.fileType,
+        allowedExtensions: widget.allowedExtensions,
+        withData: widget.withData,
+      );
+      if (result != null) {
+        widget.onFilesSelected(result.results);
+      }
+    } else {
+      final result = await YoFilePicker.pickFile(
+        type: widget.fileType,
+        allowedExtensions: widget.allowedExtensions,
+        withData: widget.withData,
+      );
+      if (result != null) {
+        widget.onFilesSelected([result]);
+      }
+    }
   }
 }

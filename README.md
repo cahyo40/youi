@@ -5,19 +5,51 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![pub package](https://img.shields.io/badge/pub-v1.1.4-blue)](https://github.com/cahyo40/youi)
 
-A comprehensive, production-ready Flutter UI library with **70+ components**, **36 color schemes**, **51 fonts**, charts, and a complete design system for building beautiful, consistent applications.
+A comprehensive, production-ready Flutter UI library with **90+ components**, **36 color schemes**, **51 fonts**, and a complete design system for building beautiful, consistent applications.
 
 ## ✨ Features
 
 | Feature | Description |
 |---------|-------------|
-| 🎯 **Design System** | Unified colors, typography, spacing, and shadows |
+| 🎯 **90+ Components** | Forms, Tables, Navigation, Feedback, Charts, and more |
 | 🎨 **36 Color Schemes** | Industry-specific themes with AMOLED dark mode |
 | 🔤 **51 Google Fonts** | Pre-configured fonts via `YoFonts` enum |
 | 🌓 **Theme Support** | Light & dark mode with easy customization |
 | 📱 **Responsive** | Adaptive layouts for mobile, tablet, desktop |
-| 🧩 **70+ Components** | Buttons, Cards, Dialogs, Forms, Navigation, Charts |
+| 🎭 **26+ Shadows** | Comprehensive shadow system with elevation levels |
 | 📊 **Charts** | Line, Bar, Pie/Donut charts with fl_chart |
+| 🚀 **Production Ready** | Battle-tested components with zero errors |
+
+## 🆕 What's New in v0.0.2 (Latest)
+
+Just added **19 powerful new components**! Check out the highlights:
+
+### 📱 Form Components
+- **YoOtpField** - OTP/PIN input with paste support & auto-focus
+- **YoSearchField** - Search with debounce & suggestions dropdown
+- **YoFileUpload** - File upload with progress indicator
+- **YoChipInput** - Tag/chip input with autocomplete
+- **YoRangeSlider** - Dual-thumb range selection
+- **YoForm** - Form validation wrapper
+
+### 🎯 Navigation & Display
+- **YoStepper** - Multi-step wizard (vertical/horizontal)
+- **YoPagination** - Page navigation controls
+- **YoBreadcrumb** - Navigation trail with icons
+- **YoCarousel** - Auto-play image slider
+- **YoDataTable** - Sortable table with selection
+- **YoExpansionPanel** - Accordion panels
+
+### 🎨 Feedback & Layout
+- **YoToast** - Beautiful toast notifications
+- **YoShimmer** - Loading skeleton effects
+- **YoModal** - Bottom sheet modals
+- **YoBanner** - Dismissible info banners
+- **YoMasonryGrid** - Pinterest-style grid
+- **YoInfiniteScroll** - Lazy loading lists
+- **YoFAB.SpeedDial** - Expandable FAB menu
+
+> See [CHANGELOG.md](CHANGELOG.md) for full details
 
 ## 📦 Installation
 
@@ -43,6 +75,7 @@ import 'package:yo_ui/yo_ui.dart';
 MaterialApp(
   theme: YoTheme.lightTheme(context),
   darkTheme: YoTheme.darkTheme(context),
+  themeMode: ThemeMode.system,
   // Or use a specific color scheme:
   // theme: YoTheme.lightTheme(context, YoColorScheme.techPurple),
 )
@@ -55,10 +88,29 @@ Scaffold(
   body: Column(
     children: [
       YoText.headlineMedium('Welcome to YoUI'),
+      
+      // New OTP Field
+      YoOtpField(
+        length: 6,
+        onCompleted: (pin) => verifyOTP(pin),
+      ),
+      
+      // Buttons
       YoButton.primary(
         text: 'Get Started',
         onPressed: () {},
       ),
+      
+      // Toast notifications
+      YoButton.secondary(
+        text: 'Show Toast',
+        onPressed: () => YoToast.success(
+          context: context,
+          message: 'Welcome!',
+        ),
+      ),
+      
+      // Cards
       YoCard(
         child: YoText.bodyMedium('Beautiful components'),
       ),
@@ -66,6 +118,21 @@ Scaffold(
   ),
 )
 ```
+
+### 3. Run Example App
+
+Explore all components interactively:
+
+```bash
+cd example
+flutter run
+```
+
+The example app includes:
+- 🎉 Interactive demos for 19 new components
+- 🎨 Theme customization showcase
+- 📱 Responsive layout examples
+- 💡 Code samples for every component
 
 ---
 
@@ -213,9 +280,173 @@ class MyApp extends StatelessWidget {
 
 ---
 
-## 🧩 Components
+---
 
-### Buttons
+## 🧩 Component Showcase
+
+### 🆕 New Components (v0.0.2)
+
+#### Form & Input
+```dart
+// OTP Field - Auto-focus, paste support
+YoOtpField(
+  length: 6,
+  obscureText: true,
+  onCompleted: (pin) => verify(pin),
+)
+
+// Search with debounce & suggestions
+YoSearchField(
+  hintText: 'Search products...',
+  suggestions: ['iPhone', 'MacBook', 'iPad'],
+  onSearch: (query) => search(query),
+)
+
+// Chip Input - Tags with autocomplete
+YoChipInput(
+  chips: ['Flutter', 'Dart'],
+  suggestions: ['React', 'Vue'],
+  maxChips: 5,
+  onChanged: (chips) => updateTags(chips),
+)
+
+// Range Slider - Dual thumb
+YoRangeSlider(
+  values: RangeValues(20, 80),
+  min: 0,
+  max: 100,
+  onChanged: (values) => filter(values),
+)
+
+// File Upload with progress
+YoFileUpload(
+  maxFiles: 5,
+  onFilesSelected: (files) => upload(files),
+)
+```
+
+#### Navigation & Workflow
+```dart
+// Stepper - Multi-step wizard
+YoStepper(
+  currentStep: 0,
+  type: YoStepperType.vertical,
+  steps: [
+    YoStep(
+      title: 'Personal Info',
+      content: PersonalInfoForm(),
+    ),
+    YoStep(
+      title: 'Address',
+      content: AddressForm(),
+    ),
+  ],
+  onStepContinue: () => nextStep(),
+)
+
+// Pagination
+YoPagination(
+  currentPage: 1,
+  totalPages: 10,
+  onPageChanged: (page) => loadPage(page),
+)
+
+// Breadcrumb navigation
+YoBreadcrumb(
+  items: [
+    YoBreadcrumbItem(
+      label: 'Home',
+      icon: Icons.home,
+      onTap: () => goHome(),
+    ),
+    YoBreadcrumbItem(label: 'Products'),
+  ],
+)
+```
+
+#### Display & Layout
+```dart
+// Carousel - Auto-play slider
+YoCarousel(
+  images: imageUrls,
+  autoPlay: true,
+  height: 200,
+)
+
+// Data Table - Sortable & selectable
+YoDataTable(
+  columns: [
+    YoDataColumn(label: 'Name'),
+    YoDataColumn(label: 'Email'),
+  ],
+  rows: data.map((item) => YoDataRow(
+    cells: [
+      YoDataCell(text: item.name),
+      YoDataCell(text: item.email),
+    ],
+  )).toList(),
+)
+
+// Expansion Panel - Accordion
+YoExpansionPanelList(
+  expandOnlyOne: true,
+  children: [
+    YoExpansionPanelItem(
+      header: Text('FAQ 1'),
+      body: Text('Answer 1'),
+    ),
+  ],
+)
+
+// Masonry Grid - Pinterest style
+YoMasonryGrid(
+  columns: 2,
+  children: items.map((item) => ItemCard(item)).toList(),
+)
+```
+
+#### Feedback & Notifications
+```dart
+// Toast - Beautiful notifications
+YoToast.success(
+  context: context,
+  message: 'Payment successful!',
+)
+
+YoToast.error(
+  context: context,
+  message: 'Failed to process',
+  duration: Duration(seconds: 5),
+)
+
+// Shimmer - Loading skeleton
+YoShimmer.card(height: 120)
+YoShimmer.listTile()
+YoShimmer.image(height: 200)
+
+// Modal - Bottom sheet
+YoModal.show(
+  context: context,
+  title: 'Filter Options',
+  height: 0.8, // 80% of screen
+  child: FilterForm(),
+)
+
+// Banner - Info banner
+YoBanner(
+  message: 'New update available',
+  type: YoBannerType.info,
+  dismissible: true,
+  action: TextButton(
+    onPressed: () => update(),
+    child: Text('Update'),
+  ),
+)
+```
+
+---
+
+### 🎨 Buttons
 
 ```dart
 // Primary button

@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 
 import '../../../yo_ui.dart';
 
-enum YoAppBarVariant { primary, surface, transparent, elevated }
-
 class YoAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final Widget? leading;
@@ -33,6 +31,20 @@ class YoAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.toolbarHeight,
   });
 
+  const YoAppBar.elevated({
+    super.key,
+    required this.title,
+    this.leading,
+    this.actions,
+    this.automaticallyImplyLeading = true,
+    this.onBackPressed,
+    this.titleStyle,
+    this.centerTitle = true,
+    this.toolbarHeight,
+  })  : variant = YoAppBarVariant.elevated,
+        backgroundColor = null,
+        elevation = 4;
+
   const YoAppBar.primary({
     super.key,
     required this.title,
@@ -43,9 +55,9 @@ class YoAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.titleStyle,
     this.centerTitle = true,
     this.toolbarHeight,
-  }) : variant = YoAppBarVariant.primary,
-       backgroundColor = null,
-       elevation = 0;
+  })  : variant = YoAppBarVariant.primary,
+        backgroundColor = null,
+        elevation = 0;
 
   const YoAppBar.surface({
     super.key,
@@ -57,9 +69,9 @@ class YoAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.titleStyle,
     this.centerTitle = true,
     this.toolbarHeight,
-  }) : variant = YoAppBarVariant.surface,
-       backgroundColor = null,
-       elevation = 1;
+  })  : variant = YoAppBarVariant.surface,
+        backgroundColor = null,
+        elevation = 1;
 
   const YoAppBar.transparent({
     super.key,
@@ -71,28 +83,15 @@ class YoAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.titleStyle,
     this.centerTitle = true,
     this.toolbarHeight,
-  }) : variant = YoAppBarVariant.transparent,
-       backgroundColor = null,
-       elevation = 0;
+  })  : variant = YoAppBarVariant.transparent,
+        backgroundColor = null,
+        elevation = 0;
 
-  const YoAppBar.elevated({
-    super.key,
-    required this.title,
-    this.leading,
-    this.actions,
-    this.automaticallyImplyLeading = true,
-    this.onBackPressed,
-    this.titleStyle,
-    this.centerTitle = true,
-    this.toolbarHeight,
-  }) : variant = YoAppBarVariant.elevated,
-       backgroundColor = null,
-       elevation = 4;
+  @override
+  Size get preferredSize => Size.fromHeight(toolbarHeight ?? kToolbarHeight);
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     final Color effectiveBackgroundColor =
         backgroundColor ?? _getBackgroundColor(context);
     final Color effectiveTitleColor = _getTitleColor(context);
@@ -101,9 +100,8 @@ class YoAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       title: YoText(
         title,
-        style:
-            titleStyle ??
-            theme.textTheme.titleLarge?.copyWith(
+        style: titleStyle ??
+            context.yoTitleLarge.copyWith(
               color: effectiveTitleColor,
               fontWeight: FontWeight.w600,
             ),
@@ -137,31 +135,15 @@ class YoAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   Color _getBackgroundColor(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     switch (variant) {
       case YoAppBarVariant.primary:
-        return colorScheme.primary;
+        return context.primaryColor;
       case YoAppBarVariant.surface:
-        return colorScheme.surface;
+        return context.backgroundColor;
       case YoAppBarVariant.transparent:
         return Colors.transparent;
       case YoAppBarVariant.elevated:
-        return colorScheme.surface;
-    }
-  }
-
-  Color _getTitleColor(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    switch (variant) {
-      case YoAppBarVariant.primary:
-        return context.onPrimaryColor;
-      case YoAppBarVariant.surface:
-      case YoAppBarVariant.elevated:
-        return colorScheme.onSurface;
-      case YoAppBarVariant.transparent:
-        return colorScheme.onBackground;
+        return context.backgroundColor;
     }
   }
 
@@ -177,6 +159,17 @@ class YoAppBar extends StatelessWidget implements PreferredSizeWidget {
     }
   }
 
-  @override
-  Size get preferredSize => Size.fromHeight(toolbarHeight ?? kToolbarHeight);
+  Color _getTitleColor(BuildContext context) {
+    switch (variant) {
+      case YoAppBarVariant.primary:
+        return context.onPrimaryColor;
+      case YoAppBarVariant.surface:
+      case YoAppBarVariant.elevated:
+        return context.textColor;
+      case YoAppBarVariant.transparent:
+        return context.textColor;
+    }
+  }
 }
+
+enum YoAppBarVariant { primary, surface, transparent, elevated }

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:yo_ui/yo_ui.dart';
 
+enum YoInputStyle { outlined, filled, underline, floating, modern, none }
+
 /* ---------------------------------------------------------- */
 /*  1.  ENUMS (tetap)                                        */
 /* ---------------------------------------------------------- */
@@ -16,8 +18,6 @@ enum YoInputType {
   multiline,
   currency,
 }
-
-enum YoInputStyle { outlined, filled, underline, floating, modern }
 
 /* ---------------------------------------------------------- */
 /*  2.  MAIN WIDGET – now 100 % YoUI color system             */
@@ -141,127 +141,6 @@ class _YoTextFormFieldState extends State<YoTextFormField>
   bool _hasText = false;
 
   @override
-  void initState() {
-    super.initState();
-    _controller = widget.controller ?? TextEditingController();
-    _focusNode = widget.focusNode ?? FocusNode();
-    _obscureText = widget.obscureText;
-    _hasText = _controller.text.isNotEmpty;
-
-    _animationController = AnimationController(
-      duration: widget.animationDuration,
-      vsync: this,
-    );
-
-    _controller.addListener(_handleTextChange);
-    _focusNode.addListener(_handleFocusChange);
-
-    if (widget.initialValue != null) {
-      _controller.text = widget.initialValue!;
-    }
-  }
-
-  void _handleTextChange() {
-    setState(() {
-      _hasText = _controller.text.isNotEmpty;
-    });
-  }
-
-  void _handleFocusChange() {
-    setState(() {
-      _hasFocus = _focusNode.hasFocus;
-      if (_hasFocus || _hasText) {
-        _animationController.forward();
-      } else {
-        _animationController.reverse();
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _controller.removeListener(_handleTextChange);
-    _focusNode.removeListener(_handleFocusChange);
-    if (widget.controller == null) _controller.dispose();
-    if (widget.focusNode == null) _focusNode.dispose();
-    _animationController.dispose();
-    super.dispose();
-  }
-
-  TextInputType _getTextInputType() {
-    switch (widget.inputType) {
-      case YoInputType.email:
-        return TextInputType.emailAddress;
-      case YoInputType.phone:
-        return TextInputType.phone;
-      case YoInputType.number:
-      case YoInputType.currency:
-        return TextInputType.number;
-      case YoInputType.url:
-        return TextInputType.url;
-      case YoInputType.multiline:
-        return TextInputType.multiline;
-      case YoInputType.search:
-        return TextInputType.text;
-      default:
-        return TextInputType.text;
-    }
-  }
-
-  List<TextInputFormatter> _getInputFormatters() {
-    final formatters = <TextInputFormatter>[];
-    if (widget.inputFormatters != null) {
-      formatters.addAll(widget.inputFormatters!);
-    }
-    switch (widget.inputType) {
-      case YoInputType.number:
-        formatters.add(FilteringTextInputFormatter.digitsOnly);
-        break;
-      case YoInputType.currency:
-        formatters.add(CurrencyTextInputFormatter());
-        break;
-      case YoInputType.phone:
-        formatters.add(PhoneNumberFormatter());
-        break;
-      default:
-        break;
-    }
-    return formatters;
-  }
-
-  String? _validateInput(String? value) {
-    if (widget.validator != null) return widget.validator!(value);
-    if (widget.isRequired && (value == null || value.isEmpty)) {
-      return 'This field is required';
-    }
-    switch (widget.inputType) {
-      case YoInputType.email:
-        final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-        if (value != null && value.isNotEmpty && !emailRegex.hasMatch(value)) {
-          return 'Please enter a valid email';
-        }
-        break;
-      case YoInputType.phone:
-        final phoneRegex = RegExp(r'^\+?[\d\s-]{10,}$');
-        if (value != null && value.isNotEmpty && !phoneRegex.hasMatch(value)) {
-          return 'Please enter a valid phone number';
-        }
-        break;
-      case YoInputType.url:
-        final urlRegex = RegExp(
-          r'^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$',
-        );
-        if (value != null && value.isNotEmpty && !urlRegex.hasMatch(value)) {
-          return 'Please enter a valid URL';
-        }
-        break;
-      default:
-        break;
-    }
-    return null;
-  }
-
-  @override
   Widget build(BuildContext context) {
     /* ------------------------------------------------------ */
     /*  NOW 100 % YoUI color system – no Theme.of()!        */
@@ -280,8 +159,7 @@ class _YoTextFormFieldState extends State<YoTextFormField>
             children: [
               Text(
                 widget.labelText!,
-                style:
-                    widget.labelStyle ??
+                style: widget.labelStyle ??
                     TextStyle(
                       color: _hasFocus ? focusedBorderColor : context.gray600,
                       fontSize: 14,
@@ -321,15 +199,13 @@ class _YoTextFormFieldState extends State<YoTextFormField>
           onChanged: widget.onChanged,
           onFieldSubmitted: widget.onSubmitted,
           onTap: widget.onTap,
-          style:
-              widget.textStyle ??
+          style: widget.textStyle ??
               TextStyle(color: context.textColor, fontSize: 16),
           textAlign: widget.textAlign,
           expands: widget.expands,
           inputFormatters: _getInputFormatters(),
           enableInteractiveSelection: widget.enableInteractiveSelection,
-          decoration:
-              widget.decoration ??
+          decoration: widget.decoration ??
               _buildInputDecoration(
                 context,
                 borderColor,
@@ -348,11 +224,11 @@ class _YoTextFormFieldState extends State<YoTextFormField>
                     style: TextStyle(color: errorBorderColor, fontSize: 12),
                   )
                 : widget.helperText != null
-                ? Text(
-                    widget.helperText!,
-                    style: TextStyle(color: context.gray500, fontSize: 12),
-                  )
-                : const SizedBox.shrink(),
+                    ? Text(
+                        widget.helperText!,
+                        style: TextStyle(color: context.gray500, fontSize: 12),
+                      )
+                    : const SizedBox.shrink(),
           ),
         ],
         if (widget.showCharacterCounter && widget.maxLength != null) ...[
@@ -368,6 +244,106 @@ class _YoTextFormFieldState extends State<YoTextFormField>
           ),
         ],
       ],
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.removeListener(_handleTextChange);
+    _focusNode.removeListener(_handleFocusChange);
+    if (widget.controller == null) _controller.dispose();
+    if (widget.focusNode == null) _focusNode.dispose();
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = widget.controller ?? TextEditingController();
+    _focusNode = widget.focusNode ?? FocusNode();
+    _obscureText = widget.obscureText;
+    _hasText = _controller.text.isNotEmpty;
+
+    _animationController = AnimationController(
+      duration: widget.animationDuration,
+      vsync: this,
+    );
+
+    _controller.addListener(_handleTextChange);
+    _focusNode.addListener(_handleFocusChange);
+
+    if (widget.initialValue != null) {
+      _controller.text = widget.initialValue!;
+    }
+  }
+
+  InputDecoration _buildFilledDecoration(
+    BuildContext context,
+    Color borderColor,
+    Color focusedBorderColor,
+    Color errorBorderColor,
+  ) {
+    return InputDecoration(
+      labelText: widget.showLabelAlways ? null : widget.labelText,
+      hintText: widget.hintText,
+      prefixIcon: widget.prefixIcon,
+      suffixIcon: _buildSuffixIcon(),
+      filled: true,
+      fillColor: widget.fillColor ?? context.gray100,
+      contentPadding: widget.contentPadding ??
+          const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(widget.borderRadius),
+        borderSide: BorderSide.none,
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(widget.borderRadius),
+        borderSide: BorderSide.none,
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(widget.borderRadius),
+        borderSide: BorderSide(
+          color: focusedBorderColor,
+          width: widget.focusedBorderWidth,
+        ),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(widget.borderRadius),
+        borderSide: BorderSide(
+          color: errorBorderColor,
+          width: widget.focusedBorderWidth,
+        ),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(widget.borderRadius),
+        borderSide: BorderSide(
+          color: errorBorderColor,
+          width: widget.focusedBorderWidth,
+        ),
+      ),
+      labelStyle: widget.labelStyle ?? TextStyle(color: context.gray600),
+      hintStyle: widget.hintStyle ?? TextStyle(color: context.gray400),
+      errorStyle: const TextStyle(height: 0, fontSize: 0),
+    );
+  }
+
+  InputDecoration _buildFloatingDecoration(
+    BuildContext context,
+    Color borderColor,
+    Color focusedBorderColor,
+    Color errorBorderColor,
+  ) {
+    return _buildOutlinedDecoration(
+      context,
+      borderColor,
+      focusedBorderColor,
+      errorBorderColor,
+    ).copyWith(
+      floatingLabelBehavior: FloatingLabelBehavior.always,
+      labelStyle: (_hasFocus || _hasText)
+          ? TextStyle(color: focusedBorderColor, fontSize: 12)
+          : TextStyle(color: context.gray400, fontSize: 16),
     );
   }
 
@@ -413,7 +389,97 @@ class _YoTextFormFieldState extends State<YoTextFormField>
           focusedBorderColor,
           errorBorderColor,
         );
+      case YoInputStyle.none:
+        return _buildNoneDecoration(
+          context,
+          borderColor,
+          focusedBorderColor,
+          errorBorderColor,
+        );
     }
+  }
+
+  InputDecoration _buildModernDecoration(
+    BuildContext context,
+    Color borderColor,
+    Color focusedBorderColor,
+    Color errorBorderColor,
+  ) {
+    return InputDecoration(
+      labelText: widget.showLabelAlways ? null : widget.labelText,
+      hintText: widget.hintText,
+      prefixIcon: widget.prefixIcon,
+      suffixIcon: _buildSuffixIcon(),
+      filled: true,
+      fillColor: widget.fillColor ??
+          (_hasFocus ? focusedBorderColor.withOpacity(0.05) : context.gray100),
+      contentPadding: widget.contentPadding ??
+          const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(widget.borderRadius * 1.5),
+        borderSide: BorderSide(
+          color: borderColor,
+          width: widget.enabledBorderWidth,
+        ),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(widget.borderRadius * 1.5),
+        borderSide: BorderSide(
+          color: borderColor,
+          width: widget.enabledBorderWidth,
+        ),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(widget.borderRadius * 1.5),
+        borderSide: BorderSide(
+          color: focusedBorderColor,
+          width: widget.focusedBorderWidth,
+        ),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(widget.borderRadius * 1.5),
+        borderSide: BorderSide(
+          color: errorBorderColor,
+          width: widget.focusedBorderWidth,
+        ),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(widget.borderRadius * 1.5),
+        borderSide: BorderSide(
+          color: errorBorderColor,
+          width: widget.focusedBorderWidth,
+        ),
+      ),
+      labelStyle: widget.labelStyle ?? TextStyle(color: context.gray600),
+      hintStyle: widget.hintStyle ?? TextStyle(color: context.gray400),
+      errorStyle: const TextStyle(height: 0, fontSize: 0),
+    );
+  }
+
+  InputDecoration _buildNoneDecoration(
+    BuildContext context,
+    Color borderColor,
+    Color focusedBorderColor,
+    Color errorBorderColor,
+  ) {
+    return InputDecoration(
+      labelText: widget.showLabelAlways ? null : widget.labelText,
+      hintText: widget.hintText,
+      prefixIcon: widget.prefixIcon,
+      suffixIcon: _buildSuffixIcon(),
+      filled: false,
+      contentPadding: widget.contentPadding ??
+          const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
+      border: InputBorder.none,
+      enabledBorder: InputBorder.none,
+      focusedBorder: InputBorder.none,
+      errorBorder: InputBorder.none,
+      focusedErrorBorder: InputBorder.none,
+      disabledBorder: InputBorder.none,
+      labelStyle: widget.labelStyle ?? TextStyle(color: context.gray600),
+      hintStyle: widget.hintStyle ?? TextStyle(color: context.gray400),
+      errorStyle: const TextStyle(height: 0, fontSize: 0),
+    );
   }
 
   /* ------------------------------------------------------ */
@@ -431,8 +497,7 @@ class _YoTextFormFieldState extends State<YoTextFormField>
       prefixIcon: widget.prefixIcon,
       suffixIcon: _buildSuffixIcon(),
       filled: false,
-      contentPadding:
-          widget.contentPadding ??
+      contentPadding: widget.contentPadding ??
           const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(widget.borderRadius),
@@ -478,187 +543,7 @@ class _YoTextFormFieldState extends State<YoTextFormField>
       ),
       labelStyle: widget.labelStyle ?? TextStyle(color: context.gray600),
       hintStyle: widget.hintStyle ?? TextStyle(color: context.gray400),
-      errorStyle: TextStyle(color: errorBorderColor),
-    );
-  }
-
-  InputDecoration _buildFilledDecoration(
-    BuildContext context,
-    Color borderColor,
-    Color focusedBorderColor,
-    Color errorBorderColor,
-  ) {
-    return InputDecoration(
-      labelText: widget.showLabelAlways ? null : widget.labelText,
-      hintText: widget.hintText,
-      prefixIcon: widget.prefixIcon,
-      suffixIcon: _buildSuffixIcon(),
-      filled: true,
-      fillColor: widget.fillColor ?? context.gray100,
-      contentPadding:
-          widget.contentPadding ??
-          const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(widget.borderRadius),
-        borderSide: BorderSide.none,
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(widget.borderRadius),
-        borderSide: BorderSide.none,
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(widget.borderRadius),
-        borderSide: BorderSide(
-          color: focusedBorderColor,
-          width: widget.focusedBorderWidth,
-        ),
-      ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(widget.borderRadius),
-        borderSide: BorderSide(
-          color: errorBorderColor,
-          width: widget.focusedBorderWidth,
-        ),
-      ),
-      focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(widget.borderRadius),
-        borderSide: BorderSide(
-          color: errorBorderColor,
-          width: widget.focusedBorderWidth,
-        ),
-      ),
-      labelStyle: widget.labelStyle ?? TextStyle(color: context.gray600),
-      hintStyle: widget.hintStyle ?? TextStyle(color: context.gray400),
-      errorStyle: TextStyle(color: errorBorderColor),
-    );
-  }
-
-  InputDecoration _buildUnderlineDecoration(
-    BuildContext context,
-    Color borderColor,
-    Color focusedBorderColor,
-    Color errorBorderColor,
-  ) {
-    return InputDecoration(
-      labelText: widget.showLabelAlways ? null : widget.labelText,
-      hintText: widget.hintText,
-      prefixIcon: widget.prefixIcon,
-      suffixIcon: _buildSuffixIcon(),
-      filled: false,
-      contentPadding:
-          widget.contentPadding ??
-          const EdgeInsets.symmetric(horizontal: 0, vertical: 16),
-      border: UnderlineInputBorder(
-        borderSide: BorderSide(
-          color: borderColor,
-          width: widget.enabledBorderWidth,
-        ),
-      ),
-      enabledBorder: UnderlineInputBorder(
-        borderSide: BorderSide(
-          color: borderColor,
-          width: widget.enabledBorderWidth,
-        ),
-      ),
-      focusedBorder: UnderlineInputBorder(
-        borderSide: BorderSide(
-          color: focusedBorderColor,
-          width: widget.focusedBorderWidth,
-        ),
-      ),
-      errorBorder: UnderlineInputBorder(
-        borderSide: BorderSide(
-          color: errorBorderColor,
-          width: widget.focusedBorderWidth,
-        ),
-      ),
-      focusedErrorBorder: UnderlineInputBorder(
-        borderSide: BorderSide(
-          color: errorBorderColor,
-          width: widget.focusedBorderWidth,
-        ),
-      ),
-      labelStyle: widget.labelStyle ?? TextStyle(color: context.gray600),
-      hintStyle: widget.hintStyle ?? TextStyle(color: context.gray400),
-      errorStyle: TextStyle(color: errorBorderColor),
-    );
-  }
-
-  InputDecoration _buildFloatingDecoration(
-    BuildContext context,
-    Color borderColor,
-    Color focusedBorderColor,
-    Color errorBorderColor,
-  ) {
-    return _buildOutlinedDecoration(
-      context,
-      borderColor,
-      focusedBorderColor,
-      errorBorderColor,
-    ).copyWith(
-      floatingLabelBehavior: FloatingLabelBehavior.always,
-      labelStyle: (_hasFocus || _hasText)
-          ? TextStyle(color: focusedBorderColor, fontSize: 12)
-          : TextStyle(color: context.gray400, fontSize: 16),
-    );
-  }
-
-  InputDecoration _buildModernDecoration(
-    BuildContext context,
-    Color borderColor,
-    Color focusedBorderColor,
-    Color errorBorderColor,
-  ) {
-    return InputDecoration(
-      labelText: widget.showLabelAlways ? null : widget.labelText,
-      hintText: widget.hintText,
-      prefixIcon: widget.prefixIcon,
-      suffixIcon: _buildSuffixIcon(),
-      filled: true,
-      fillColor:
-          widget.fillColor ??
-          (_hasFocus ? focusedBorderColor.withOpacity(0.05) : context.gray100),
-      contentPadding:
-          widget.contentPadding ??
-          const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(widget.borderRadius * 1.5),
-        borderSide: BorderSide(
-          color: borderColor,
-          width: widget.enabledBorderWidth,
-        ),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(widget.borderRadius * 1.5),
-        borderSide: BorderSide(
-          color: borderColor,
-          width: widget.enabledBorderWidth,
-        ),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(widget.borderRadius * 1.5),
-        borderSide: BorderSide(
-          color: focusedBorderColor,
-          width: widget.focusedBorderWidth,
-        ),
-      ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(widget.borderRadius * 1.5),
-        borderSide: BorderSide(
-          color: errorBorderColor,
-          width: widget.focusedBorderWidth,
-        ),
-      ),
-      focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(widget.borderRadius * 1.5),
-        borderSide: BorderSide(
-          color: errorBorderColor,
-          width: widget.focusedBorderWidth,
-        ),
-      ),
-      labelStyle: widget.labelStyle ?? TextStyle(color: context.gray600),
-      hintStyle: widget.hintStyle ?? TextStyle(color: context.gray400),
-      errorStyle: TextStyle(color: errorBorderColor),
+      errorStyle: const TextStyle(height: 0, fontSize: 0),
     );
   }
 
@@ -692,5 +577,145 @@ class _YoTextFormFieldState extends State<YoTextFormField>
     if (icons.isEmpty) return null;
     if (icons.length == 1) return icons.first;
     return Row(mainAxisSize: MainAxisSize.min, children: icons);
+  }
+
+  InputDecoration _buildUnderlineDecoration(
+    BuildContext context,
+    Color borderColor,
+    Color focusedBorderColor,
+    Color errorBorderColor,
+  ) {
+    return InputDecoration(
+      labelText: widget.showLabelAlways ? null : widget.labelText,
+      hintText: widget.hintText,
+      prefixIcon: widget.prefixIcon,
+      suffixIcon: _buildSuffixIcon(),
+      filled: false,
+      contentPadding: widget.contentPadding ??
+          const EdgeInsets.symmetric(horizontal: 0, vertical: 16),
+      border: UnderlineInputBorder(
+        borderSide: BorderSide(
+          color: borderColor,
+          width: widget.enabledBorderWidth,
+        ),
+      ),
+      enabledBorder: UnderlineInputBorder(
+        borderSide: BorderSide(
+          color: borderColor,
+          width: widget.enabledBorderWidth,
+        ),
+      ),
+      focusedBorder: UnderlineInputBorder(
+        borderSide: BorderSide(
+          color: focusedBorderColor,
+          width: widget.focusedBorderWidth,
+        ),
+      ),
+      errorBorder: UnderlineInputBorder(
+        borderSide: BorderSide(
+          color: errorBorderColor,
+          width: widget.focusedBorderWidth,
+        ),
+      ),
+      focusedErrorBorder: UnderlineInputBorder(
+        borderSide: BorderSide(
+          color: errorBorderColor,
+          width: widget.focusedBorderWidth,
+        ),
+      ),
+      labelStyle: widget.labelStyle ?? TextStyle(color: context.gray600),
+      hintStyle: widget.hintStyle ?? TextStyle(color: context.gray400),
+      errorStyle: const TextStyle(height: 0, fontSize: 0),
+    );
+  }
+
+  List<TextInputFormatter> _getInputFormatters() {
+    final formatters = <TextInputFormatter>[];
+    if (widget.inputFormatters != null) {
+      formatters.addAll(widget.inputFormatters!);
+    }
+    switch (widget.inputType) {
+      case YoInputType.number:
+        formatters.add(FilteringTextInputFormatter.digitsOnly);
+        break;
+      case YoInputType.currency:
+        formatters.add(CurrencyTextInputFormatter());
+        break;
+      case YoInputType.phone:
+        formatters.add(PhoneNumberFormatter());
+        break;
+      default:
+        break;
+    }
+    return formatters;
+  }
+
+  TextInputType _getTextInputType() {
+    switch (widget.inputType) {
+      case YoInputType.email:
+        return TextInputType.emailAddress;
+      case YoInputType.phone:
+        return TextInputType.phone;
+      case YoInputType.number:
+      case YoInputType.currency:
+        return TextInputType.number;
+      case YoInputType.url:
+        return TextInputType.url;
+      case YoInputType.multiline:
+        return TextInputType.multiline;
+      case YoInputType.search:
+        return TextInputType.text;
+      default:
+        return TextInputType.text;
+    }
+  }
+
+  void _handleFocusChange() {
+    setState(() {
+      _hasFocus = _focusNode.hasFocus;
+      if (_hasFocus || _hasText) {
+        _animationController.forward();
+      } else {
+        _animationController.reverse();
+      }
+    });
+  }
+
+  void _handleTextChange() {
+    setState(() {
+      _hasText = _controller.text.isNotEmpty;
+    });
+  }
+
+  String? _validateInput(String? value) {
+    if (widget.validator != null) return widget.validator!(value);
+    if (widget.isRequired && (value == null || value.isEmpty)) {
+      return 'This field is required';
+    }
+    switch (widget.inputType) {
+      case YoInputType.email:
+        final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+        if (value != null && value.isNotEmpty && !emailRegex.hasMatch(value)) {
+          return 'Please enter a valid email';
+        }
+        break;
+      case YoInputType.phone:
+        final phoneRegex = RegExp(r'^\+?[\d\s-]{10,}$');
+        if (value != null && value.isNotEmpty && !phoneRegex.hasMatch(value)) {
+          return 'Please enter a valid phone number';
+        }
+        break;
+      case YoInputType.url:
+        final urlRegex = RegExp(
+          r'^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$',
+        );
+        if (value != null && value.isNotEmpty && !urlRegex.hasMatch(value)) {
+          return 'Please enter a valid URL';
+        }
+        break;
+      default:
+        break;
+    }
+    return null;
   }
 }

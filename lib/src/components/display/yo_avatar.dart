@@ -1,12 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:yo_ui/yo_ui.dart';
 
-enum YoAvatarSize { xs, sm, md, lg, xl }
-
-enum YoAvatarVariant { circle, rounded, square }
-
 /// Avatar widget dengan berbagai konfigurasi
 class YoAvatar extends StatelessWidget {
+  static const sizeMap = {
+    YoAvatarSize.xs: 24.0,
+    YoAvatarSize.sm: 32.0,
+    YoAvatarSize.md: 40.0,
+    YoAvatarSize.lg: 56.0,
+    YoAvatarSize.xl: 72.0,
+  };
+  static const _textSizeMap = {
+    YoAvatarSize.xs: 10.0,
+    YoAvatarSize.sm: 12.0,
+    YoAvatarSize.md: 14.0,
+    YoAvatarSize.lg: 18.0,
+    YoAvatarSize.xl: 24.0,
+  };
+  static const _iconSizeMap = {
+    YoAvatarSize.xs: 12.0,
+    YoAvatarSize.sm: 16.0,
+    YoAvatarSize.md: 20.0,
+    YoAvatarSize.lg: 28.0,
+    YoAvatarSize.xl: 36.0,
+  };
+  static const _badgeSizeMap = {
+    YoAvatarSize.xs: 8.0,
+    YoAvatarSize.sm: 10.0,
+    YoAvatarSize.md: 12.0,
+    YoAvatarSize.lg: 14.0,
+    YoAvatarSize.xl: 16.0,
+  };
   final String? imageUrl;
   final String? text;
   final IconData? icon;
@@ -18,9 +42,13 @@ class YoAvatar extends StatelessWidget {
   final double? borderRadius;
   final bool showBadge;
   final Color? badgeColor;
+
   final Widget? customBadge;
+
   final VoidCallback? onTap;
+
   final double? borderWidth;
+
   final Color? borderColor;
 
   const YoAvatar({
@@ -41,47 +69,9 @@ class YoAvatar extends StatelessWidget {
     this.borderWidth,
     this.borderColor,
   }) : assert(
-         imageUrl != null || text != null || icon != null,
-         'Either imageUrl, text, or icon must be provided',
-       );
-
-  /// Image avatar
-  const YoAvatar.image({
-    super.key,
-    required this.imageUrl,
-    this.size = YoAvatarSize.md,
-    this.variant = YoAvatarVariant.circle,
-    this.borderRadius,
-    this.showBadge = false,
-    this.badgeColor,
-    this.customBadge,
-    this.onTap,
-    this.borderWidth,
-    this.borderColor,
-  }) : text = null,
-       icon = null,
-       backgroundColor = null,
-       textColor = null,
-       iconColor = null;
-
-  /// Text/initials avatar
-  const YoAvatar.text({
-    super.key,
-    required this.text,
-    this.backgroundColor,
-    this.textColor,
-    this.size = YoAvatarSize.md,
-    this.variant = YoAvatarVariant.circle,
-    this.borderRadius,
-    this.showBadge = false,
-    this.badgeColor,
-    this.customBadge,
-    this.onTap,
-    this.borderWidth,
-    this.borderColor,
-  }) : imageUrl = null,
-       icon = null,
-       iconColor = null;
+          imageUrl != null || text != null || icon != null,
+          'Either imageUrl, text, or icon must be provided',
+        );
 
   /// Icon avatar
   const YoAvatar.icon({
@@ -98,44 +88,50 @@ class YoAvatar extends StatelessWidget {
     this.onTap,
     this.borderWidth,
     this.borderColor,
-  }) : imageUrl = null,
-       text = null,
-       textColor = null;
+  })  : imageUrl = null,
+        text = null,
+        textColor = null;
+
+  /// Image avatar
+  const YoAvatar.image({
+    super.key,
+    required this.imageUrl,
+    this.size = YoAvatarSize.md,
+    this.variant = YoAvatarVariant.circle,
+    this.borderRadius,
+    this.showBadge = false,
+    this.badgeColor,
+    this.customBadge,
+    this.onTap,
+    this.borderWidth,
+    this.borderColor,
+  })  : text = null,
+        icon = null,
+        backgroundColor = null,
+        textColor = null,
+        iconColor = null;
+
+  /// Text/initials avatar
+  const YoAvatar.text({
+    super.key,
+    required this.text,
+    this.backgroundColor,
+    this.textColor,
+    this.size = YoAvatarSize.md,
+    this.variant = YoAvatarVariant.circle,
+    this.borderRadius,
+    this.showBadge = false,
+    this.badgeColor,
+    this.customBadge,
+    this.onTap,
+    this.borderWidth,
+    this.borderColor,
+  })  : imageUrl = null,
+        icon = null,
+        iconColor = null;
 
   /// Get pixel size from enum
   double get pixelSize => sizeMap[size]!;
-
-  static const sizeMap = {
-    YoAvatarSize.xs: 24.0,
-    YoAvatarSize.sm: 32.0,
-    YoAvatarSize.md: 40.0,
-    YoAvatarSize.lg: 56.0,
-    YoAvatarSize.xl: 72.0,
-  };
-
-  static const _textSizeMap = {
-    YoAvatarSize.xs: 10.0,
-    YoAvatarSize.sm: 12.0,
-    YoAvatarSize.md: 14.0,
-    YoAvatarSize.lg: 18.0,
-    YoAvatarSize.xl: 24.0,
-  };
-
-  static const _iconSizeMap = {
-    YoAvatarSize.xs: 12.0,
-    YoAvatarSize.sm: 16.0,
-    YoAvatarSize.md: 20.0,
-    YoAvatarSize.lg: 28.0,
-    YoAvatarSize.xl: 36.0,
-  };
-
-  static const _badgeSizeMap = {
-    YoAvatarSize.xs: 8.0,
-    YoAvatarSize.sm: 10.0,
-    YoAvatarSize.md: 12.0,
-    YoAvatarSize.lg: 14.0,
-    YoAvatarSize.xl: 16.0,
-  };
 
   @override
   Widget build(BuildContext context) {
@@ -147,9 +143,7 @@ class YoAvatar extends StatelessWidget {
       height: avatarSize,
       decoration: BoxDecoration(
         borderRadius: effectiveBorderRadius,
-        color:
-            backgroundColor ??
-            Theme.of(context).colorScheme.surfaceContainerHighest,
+        color: backgroundColor ?? context.gray100,
         border: borderWidth != null
             ? Border.all(
                 color: borderColor ?? context.backgroundColor,
@@ -181,6 +175,18 @@ class YoAvatar extends StatelessWidget {
     return avatarContent;
   }
 
+  Widget _buildBadge(BuildContext context) {
+    return Container(
+      width: _badgeSizeMap[size],
+      height: _badgeSizeMap[size],
+      decoration: BoxDecoration(
+        color: badgeColor ?? context.primaryColor,
+        shape: BoxShape.circle,
+        border: Border.all(color: context.backgroundColor, width: 1.5),
+      ),
+    );
+  }
+
   Widget _buildContent(BuildContext context) {
     if (imageUrl != null) {
       return ClipRRect(
@@ -201,7 +207,7 @@ class YoAvatar extends StatelessWidget {
                   strokeWidth: 2,
                   value: progress.expectedTotalBytes != null
                       ? progress.cumulativeBytesLoaded /
-                            progress.expectedTotalBytes!
+                          progress.expectedTotalBytes!
                       : null,
                 ),
               ),
@@ -219,7 +225,7 @@ class YoAvatar extends StatelessWidget {
         child: Text(
           _getInitials(text!),
           style: TextStyle(
-            color: textColor ?? Theme.of(context).colorScheme.onSurfaceVariant,
+            color: textColor ?? context.gray600,
             fontSize: _textSizeMap[size],
             fontWeight: FontWeight.w600,
           ),
@@ -231,31 +237,9 @@ class YoAvatar extends StatelessWidget {
       child: Icon(
         icon ?? Icons.person,
         size: _iconSizeMap[size],
-        color: iconColor ?? Theme.of(context).colorScheme.onSurfaceVariant,
+        color: iconColor ?? context.gray500,
       ),
     );
-  }
-
-  Widget _buildBadge(BuildContext context) {
-    return Container(
-      width: _badgeSizeMap[size],
-      height: _badgeSizeMap[size],
-      decoration: BoxDecoration(
-        color: badgeColor ?? context.primaryColor,
-        shape: BoxShape.circle,
-        border: Border.all(color: context.backgroundColor, width: 1.5),
-      ),
-    );
-  }
-
-  String _getInitials(String name) {
-    final parts = name.trim().split(' ');
-    if (parts.length == 1) {
-      return parts[0].length > 1
-          ? parts[0].substring(0, 2).toUpperCase()
-          : parts[0].toUpperCase();
-    }
-    return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
   }
 
   BorderRadius _getBorderRadius(double avatarSize) {
@@ -268,4 +252,18 @@ class YoAvatar extends StatelessWidget {
         return BorderRadius.circular(borderRadius ?? 4);
     }
   }
+
+  String _getInitials(String name) {
+    final parts = name.trim().split(' ');
+    if (parts.length == 1) {
+      return parts[0].length > 1
+          ? parts[0].substring(0, 2).toUpperCase()
+          : parts[0].toUpperCase();
+    }
+    return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
+  }
 }
+
+enum YoAvatarSize { xs, sm, md, lg, xl }
+
+enum YoAvatarVariant { circle, rounded, square }

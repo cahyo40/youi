@@ -5,6 +5,67 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.2] - 2026-01-09
+
+### Added
+
+#### 🎉 New Components (19 total)
+
+**Form Components (6):**
+- `YoForm` - Form validation wrapper with submit handling
+- `YoFileUpload` - File upload widget with progress and drag-drop
+- `YoSearchField` - Search input with debounce and suggestions dropdown
+- `YoOtpField` - OTP/PIN input with auto-focus, paste support, and backspace navigation
+- `YoChipInput` - Tag/chip input with suggestions and max limit
+- `YoRangeSlider` - Dual-thumb range slider with labels
+
+**Display Components (3):**
+- `YoCarousel` - Image slider with auto-play, indicators, and infinite scroll
+- `YoDataTable` - Sortable data table with selection and horizontal scroll
+- `YoExpansionPanel` - Accordion-style expansion panels (single & list variants)
+
+**Navigation Components (3):**
+- `YoPagination` - Page navigation with first/last/prev/next buttons
+- `YoStepper` - Multi-step wizard (vertical & horizontal layouts)
+- `YoBreadcrumb` - Breadcrumb navigation trail with max items collapse
+
+**Feedback Components (4):**
+- `YoShimmer` - Shimmer loading effect with presets (card, listTile, image)
+- `YoToast` - Toast notifications (success/error/info/warning variants)
+- `YoModal` - Bottom sheet modal with drag handle and custom height
+- `YoBanner` - Info banner with dismissible and action button support
+
+**Layout Components (1):**
+- `YoMasonryGrid` - Pinterest-style grid with responsive variant
+
+**Utility Components (2):**
+- `YoInfiniteScroll` - Lazy loading list with threshold trigger
+- `YoFAB.SpeedDial` - Floating action button with expandable menu
+
+#### ✨ Enhanced Shadow System (`YoBoxShadow`)
+
+Added 17+ new shadow variants:
+- **State Shadows**: `hover`, `pressed` - Interactive state shadows
+- **Special Effects**: `directional`, `neumorphic`, `inner`, `outline` - Design-specific shadows
+- **Colored Shadows**: `success`, `error`, `warning`, `info` - Status-based shadows
+- **Material Elevations**: `elevation0` through `elevation24` - Material Design levels
+- **Size Variants**: `xxl` - Maximum depth shadow
+
+Total shadow options: **26+ variants** with dark/light mode auto-adjustment
+
+### Changed
+- Enhanced component documentation with dart doc comments
+- Improved type safety across all new components
+- Updated shadow system for better consistency
+
+### Fixed
+- File picker API compatibility with `YoMultiFilePickerResult`
+- `YoButton` variant naming (text → ghost)
+- YoStepper button initialization syntax
+- Various compilation warnings and type mismatches
+
+---
+
 ## [1.1.4] - 2026-01-01
 
 ### Added

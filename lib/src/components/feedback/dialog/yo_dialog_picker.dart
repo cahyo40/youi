@@ -25,20 +25,26 @@ abstract final class YoDialogPicker {
     );
   }
 
-  /// Show time picker dialog
-  static Future<TimeOfDay?> time({
+  /// Show date range picker
+  static Future<DateTimeRange?> dateRange({
     required BuildContext context,
-    TimeOfDay? initialTime,
+    DateTimeRange? initialDateRange,
+    DateTime? firstDate,
+    DateTime? lastDate,
     String? helpText,
     String? cancelText,
     String? confirmText,
+    String? saveText,
   }) async {
-    return showTimePicker(
+    return showDateRangePicker(
       context: context,
-      initialTime: initialTime ?? TimeOfDay.now(),
+      initialDateRange: initialDateRange,
+      firstDate: firstDate ?? DateTime(1900),
+      lastDate: lastDate ?? DateTime(2100),
       helpText: helpText,
       cancelText: cancelText,
       confirmText: confirmText,
+      saveText: saveText,
       builder: (context, child) => _themedDialog(context, child),
     );
   }
@@ -77,28 +83,70 @@ abstract final class YoDialogPicker {
     );
   }
 
-  /// Show date range picker
-  static Future<DateTimeRange?> dateRange({
+  /// Show month picker dialog
+  static Future<DateTime?> month({
     required BuildContext context,
-    DateTimeRange? initialDateRange,
+    DateTime? initialDate,
     DateTime? firstDate,
     DateTime? lastDate,
     String? helpText,
     String? cancelText,
     String? confirmText,
-    String? saveText,
   }) async {
-    return showDateRangePicker(
+    return showDatePicker(
       context: context,
-      initialDateRange: initialDateRange,
+      initialDate: initialDate ?? DateTime.now(),
       firstDate: firstDate ?? DateTime(1900),
       lastDate: lastDate ?? DateTime(2100),
+      helpText: helpText ?? 'Select Month',
+      cancelText: cancelText,
+      confirmText: confirmText,
+      initialDatePickerMode: DatePickerMode.year,
+      builder: (context, child) => _themedDialog(context, child),
+    );
+  }
+
+  /// Show time picker dialog
+  static Future<TimeOfDay?> time({
+    required BuildContext context,
+    TimeOfDay? initialTime,
+    String? helpText,
+    String? cancelText,
+    String? confirmText,
+  }) async {
+    return showTimePicker(
+      context: context,
+      initialTime: initialTime ?? TimeOfDay.now(),
       helpText: helpText,
       cancelText: cancelText,
       confirmText: confirmText,
-      saveText: saveText,
       builder: (context, child) => _themedDialog(context, child),
     );
+  }
+
+  /// Show year picker dialog
+  static Future<int?> year({
+    required BuildContext context,
+    int? initialYear,
+    int? firstYear,
+    int? lastYear,
+    String? helpText,
+    String? cancelText,
+    String? confirmText,
+  }) async {
+    final selectedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime(initialYear ?? DateTime.now().year),
+      firstDate: DateTime(firstYear ?? 1900),
+      lastDate: DateTime(lastYear ?? 2100),
+      helpText: helpText ?? 'Select Year',
+      cancelText: cancelText,
+      confirmText: confirmText,
+      initialDatePickerMode: DatePickerMode.year,
+      builder: (context, child) => _themedDialog(context, child),
+    );
+
+    return selectedDate?.year;
   }
 
   /// Apply theme to picker dialogs
