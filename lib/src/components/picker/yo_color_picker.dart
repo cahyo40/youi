@@ -731,19 +731,24 @@ class _YoColorPickerState extends State<YoColorPicker> {
                     ],
                     if (widget.showHexInput)
                       Expanded(
-                        child: TextField(
+                        child: YoTextFormField(
                           controller: _hexController,
-                          decoration: InputDecoration(
-                            labelText: 'Hex Color',
-                            prefixText: '#',
-                            filled: true,
-                            fillColor: context.gray100,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide.none,
+                          labelText: 'Hex Color',
+                          hintText: 'FFFFFF',
+                          inputStyle: YoInputStyle.filled,
+                          borderRadius: 8.0,
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 12),
+                          prefixIcon: Padding(
+                            padding: const EdgeInsets.only(left: 12),
+                            child: Text(
+                              '#',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: context.gray600,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
-                            contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 12),
                           ),
                           inputFormatters: [
                             FilteringTextInputFormatter.allow(

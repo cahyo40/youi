@@ -20,34 +20,18 @@ A comprehensive, production-ready Flutter UI library with **90+ components**, **
 | 📊 **Charts** | Line, Bar, Pie/Donut charts with fl_chart |
 | 🚀 **Production Ready** | Battle-tested components with zero errors |
 
-## 🆕 What's New in v0.0.2 (Latest)
+## 🆕 What's New in v0.0.3 (Latest)
 
-Just added **19 powerful new components**! Check out the highlights:
+### 📅 Month Picker Improvements
+- **YoMonthPicker** - Now shows custom dialog with month/year only (no date picker)
+  - Returns `DateTimeRange` (first to last day of selected month)
+  - 3x4 month grid with year navigation
+- **YoDialogPicker.monthRange()** - New method for month selection dialog
 
-### 📱 Form Components
-- **YoOtpField** - OTP/PIN input with paste support & auto-focus
-- **YoSearchField** - Search with debounce & suggestions dropdown
-- **YoFileUpload** - File upload with progress indicator
-- **YoChipInput** - Tag/chip input with autocomplete
-- **YoRangeSlider** - Dual-thumb range selection
-- **YoForm** - Form validation wrapper
+### 🎨 Styling Consistency
+- **YoIconPicker** & **YoColorPicker** now use `YoTextFormField` for consistent styling
 
-### 🎯 Navigation & Display
-- **YoStepper** - Multi-step wizard (vertical/horizontal)
-- **YoPagination** - Page navigation controls
-- **YoBreadcrumb** - Navigation trail with icons
-- **YoCarousel** - Auto-play image slider
-- **YoDataTable** - Sortable table with selection
-- **YoExpansionPanel** - Accordion panels
-
-### 🎨 Feedback & Layout
-- **YoToast** - Beautiful toast notifications
-- **YoShimmer** - Loading skeleton effects
-- **YoModal** - Bottom sheet modals
-- **YoBanner** - Dismissible info banners
-- **YoMasonryGrid** - Pinterest-style grid
-- **YoInfiniteScroll** - Lazy loading lists
-- **YoFAB.SpeedDial** - Expandable FAB menu
+> ⚠️ **Breaking Change**: `YoMonthPicker` now uses `DateTimeRange` instead of `DateTime`
 
 > See [CHANGELOG.md](CHANGELOG.md) for full details
 
@@ -650,11 +634,20 @@ YoDateRangePicker.compact(
   onRangeChanged: (range) => setState(() => dateRange = range),
 )
 
+// Month Picker (returns DateTimeRange for entire month)
+YoMonthPicker(
+  selectedRange: monthRange, // DateTimeRange
+  labelText: 'Select Month',
+  onMonthChanged: (range) => setState(() => monthRange = range),
+  // range.start = first day of month, range.end = last day of month
+)
+
 // Dialog Pickers (programmatic)
 final date = await YoDialogPicker.date(context: context);
 final time = await YoDialogPicker.time(context: context);
 final dateTime = await YoDialogPicker.dateTime(context: context);
 final dateRange = await YoDialogPicker.dateRange(context: context);
+final monthRange = await YoDialogPicker.monthRange(context: context); // NEW
 ```
 
 ### Icon Picker

@@ -46,10 +46,242 @@ class YoIconData {
   });
 }
 
+/// Icon picker widget
+class YoIconPicker extends StatefulWidget {
+  /// Currently selected icon
+  final IconData? selectedIcon;
+
+  /// Callback when an icon is selected
+  final ValueChanged<IconData> onIconSelected;
+
+  /// Initially selected category
+  final YoIconCategory initialCategory;
+
+  /// Icon size in the grid
+  final double iconSize;
+
+  /// Number of columns in the grid
+  final int crossAxisCount;
+
+  /// Whether to show the search bar
+  final bool showSearch;
+
+  /// Whether to show category tabs
+  final bool showCategories;
+
+  /// Label text
+  final String? labelText;
+
+  /// Hint text for search
+  final String searchHint;
+
+  /// Height of the picker
+  final double height;
+
+  /// Background color
+  final Color? backgroundColor;
+
+  /// Selected icon color
+  final Color? selectedColor;
+
+  const YoIconPicker({
+    super.key,
+    this.selectedIcon,
+    required this.onIconSelected,
+    this.initialCategory = YoIconCategory.all,
+    this.iconSize = 24,
+    this.crossAxisCount = 6,
+    this.showSearch = true,
+    this.showCategories = true,
+    this.labelText,
+    this.searchHint = 'Search icons...',
+    this.height = 300,
+    this.backgroundColor,
+    this.selectedColor,
+  });
+
+  @override
+  State<YoIconPicker> createState() => _YoIconPickerState();
+
+  /// Show icon picker as a bottom sheet
+  static Future<IconData?> showAsBottomSheet({
+    required BuildContext context,
+    IconData? selectedIcon,
+    YoIconCategory initialCategory = YoIconCategory.all,
+    String title = 'Select Icon',
+  }) {
+    return showModalBottomSheet<IconData>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => _YoIconPickerBottomSheet(
+        selectedIcon: selectedIcon,
+        initialCategory: initialCategory,
+        title: title,
+      ),
+    );
+  }
+
+  /// Show icon picker as a dialog
+  static Future<IconData?> showAsDialog({
+    required BuildContext context,
+    IconData? selectedIcon,
+    YoIconCategory initialCategory = YoIconCategory.all,
+    String title = 'Select Icon',
+  }) {
+    return showDialog<IconData>(
+      context: context,
+      builder: (context) => _YoIconPickerDialog(
+        selectedIcon: selectedIcon,
+        initialCategory: initialCategory,
+        title: title,
+      ),
+    );
+  }
+}
+
+/// Icon picker button that shows picker on tap
+class YoIconPickerButton extends StatelessWidget {
+  /// Currently selected icon
+  final IconData? selectedIcon;
+
+  /// Callback when an icon is selected
+  final ValueChanged<IconData> onIconSelected;
+
+  /// Label text
+  final String? labelText;
+
+  /// Hint text when no icon is selected
+  final String hintText;
+
+  /// Border radius
+  final double borderRadius;
+
+  /// Border color
+  final Color? borderColor;
+
+  /// Background color
+  final Color? backgroundColor;
+
+  /// Picker type (bottom sheet or dialog)
+  final bool useDialog;
+
+  /// Picker title
+  final String pickerTitle;
+
+  const YoIconPickerButton({
+    super.key,
+    this.selectedIcon,
+    required this.onIconSelected,
+    this.labelText,
+    this.hintText = 'Select icon',
+    this.borderRadius = 8,
+    this.borderColor,
+    this.backgroundColor,
+    this.useDialog = false,
+    this.pickerTitle = 'Select Icon',
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => _showPicker(context),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: backgroundColor ?? context.backgroundColor,
+          borderRadius: BorderRadius.circular(borderRadius),
+          border: Border.all(color: borderColor ?? context.gray300, width: 1),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: selectedIcon != null
+                    ? context.primaryColor.withAlpha(30)
+                    : context.gray100,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: selectedIcon != null
+                      ? context.primaryColor
+                      : context.gray300,
+                ),
+              ),
+              child: Icon(
+                selectedIcon ?? Icons.add,
+                color: selectedIcon != null
+                    ? context.primaryColor
+                    : context.gray400,
+                size: 24,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (labelText != null) ...[
+                    YoText(
+                      labelText!,
+                      style:
+                          context.yoLabelSmall.copyWith(color: context.gray500),
+                    ),
+                    const SizedBox(height: 2),
+                  ],
+                  YoText(
+                    selectedIcon != null
+                        ? _getIconName(selectedIcon!)
+                        : hintText,
+                    style: context.yoBodyMedium.copyWith(
+                      color: selectedIcon != null
+                          ? context.textColor
+                          : context.gray400,
+                      fontWeight: selectedIcon != null
+                          ? FontWeight.w500
+                          : FontWeight.normal,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.keyboard_arrow_down, color: context.gray500),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _getIconName(IconData icon) {
+    final found = YoIcons.all.where((i) => i.icon == icon).firstOrNull;
+    return found?.name ?? 'Icon selected';
+  }
+
+  Future<void> _showPicker(BuildContext context) async {
+    final IconData? result;
+    if (useDialog) {
+      result = await YoIconPicker.showAsDialog(
+        context: context,
+        selectedIcon: selectedIcon,
+        title: pickerTitle,
+      );
+    } else {
+      result = await YoIconPicker.showAsBottomSheet(
+        context: context,
+        selectedIcon: selectedIcon,
+        title: pickerTitle,
+      );
+    }
+
+    if (result != null) {
+      onIconSelected(result);
+    }
+  }
+}
+
 /// Predefined icons organized by category
 class YoIcons {
-  YoIcons._();
-
   static const List<YoIconData> all = [
     // Action icons
     YoIconData(icon: Icons.add, name: 'add', category: YoIconCategory.action),
@@ -1040,6 +1272,8 @@ class YoIcons {
         category: YoIconCategory.toggle),
   ];
 
+  YoIcons._();
+
   /// Get icons by category
   static List<YoIconData> byCategory(YoIconCategory category) {
     if (category == YoIconCategory.all) return all;
@@ -1056,127 +1290,189 @@ class YoIcons {
   }
 }
 
-/// Icon picker widget
-class YoIconPicker extends StatefulWidget {
-  /// Currently selected icon
+/// Bottom sheet variant
+class _YoIconPickerBottomSheet extends StatefulWidget {
   final IconData? selectedIcon;
-
-  /// Callback when an icon is selected
-  final ValueChanged<IconData> onIconSelected;
-
-  /// Initially selected category
   final YoIconCategory initialCategory;
+  final String title;
 
-  /// Icon size in the grid
-  final double iconSize;
-
-  /// Number of columns in the grid
-  final int crossAxisCount;
-
-  /// Whether to show the search bar
-  final bool showSearch;
-
-  /// Whether to show category tabs
-  final bool showCategories;
-
-  /// Label text
-  final String? labelText;
-
-  /// Hint text for search
-  final String searchHint;
-
-  /// Height of the picker
-  final double height;
-
-  /// Background color
-  final Color? backgroundColor;
-
-  /// Selected icon color
-  final Color? selectedColor;
-
-  const YoIconPicker({
-    super.key,
+  const _YoIconPickerBottomSheet({
     this.selectedIcon,
-    required this.onIconSelected,
-    this.initialCategory = YoIconCategory.all,
-    this.iconSize = 24,
-    this.crossAxisCount = 6,
-    this.showSearch = true,
-    this.showCategories = true,
-    this.labelText,
-    this.searchHint = 'Search icons...',
-    this.height = 300,
-    this.backgroundColor,
-    this.selectedColor,
+    required this.initialCategory,
+    required this.title,
   });
 
-  /// Show icon picker as a bottom sheet
-  static Future<IconData?> showAsBottomSheet({
-    required BuildContext context,
-    IconData? selectedIcon,
-    YoIconCategory initialCategory = YoIconCategory.all,
-    String title = 'Select Icon',
-  }) {
-    return showModalBottomSheet<IconData>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => _YoIconPickerBottomSheet(
-        selectedIcon: selectedIcon,
-        initialCategory: initialCategory,
-        title: title,
-      ),
-    );
-  }
+  @override
+  State<_YoIconPickerBottomSheet> createState() =>
+      _YoIconPickerBottomSheetState();
+}
 
-  /// Show icon picker as a dialog
-  static Future<IconData?> showAsDialog({
-    required BuildContext context,
-    IconData? selectedIcon,
-    YoIconCategory initialCategory = YoIconCategory.all,
-    String title = 'Select Icon',
-  }) {
-    return showDialog<IconData>(
-      context: context,
-      builder: (context) => _YoIconPickerDialog(
-        selectedIcon: selectedIcon,
-        initialCategory: initialCategory,
-        title: title,
+class _YoIconPickerBottomSheetState extends State<_YoIconPickerBottomSheet> {
+  IconData? _selectedIcon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.7,
+      decoration: BoxDecoration(
+        color: context.backgroundColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      child: Column(
+        children: [
+          // Handle bar
+          Container(
+            margin: const EdgeInsets.only(top: 12),
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: context.gray300,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          // Header
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                YoText(
+                  widget.title,
+                  style: context.yoTitleMedium
+                      .copyWith(fontWeight: FontWeight.w600),
+                ),
+                Row(
+                  children: [
+                    if (_selectedIcon != null)
+                      TextButton(
+                        onPressed: () =>
+                            Navigator.of(context).pop(_selectedIcon),
+                        child: const Text('Select'),
+                      ),
+                    IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: const Icon(Icons.close),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          // Picker
+          Expanded(
+            child: YoIconPicker(
+              selectedIcon: _selectedIcon,
+              initialCategory: widget.initialCategory,
+              onIconSelected: (icon) {
+                setState(() => _selectedIcon = icon);
+              },
+              height: double.infinity,
+            ),
+          ),
+        ],
       ),
     );
   }
 
   @override
-  State<YoIconPicker> createState() => _YoIconPickerState();
+  void initState() {
+    super.initState();
+    _selectedIcon = widget.selectedIcon;
+  }
+}
+
+/// Dialog variant
+class _YoIconPickerDialog extends StatefulWidget {
+  final IconData? selectedIcon;
+  final YoIconCategory initialCategory;
+  final String title;
+
+  const _YoIconPickerDialog({
+    this.selectedIcon,
+    required this.initialCategory,
+    required this.title,
+  });
+
+  @override
+  State<_YoIconPickerDialog> createState() => _YoIconPickerDialogState();
+}
+
+class _YoIconPickerDialogState extends State<_YoIconPickerDialog> {
+  IconData? _selectedIcon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.9,
+        height: MediaQuery.of(context).size.height * 0.6,
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            // Header
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                YoText(
+                  widget.title,
+                  style: context.yoTitleMedium
+                      .copyWith(fontWeight: FontWeight.w600),
+                ),
+                IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.close),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            // Picker
+            Expanded(
+              child: YoIconPicker(
+                selectedIcon: _selectedIcon,
+                initialCategory: widget.initialCategory,
+                onIconSelected: (icon) {
+                  setState(() => _selectedIcon = icon);
+                },
+                height: double.infinity,
+                crossAxisCount: 5,
+              ),
+            ),
+            const SizedBox(height: 16),
+            // Actions
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Cancel'),
+                ),
+                const SizedBox(width: 8),
+                ElevatedButton(
+                  onPressed: _selectedIcon != null
+                      ? () => Navigator.of(context).pop(_selectedIcon)
+                      : null,
+                  child: const Text('Select'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIcon = widget.selectedIcon;
+  }
 }
 
 class _YoIconPickerState extends State<YoIconPicker> {
   late YoIconCategory _selectedCategory;
   late TextEditingController _searchController;
   List<YoIconData> _filteredIcons = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _selectedCategory = widget.initialCategory;
-    _searchController = TextEditingController();
-    _updateFilteredIcons();
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  void _updateFilteredIcons() {
-    final query = _searchController.text;
-    if (query.isNotEmpty) {
-      _filteredIcons = YoIcons.search(query);
-    } else {
-      _filteredIcons = YoIcons.byCategory(_selectedCategory);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -1204,22 +1500,15 @@ class _YoIconPickerState extends State<YoIconPicker> {
           if (widget.showSearch)
             Padding(
               padding: const EdgeInsets.all(12),
-              child: TextField(
+              child: YoTextFormField(
                 controller: _searchController,
-                decoration: InputDecoration(
-                  hintText: widget.searchHint,
-                  prefixIcon:
-                      Icon(Icons.search, size: 20, color: context.gray400),
-                  filled: true,
-                  fillColor: context.gray100,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  isDense: true,
-                ),
+                hintText: widget.searchHint,
+                prefixIcon:
+                    Icon(Icons.search, size: 20, color: context.gray400),
+                inputStyle: YoInputStyle.filled,
+                borderRadius: 8.0,
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 onChanged: (value) {
                   setState(() => _updateFilteredIcons());
                 },
@@ -1332,323 +1621,27 @@ class _YoIconPickerState extends State<YoIconPicker> {
       ),
     );
   }
-}
-
-/// Bottom sheet variant
-class _YoIconPickerBottomSheet extends StatefulWidget {
-  final IconData? selectedIcon;
-  final YoIconCategory initialCategory;
-  final String title;
-
-  const _YoIconPickerBottomSheet({
-    this.selectedIcon,
-    required this.initialCategory,
-    required this.title,
-  });
 
   @override
-  State<_YoIconPickerBottomSheet> createState() =>
-      _YoIconPickerBottomSheetState();
-}
-
-class _YoIconPickerBottomSheetState extends State<_YoIconPickerBottomSheet> {
-  IconData? _selectedIcon;
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
     super.initState();
-    _selectedIcon = widget.selectedIcon;
+    _selectedCategory = widget.initialCategory;
+    _searchController = TextEditingController();
+    _updateFilteredIcons();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.7,
-      decoration: BoxDecoration(
-        color: context.backgroundColor,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      child: Column(
-        children: [
-          // Handle bar
-          Container(
-            margin: const EdgeInsets.only(top: 12),
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: context.gray300,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          // Header
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                YoText(
-                  widget.title,
-                  style: context.yoTitleMedium
-                      .copyWith(fontWeight: FontWeight.w600),
-                ),
-                Row(
-                  children: [
-                    if (_selectedIcon != null)
-                      TextButton(
-                        onPressed: () =>
-                            Navigator.of(context).pop(_selectedIcon),
-                        child: const Text('Select'),
-                      ),
-                    IconButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      icon: const Icon(Icons.close),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          // Picker
-          Expanded(
-            child: YoIconPicker(
-              selectedIcon: _selectedIcon,
-              initialCategory: widget.initialCategory,
-              onIconSelected: (icon) {
-                setState(() => _selectedIcon = icon);
-              },
-              height: double.infinity,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Dialog variant
-class _YoIconPickerDialog extends StatefulWidget {
-  final IconData? selectedIcon;
-  final YoIconCategory initialCategory;
-  final String title;
-
-  const _YoIconPickerDialog({
-    this.selectedIcon,
-    required this.initialCategory,
-    required this.title,
-  });
-
-  @override
-  State<_YoIconPickerDialog> createState() => _YoIconPickerDialogState();
-}
-
-class _YoIconPickerDialogState extends State<_YoIconPickerDialog> {
-  IconData? _selectedIcon;
-
-  @override
-  void initState() {
-    super.initState();
-    _selectedIcon = widget.selectedIcon;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Container(
-        width: MediaQuery.of(context).size.width * 0.9,
-        height: MediaQuery.of(context).size.height * 0.6,
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            // Header
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                YoText(
-                  widget.title,
-                  style: context.yoTitleMedium
-                      .copyWith(fontWeight: FontWeight.w600),
-                ),
-                IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.close),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            // Picker
-            Expanded(
-              child: YoIconPicker(
-                selectedIcon: _selectedIcon,
-                initialCategory: widget.initialCategory,
-                onIconSelected: (icon) {
-                  setState(() => _selectedIcon = icon);
-                },
-                height: double.infinity,
-                crossAxisCount: 5,
-              ),
-            ),
-            const SizedBox(height: 16),
-            // Actions
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Cancel'),
-                ),
-                const SizedBox(width: 8),
-                ElevatedButton(
-                  onPressed: _selectedIcon != null
-                      ? () => Navigator.of(context).pop(_selectedIcon)
-                      : null,
-                  child: const Text('Select'),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// Icon picker button that shows picker on tap
-class YoIconPickerButton extends StatelessWidget {
-  /// Currently selected icon
-  final IconData? selectedIcon;
-
-  /// Callback when an icon is selected
-  final ValueChanged<IconData> onIconSelected;
-
-  /// Label text
-  final String? labelText;
-
-  /// Hint text when no icon is selected
-  final String hintText;
-
-  /// Border radius
-  final double borderRadius;
-
-  /// Border color
-  final Color? borderColor;
-
-  /// Background color
-  final Color? backgroundColor;
-
-  /// Picker type (bottom sheet or dialog)
-  final bool useDialog;
-
-  /// Picker title
-  final String pickerTitle;
-
-  const YoIconPickerButton({
-    super.key,
-    this.selectedIcon,
-    required this.onIconSelected,
-    this.labelText,
-    this.hintText = 'Select icon',
-    this.borderRadius = 8,
-    this.borderColor,
-    this.backgroundColor,
-    this.useDialog = false,
-    this.pickerTitle = 'Select Icon',
-  });
-
-  Future<void> _showPicker(BuildContext context) async {
-    final IconData? result;
-    if (useDialog) {
-      result = await YoIconPicker.showAsDialog(
-        context: context,
-        selectedIcon: selectedIcon,
-        title: pickerTitle,
-      );
+  void _updateFilteredIcons() {
+    final query = _searchController.text;
+    if (query.isNotEmpty) {
+      _filteredIcons = YoIcons.search(query);
     } else {
-      result = await YoIconPicker.showAsBottomSheet(
-        context: context,
-        selectedIcon: selectedIcon,
-        title: pickerTitle,
-      );
+      _filteredIcons = YoIcons.byCategory(_selectedCategory);
     }
-
-    if (result != null) {
-      onIconSelected(result);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => _showPicker(context),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: backgroundColor ?? context.backgroundColor,
-          borderRadius: BorderRadius.circular(borderRadius),
-          border: Border.all(color: borderColor ?? context.gray300, width: 1),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: selectedIcon != null
-                    ? context.primaryColor.withAlpha(30)
-                    : context.gray100,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: selectedIcon != null
-                      ? context.primaryColor
-                      : context.gray300,
-                ),
-              ),
-              child: Icon(
-                selectedIcon ?? Icons.add,
-                color: selectedIcon != null
-                    ? context.primaryColor
-                    : context.gray400,
-                size: 24,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (labelText != null) ...[
-                    YoText(
-                      labelText!,
-                      style:
-                          context.yoLabelSmall.copyWith(color: context.gray500),
-                    ),
-                    const SizedBox(height: 2),
-                  ],
-                  YoText(
-                    selectedIcon != null
-                        ? _getIconName(selectedIcon!)
-                        : hintText,
-                    style: context.yoBodyMedium.copyWith(
-                      color: selectedIcon != null
-                          ? context.textColor
-                          : context.gray400,
-                      fontWeight: selectedIcon != null
-                          ? FontWeight.w500
-                          : FontWeight.normal,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Icon(Icons.keyboard_arrow_down, color: context.gray500),
-          ],
-        ),
-      ),
-    );
-  }
-
-  String _getIconName(IconData icon) {
-    final found = YoIcons.all.where((i) => i.icon == icon).firstOrNull;
-    return found?.name ?? 'Icon selected';
   }
 }

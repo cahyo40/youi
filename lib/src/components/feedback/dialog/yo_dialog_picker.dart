@@ -106,6 +106,29 @@ abstract final class YoDialogPicker {
     );
   }
 
+  /// Show month range picker dialog (returns DateTimeRange for entire month)
+  static Future<DateTimeRange?> monthRange({
+    required BuildContext context,
+    DateTime? initialDate,
+    DateTime? firstDate,
+    DateTime? lastDate,
+    String? helpText,
+    String? cancelText,
+    String? confirmText,
+  }) async {
+    return showDialog<DateTimeRange>(
+      context: context,
+      builder: (context) => _YoMonthRangePickerDialog(
+        initialDate: initialDate ?? DateTime.now(),
+        firstDate: firstDate ?? DateTime(1900),
+        lastDate: lastDate ?? DateTime(2100),
+        helpText: helpText ?? 'Select Month',
+        cancelText: cancelText ?? 'Cancel',
+        confirmText: confirmText ?? 'OK',
+      ),
+    );
+  }
+
   /// Show time picker dialog
   static Future<TimeOfDay?> time({
     required BuildContext context,
@@ -172,5 +195,259 @@ abstract final class YoDialogPicker {
       ),
       child: child!,
     );
+  }
+}
+
+/// Custom month range picker dialog widget
+class _YoMonthRangePickerDialog extends StatefulWidget {
+  final DateTime initialDate;
+  final DateTime firstDate;
+  final DateTime lastDate;
+  final String helpText;
+  final String cancelText;
+  final String confirmText;
+
+  const _YoMonthRangePickerDialog({
+    required this.initialDate,
+    required this.firstDate,
+    required this.lastDate,
+    required this.helpText,
+    required this.cancelText,
+    required this.confirmText,
+  });
+
+  @override
+  State<_YoMonthRangePickerDialog> createState() =>
+      _YoMonthRangePickerDialogState();
+}
+
+class _YoMonthRangePickerDialogState extends State<_YoMonthRangePickerDialog> {
+  static const List<String> _monthNames = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec'
+  ];
+  late int _selectedYear;
+
+  late int _selectedMonth;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      backgroundColor: context.backgroundColor,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 320),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Header
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: context.primaryColor,
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(16)),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  YoText(
+                    widget.helpText,
+                    style: TextStyle(
+                      color: context.onPrimaryColor.withAlpha(180),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  YoText(
+                    '${_monthNames[_selectedMonth - 1]} $_selectedYear',
+                    style: TextStyle(
+                      color: context.onPrimaryColor,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Year navigation
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.chevron_left, color: context.textColor),
+                    onPressed: _selectedYear > widget.firstDate.year
+                        ? () => setState(() => _selectedYear--)
+                        : null,
+                  ),
+                  GestureDetector(
+                    onTap: () async {
+                      final year = await YoDialogPicker.year(
+                        context: context,
+                        initialYear: _selectedYear,
+                        firstYear: widget.firstDate.year,
+                        lastYear: widget.lastDate.year,
+                      );
+                      if (year != null) {
+                        setState(() => _selectedYear = year);
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: isDark ? context.gray800 : context.gray100,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: YoText(
+                        _selectedYear.toString(),
+                        style: context.yoTitleMedium.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.chevron_right, color: context.textColor),
+                    onPressed: _selectedYear < widget.lastDate.year
+                        ? () => setState(() => _selectedYear++)
+                        : null,
+                  ),
+                ],
+              ),
+            ),
+
+            // Month grid (3x4)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+              child: GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  childAspectRatio: 1.5,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                ),
+                itemCount: 12,
+                itemBuilder: (context, index) {
+                  final month = index + 1;
+                  final isSelected = month == _selectedMonth;
+                  final isEnabled = _isMonthEnabled(_selectedYear, month);
+
+                  return Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(8),
+                      onTap: isEnabled
+                          ? () => setState(() => _selectedMonth = month)
+                          : null,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? context.primaryColor
+                              : Colors.transparent,
+                          borderRadius: BorderRadius.circular(8),
+                          border: isSelected
+                              ? null
+                              : Border.all(
+                                  color: isEnabled
+                                      ? context.gray300
+                                      : context.gray200,
+                                ),
+                        ),
+                        alignment: Alignment.center,
+                        child: YoText(
+                          _monthNames[index],
+                          style: TextStyle(
+                            color: isSelected
+                                ? context.onPrimaryColor
+                                : isEnabled
+                                    ? context.textColor
+                                    : context.gray400,
+                            fontWeight:
+                                isSelected ? FontWeight.w600 : FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+
+            // Actions
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text(
+                      widget.cancelText,
+                      style: TextStyle(color: context.gray600),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  ElevatedButton(
+                    onPressed: () {
+                      final range =
+                          _getMonthRange(_selectedYear, _selectedMonth);
+                      Navigator.of(context).pop(range);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: context.primaryColor,
+                      foregroundColor: context.onPrimaryColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Text(widget.confirmText),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedYear = widget.initialDate.year;
+    _selectedMonth = widget.initialDate.month;
+  }
+
+  DateTimeRange _getMonthRange(int year, int month) {
+    final start = DateTime(year, month, 1);
+    final end = DateTime(year, month + 1, 0); // Last day of month
+    return DateTimeRange(start: start, end: end);
+  }
+
+  bool _isMonthEnabled(int year, int month) {
+    final date = DateTime(year, month);
+    final firstMonth = DateTime(widget.firstDate.year, widget.firstDate.month);
+    final lastMonth = DateTime(widget.lastDate.year, widget.lastDate.month);
+    return !date.isBefore(firstMonth) && !date.isAfter(lastMonth);
   }
 }

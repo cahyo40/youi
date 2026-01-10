@@ -2,24 +2,51 @@
 import 'package:flutter/material.dart';
 import 'package:yo_ui/yo_ui.dart';
 
+/// A month picker widget that shows a dialog with month/year selection only.
+/// Returns a [DateTimeRange] representing the entire selected month.
 class YoMonthPicker extends StatelessWidget {
-  final DateTime? selectedDate;
-  final ValueChanged<DateTime> onMonthChanged;
+  /// The currently selected date range (first to last day of month).
+  final DateTimeRange? selectedRange;
+
+  /// Callback when the month changes, returns the full month range.
+  final ValueChanged<DateTimeRange> onMonthChanged;
+
+  /// The earliest date that can be selected.
   final DateTime? firstDate;
+
+  /// The latest date that can be selected.
   final DateTime? lastDate;
+
+  /// Label text displayed above the picker.
   final String? labelText;
+
+  /// Hint text displayed when no month is selected.
   final String? hintText;
+
+  /// Icon displayed on the left side.
   final IconData? icon;
+
+  /// Whether the picker is enabled.
   final bool enabled;
+
+  /// Padding inside the picker container.
   final EdgeInsetsGeometry? padding;
+
+  /// Border radius of the picker container.
   final double borderRadius;
+
+  /// Border color of the picker container.
   final Color? borderColor;
+
+  /// Background color of the picker container.
   final Color? backgroundColor;
+
+  /// Whether to show the year in the display text.
   final bool showYear;
 
   const YoMonthPicker({
     super.key,
-    this.selectedDate,
+    this.selectedRange,
     required this.onMonthChanged,
     this.firstDate,
     this.lastDate,
@@ -67,14 +94,14 @@ class YoMonthPicker extends StatelessWidget {
                     const SizedBox(height: 2),
                   ],
                   YoText(
-                    selectedDate != null
-                        ? _formatMonth(selectedDate!)
+                    selectedRange != null
+                        ? _formatMonth(selectedRange!.start)
                         : hintText ?? 'Select month',
                     style: context.yoBodyMedium.copyWith(
-                      color: selectedDate != null
+                      color: selectedRange != null
                           ? context.textColor
                           : context.gray400,
-                      fontWeight: selectedDate != null
+                      fontWeight: selectedRange != null
                           ? FontWeight.w500
                           : FontWeight.normal,
                     ),
@@ -112,14 +139,14 @@ class YoMonthPicker extends StatelessWidget {
   Future<void> _selectMonth(BuildContext context) async {
     if (!enabled) return;
 
-    final DateTime? picked = await YoDialogPicker.month(
+    final DateTimeRange? picked = await YoDialogPicker.monthRange(
       context: context,
-      initialDate: selectedDate,
+      initialDate: selectedRange?.start,
       firstDate: firstDate,
       lastDate: lastDate,
     );
 
-    if (picked != null && picked != selectedDate) {
+    if (picked != null) {
       onMonthChanged(picked);
     }
   }

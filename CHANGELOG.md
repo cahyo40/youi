@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.3] - 2026-01-10
+
+### Added
+- **YoDialogPicker.monthRange()** - New custom month picker dialog
+  - 3x4 month grid (Jan-Dec) without date selection
+  - Year navigation with arrows and tap-to-pick year
+  - Returns `DateTimeRange` (first to last day of selected month)
+  - Themed styling consistent with YoUI design system
+
+### Changed
+- **YoMonthPicker** - **BREAKING**: Changed return type from `DateTime` to `DateTimeRange`
+  - `selectedDate` → `selectedRange` (`DateTimeRange`)
+  - `onMonthChanged` callback now receives `DateTimeRange`
+  - Shows custom dialog with month/year only (no date picker)
+- **YoIconPicker** - Replaced `TextField` with `YoTextFormField` for search input
+- **YoColorPicker** - Replaced `TextField` with `YoTextFormField` for hex color input
+
+### Fixed
+- Consistent styling across all picker components
+
+---
+
 ## [0.0.2] - 2026-01-09
 
 ### Added

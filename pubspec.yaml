@@ -1,6 +1,6 @@
 name: yo_ui
-description: "A comprehensive Flutter UI library with 70+ components, 36 color schemes, 51 fonts, and a complete design system for building beautiful, consistent applications."
-version: 1.1.4
+description: "A comprehensive Flutter UI library with 90+ components, 36 color schemes, 51 fonts, and a complete design system for building beautiful, consistent applications."
+version: 0.0.3
 homepage: https://github.com/cahyo40/youi
 repository: https://github.com/cahyo40/youi
 issue_tracker: https://github.com/cahyo40/youi/issues
