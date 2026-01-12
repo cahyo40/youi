@@ -313,13 +313,14 @@ class _YoMonthRangePickerDialogState extends State<_YoMonthRangePickerDialog> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 8),
                       decoration: BoxDecoration(
-                        color: isDark ? context.gray800 : context.gray100,
+                        color: context.backgroundColor,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: YoText(
                         _selectedYear.toString(),
                         style: context.yoTitleMedium.copyWith(
                           fontWeight: FontWeight.w600,
+                          color: context.textColor,
                         ),
                       ),
                     ),
