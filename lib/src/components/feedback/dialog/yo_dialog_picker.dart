@@ -83,31 +83,8 @@ abstract final class YoDialogPicker {
     );
   }
 
-  /// Show month picker dialog
-  static Future<DateTime?> month({
-    required BuildContext context,
-    DateTime? initialDate,
-    DateTime? firstDate,
-    DateTime? lastDate,
-    String? helpText,
-    String? cancelText,
-    String? confirmText,
-  }) async {
-    return showDatePicker(
-      context: context,
-      initialDate: initialDate ?? DateTime.now(),
-      firstDate: firstDate ?? DateTime(1900),
-      lastDate: lastDate ?? DateTime(2100),
-      helpText: helpText ?? 'Select Month',
-      cancelText: cancelText,
-      confirmText: confirmText,
-      initialDatePickerMode: DatePickerMode.year,
-      builder: (context, child) => _themedDialog(context, child),
-    );
-  }
-
   /// Show month range picker dialog (returns DateTimeRange for entire month)
-  static Future<DateTimeRange?> monthRange({
+  static Future<DateTimeRange?> month({
     required BuildContext context,
     DateTime? initialDate,
     DateTime? firstDate,
@@ -242,8 +219,6 @@ class _YoMonthRangePickerDialogState extends State<_YoMonthRangePickerDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       backgroundColor: context.backgroundColor,

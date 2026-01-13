@@ -139,7 +139,7 @@ class YoMonthPicker extends StatelessWidget {
   Future<void> _selectMonth(BuildContext context) async {
     if (!enabled) return;
 
-    final DateTimeRange? picked = await YoDialogPicker.monthRange(
+    final DateTimeRange? picked = await YoDialogPicker.month(
       context: context,
       initialDate: selectedRange?.start,
       firstDate: firstDate,
