@@ -28,11 +28,11 @@ import 'package:yo_ui/yo_ui.dart';
 void main() {
   // Opsional: Set font kustom (mendukung 51+ Google Fonts)
   YoTextTheme.setFont(
-    primary: YoFonts.poppins,    // Untuk Headline & Title
+    primary: YoFonts.inter,    // Untuk Headline & Title
     secondary: YoFonts.inter,    // Untuk Body & Label
     mono: YoFonts.spaceMono,     // Untuk Angka/Kode
   );
-  
+
   runApp(MyApp());
 }
 
@@ -295,7 +295,7 @@ void main() {
     secondary: YoFonts.inter,    // Untuk Body, Label
     mono: YoFonts.spaceMono,     // Untuk angka, kode
   );
-  
+
   runApp(MyApp());
 }
 
@@ -695,8 +695,8 @@ EdgeInsets custom = YoPadding.adaptiveAll(context, size: YoSpacingSize.lg);
 EdgeInsets horz = YoPadding.adaptiveHorizontal(context, size: YoSpacingSize.md);
 EdgeInsets vert = YoPadding.adaptiveVertical(context, size: YoSpacingSize.sm);
 EdgeInsets sym = YoPadding.adaptiveSymmetric(
-  context, 
-  horizontal: YoSpacingSize.lg, 
+  context,
+  horizontal: YoSpacingSize.lg,
   vertical: YoSpacingSize.md,
 );
 ```
@@ -1022,7 +1022,7 @@ Kelas utama untuk generate theme.
 // Light theme
 ThemeData light = YoTheme.lightTheme(context, YoColorScheme.techPurple);
 
-// Dark theme  
+// Dark theme
 ThemeData dark = YoTheme.darkTheme(context, YoColorScheme.techPurple);
 ```
 
