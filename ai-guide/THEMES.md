@@ -28,7 +28,7 @@ import 'package:yo_ui/yo_ui.dart';
 void main() {
   // Opsional: Set font kustom (mendukung 51+ Google Fonts)
   YoTextTheme.setFont(
-    primary: YoFonts.inter,    // Untuk Headline & Title
+    primary: YoFonts.poppins,    // Untuk Headline & Title
     secondary: YoFonts.inter,    // Untuk Body & Label
     mono: YoFonts.spaceMono,     // Untuk Angka/Kode
   );
