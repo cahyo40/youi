@@ -59,8 +59,12 @@ class _YoSearchFieldState extends State<YoSearchField> {
         focusNode: _focusNode,
         autofocus: widget.autofocus,
         onChanged: _onSearchChanged,
+        style: YoTextTheme.bodyMedium(context),
         decoration: InputDecoration(
           hintText: widget.hintText,
+          hintStyle: YoTextTheme.bodyMedium(context).copyWith(
+            color: context.gray400,
+          ),
           filled: true,
           fillColor: widget.fillColor ?? context.gray50,
           prefixIcon: widget.prefixIcon ??
@@ -190,7 +194,10 @@ class _YoSearchFieldState extends State<YoSearchField> {
                 itemBuilder: (context, index) {
                   return ListTile(
                     dense: true,
-                    title: Text(_filteredSuggestions[index]),
+                    title: Text(
+                      _filteredSuggestions[index],
+                      style: YoTextTheme.bodyMedium(context),
+                    ),
                     onTap: () {
                       _controller.text = _filteredSuggestions[index];
                       widget.onSearch?.call(_filteredSuggestions[index]);
