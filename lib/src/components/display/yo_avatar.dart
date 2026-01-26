@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:yo_ui/yo_ui.dart';
 
@@ -32,6 +34,8 @@ class YoAvatar extends StatelessWidget {
     YoAvatarSize.xl: 16.0,
   };
   final String? imageUrl;
+  final String? assetPath;
+  final File? imageFile;
   final String? text;
   final IconData? icon;
   final Color? backgroundColor;
@@ -55,6 +59,8 @@ class YoAvatar extends StatelessWidget {
   const YoAvatar({
     super.key,
     this.imageUrl,
+    this.assetPath,
+    this.imageFile,
     this.text,
     this.icon,
     this.backgroundColor,
@@ -71,8 +77,12 @@ class YoAvatar extends StatelessWidget {
     this.borderWidth,
     this.borderColor,
   }) : assert(
-          imageUrl != null || text != null || icon != null,
-          'Either imageUrl, text, or icon must be provided',
+          imageUrl != null ||
+              assetPath != null ||
+              imageFile != null ||
+              text != null ||
+              icon != null,
+          'Either imageUrl, assetPath, imageFile, text, or icon must be provided',
         );
 
   /// Icon avatar
@@ -92,10 +102,12 @@ class YoAvatar extends StatelessWidget {
     this.borderWidth,
     this.borderColor,
   })  : imageUrl = null,
+        assetPath = null,
+        imageFile = null,
         text = null,
         textColor = null;
 
-  /// Image avatar
+  /// Image avatar (network URL)
   const YoAvatar.image({
     super.key,
     required this.imageUrl,
@@ -109,7 +121,9 @@ class YoAvatar extends StatelessWidget {
     this.onTap,
     this.borderWidth,
     this.borderColor,
-  })  : text = null,
+  })  : assetPath = null,
+        imageFile = null,
+        text = null,
         icon = null,
         backgroundColor = null,
         textColor = null,
@@ -132,7 +146,53 @@ class YoAvatar extends StatelessWidget {
     this.borderWidth,
     this.borderColor,
   })  : imageUrl = null,
+        assetPath = null,
+        imageFile = null,
         icon = null,
+        iconColor = null;
+
+  /// Asset image avatar (from assets folder)
+  const YoAvatar.asset({
+    super.key,
+    required this.assetPath,
+    this.size = YoAvatarSize.md,
+    this.customSize,
+    this.variant = YoAvatarVariant.circle,
+    this.borderRadius,
+    this.showBadge = false,
+    this.badgeColor,
+    this.customBadge,
+    this.onTap,
+    this.borderWidth,
+    this.borderColor,
+  })  : imageUrl = null,
+        imageFile = null,
+        text = null,
+        icon = null,
+        backgroundColor = null,
+        textColor = null,
+        iconColor = null;
+
+  /// File image avatar (from device storage)
+  YoAvatar.file({
+    super.key,
+    required this.imageFile,
+    this.size = YoAvatarSize.md,
+    this.customSize,
+    this.variant = YoAvatarVariant.circle,
+    this.borderRadius,
+    this.showBadge = false,
+    this.badgeColor,
+    this.customBadge,
+    this.onTap,
+    this.borderWidth,
+    this.borderColor,
+  })  : imageUrl = null,
+        assetPath = null,
+        text = null,
+        icon = null,
+        backgroundColor = null,
+        textColor = null,
         iconColor = null;
 
   /// Get pixel size from enum or custom size
@@ -203,6 +263,7 @@ class YoAvatar extends StatelessWidget {
   }
 
   Widget _buildContent(BuildContext context, double avatarSize) {
+    // Network image
     if (imageUrl != null) {
       return ClipRRect(
         borderRadius: _getBorderRadius(avatarSize),
@@ -231,6 +292,35 @@ class YoAvatar extends StatelessWidget {
         ),
       );
     }
+
+    // Asset image
+    if (assetPath != null) {
+      return ClipRRect(
+        borderRadius: _getBorderRadius(avatarSize),
+        child: Image.asset(
+          assetPath!,
+          fit: BoxFit.cover,
+          width: double.infinity,
+          height: double.infinity,
+          errorBuilder: (_, __, ___) => _buildFallback(context),
+        ),
+      );
+    }
+
+    // File image
+    if (imageFile != null) {
+      return ClipRRect(
+        borderRadius: _getBorderRadius(avatarSize),
+        child: Image.file(
+          imageFile!,
+          fit: BoxFit.cover,
+          width: double.infinity,
+          height: double.infinity,
+          errorBuilder: (_, __, ___) => _buildFallback(context),
+        ),
+      );
+    }
+
     return _buildFallback(context);
   }
 

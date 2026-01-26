@@ -57,19 +57,23 @@ Komponen untuk menampilkan konten dan data kepada pengguna.
 
 ### YoAvatar
 
-Widget avatar dengan dukungan gambar, inisial, atau icon.
+Widget avatar dengan dukungan gambar (network, asset, file), inisial, atau icon.
 
 **Constructors:**
 - `YoAvatar()` - Default constructor
 - `YoAvatar.icon()` - Avatar dengan icon
-- `YoAvatar.image()` - Avatar dengan gambar
+- `YoAvatar.image()` - Avatar dengan gambar dari URL
+- `YoAvatar.asset()` - Avatar dengan gambar dari assets
+- `YoAvatar.file()` - Avatar dengan gambar dari file device
 - `YoAvatar.text()` - Avatar dengan inisial teks
 
 **Parameters:**
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `imageUrl` | `String?` | `null` | URL gambar avatar |
+| `imageUrl` | `String?` | `null` | URL gambar avatar (network) |
+| `assetPath` | `String?` | `null` | Path gambar dari assets |
+| `imageFile` | `File?` | `null` | File gambar dari device storage |
 | `text` | `String?` | `null` | Teks untuk dikonversi ke inisial |
 | `icon` | `IconData?` | `null` | Icon yang ditampilkan |
 | `backgroundColor` | `Color?` | `null` | Warna background |
@@ -96,12 +100,25 @@ enum YoAvatarVariant { circle, rounded, square }
 **Contoh Penggunaan:**
 
 ```dart
-// Avatar dengan gambar
+// Avatar dengan gambar network
 YoAvatar.image(
   imageUrl: 'https://example.com/photo.jpg',
   size: YoAvatarSize.lg,
   showBadge: true,
   badgeColor: Colors.green,
+)
+
+// Avatar dengan gambar dari assets
+YoAvatar.asset(
+  assetPath: 'assets/images/avatar.png',
+  size: YoAvatarSize.lg,
+)
+
+// Avatar dengan file dari device (hasil image picker)
+YoAvatar.file(
+  imageFile: pickedImageFile,
+  size: YoAvatarSize.xl,
+  variant: YoAvatarVariant.rounded,
 )
 
 // Avatar dengan inisial
