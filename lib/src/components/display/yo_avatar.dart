@@ -38,6 +38,7 @@ class YoAvatar extends StatelessWidget {
   final Color? textColor;
   final Color? iconColor;
   final YoAvatarSize size;
+  final double? customSize;
   final YoAvatarVariant variant;
   final double? borderRadius;
   final bool showBadge;
@@ -60,6 +61,7 @@ class YoAvatar extends StatelessWidget {
     this.textColor,
     this.iconColor,
     this.size = YoAvatarSize.md,
+    this.customSize,
     this.variant = YoAvatarVariant.circle,
     this.borderRadius,
     this.showBadge = false,
@@ -80,6 +82,7 @@ class YoAvatar extends StatelessWidget {
     this.backgroundColor,
     this.iconColor,
     this.size = YoAvatarSize.md,
+    this.customSize,
     this.variant = YoAvatarVariant.circle,
     this.borderRadius,
     this.showBadge = false,
@@ -97,6 +100,7 @@ class YoAvatar extends StatelessWidget {
     super.key,
     required this.imageUrl,
     this.size = YoAvatarSize.md,
+    this.customSize,
     this.variant = YoAvatarVariant.circle,
     this.borderRadius,
     this.showBadge = false,
@@ -118,6 +122,7 @@ class YoAvatar extends StatelessWidget {
     this.backgroundColor,
     this.textColor,
     this.size = YoAvatarSize.md,
+    this.customSize,
     this.variant = YoAvatarVariant.circle,
     this.borderRadius,
     this.showBadge = false,
@@ -130,12 +135,21 @@ class YoAvatar extends StatelessWidget {
         icon = null,
         iconColor = null;
 
-  /// Get pixel size from enum
-  double get pixelSize => sizeMap[size]!;
+  /// Get pixel size from enum or custom size
+  double get pixelSize => customSize ?? sizeMap[size]!;
+
+  double get _effectiveTextSize =>
+      customSize != null ? customSize! * 0.35 : _textSizeMap[size]!;
+
+  double get _effectiveIconSize =>
+      customSize != null ? customSize! * 0.5 : _iconSizeMap[size]!;
+
+  double get _effectiveBadgeSize =>
+      customSize != null ? customSize! * 0.25 : _badgeSizeMap[size]!;
 
   @override
   Widget build(BuildContext context) {
-    final avatarSize = sizeMap[size]!;
+    final avatarSize = pixelSize;
     final effectiveBorderRadius = _getBorderRadius(avatarSize);
 
     Widget avatarContent = Container(
@@ -151,7 +165,7 @@ class YoAvatar extends StatelessWidget {
               )
             : null,
       ),
-      child: _buildContent(context),
+      child: _buildContent(context, avatarSize),
     );
 
     if (onTap != null) {
@@ -164,8 +178,8 @@ class YoAvatar extends StatelessWidget {
         children: [
           avatarContent,
           Positioned(
-            top: -2,
-            right: -2,
+            top: 0,
+            right: 0,
             child: customBadge ?? _buildBadge(context),
           ),
         ],
@@ -176,9 +190,10 @@ class YoAvatar extends StatelessWidget {
   }
 
   Widget _buildBadge(BuildContext context) {
+    final badgeSize = _effectiveBadgeSize;
     return Container(
-      width: _badgeSizeMap[size],
-      height: _badgeSizeMap[size],
+      width: badgeSize,
+      height: badgeSize,
       decoration: BoxDecoration(
         color: badgeColor ?? context.primaryColor,
         shape: BoxShape.circle,
@@ -187,10 +202,10 @@ class YoAvatar extends StatelessWidget {
     );
   }
 
-  Widget _buildContent(BuildContext context) {
+  Widget _buildContent(BuildContext context, double avatarSize) {
     if (imageUrl != null) {
       return ClipRRect(
-        borderRadius: _getBorderRadius(sizeMap[size]!),
+        borderRadius: _getBorderRadius(avatarSize),
         child: Image.network(
           imageUrl!,
           fit: BoxFit.cover,
@@ -201,8 +216,8 @@ class YoAvatar extends StatelessWidget {
             if (progress == null) return child;
             return Center(
               child: SizedBox(
-                width: _iconSizeMap[size],
-                height: _iconSizeMap[size],
+                width: _effectiveIconSize,
+                height: _effectiveIconSize,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
                   value: progress.expectedTotalBytes != null
@@ -226,7 +241,7 @@ class YoAvatar extends StatelessWidget {
           _getInitials(text!),
           style: TextStyle(
             color: textColor ?? context.gray600,
-            fontSize: _textSizeMap[size],
+            fontSize: _effectiveTextSize,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -236,7 +251,7 @@ class YoAvatar extends StatelessWidget {
     return Center(
       child: Icon(
         icon ?? Icons.person,
-        size: _iconSizeMap[size],
+        size: _effectiveIconSize,
         color: iconColor ?? context.gray500,
       ),
     );

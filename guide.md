@@ -1,10 +1,12 @@
-# 📚 YoUI Complete Guide
+# YoUI Complete Guide
 
-Panduan lengkap untuk menggunakan semua fitur YoUI package.
+Selamat datang di **YoUI** - *Advanced Flutter UI Framework* yang dirancang untuk membangun aplikasi cantik, responsif, dan konsisten dalam waktu singkat.
 
 ---
 
-## 📦 Instalasi
+## Instalasi
+
+Tambahkan package ke dalam `pubspec.yaml`:
 
 ```yaml
 dependencies:
@@ -14,20 +16,27 @@ dependencies:
       ref: main
 ```
 
+Jalankan:
 ```bash
 flutter pub get
 ```
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
+
+### 1. Setup Theme
 
 ```dart
 import 'package:yo_ui/yo_ui.dart';
 
 void main() {
-  // Optional: Set custom font
-  YoTextTheme.setFont(primary: YoFonts.poppins);
+  // Opsional: Set custom fonts
+  YoTextTheme.setFont(
+    primary: YoFonts.poppins,
+    secondary: YoFonts.inter,
+    mono: YoFonts.spaceMono,
+  );
   
   runApp(MyApp());
 }
@@ -45,547 +54,301 @@ class MyApp extends StatelessWidget {
 }
 ```
 
----
-
-## 📁 Struktur Package
-
-```
-lib/
-├── yo_ui.dart           # Entry point utama
-├── yo_ui_base.dart      # Base exports
-└── src/
-    ├── colors/          # Color system
-    ├── themes/          # Theme system  
-    ├── fonts/           # Font registry (51 fonts)
-    ├── layout/          # Responsive/adaptive system
-    ├── extensions/      # Context extensions
-    ├── helpers/         # Formatters, generators, utilities
-    └── components/
-        ├── basic/       # Button, Card, FAB, etc.
-        ├── display/     # Avatar, Badge, Chart, etc.
-        ├── feedback/    # Toast, Dialog, Loading, etc.
-        ├── form/        # TextFormField, Dropdown, etc.
-        ├── layout/      # Space, Grid
-        ├── navigation/  # BottomNav, Drawer, etc.
-        ├── picker/      # Date, Color, File picker, etc.
-        └── utility/     # Animated, Infinite scroll
-```
-
----
-
-## 🎨 Color System
-
-### YoColors (via Context)
+### 2. Use Components
 
 ```dart
-// Primary colors
-context.primaryColor;
-context.secondaryColor;
-context.accentColor;
-context.textColor;
-context.backgroundColor;
-
-// Semantic colors
-context.successColor;
-context.warningColor;
-context.errorColor;
-context.infoColor;
-
-// Gray scale (gray50 - gray900)
-context.gray500;
-
-// Gradients
-context.primaryGradient;
-context.accentGradient;
+class HomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return YoScaffold(
+      appBar: YoAppBar(title: 'Dashboard'),
+      body: Padding(
+        padding: context.adaptivePagePadding,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            YoText.headlineMedium('Welcome Back!'),
+            YoSpace.heightMd(),
+            YoCard(
+              child: YoListTile(
+                leading: YoAvatar.image(imageUrl: 'https://...'),
+                title: 'John Doe',
+                subtitle: 'Flutter Developer',
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 ```
 
-### Color Schemes (36+ preset)
-
-```dart
-YoColorScheme.defaultScheme   // Finance
-YoColorScheme.techPurple      // Tech
-YoColorScheme.oceanTeal       // Healthcare
-YoColorScheme.gamingNeon      // Gaming
-YoColorScheme.amoledBlack     // AMOLED Dark
-YoColorScheme.custom          // Custom palette
-```
-
-### Custom Palette
-
-```dart
-setCustomPalette(
-  light: YoCorePalette(
-    text: Color(0xFF1A1A2E),
-    background: Color(0xFFFAFAFF),
-    primary: Color(0xFF6C63FF),
-    secondary: Color(0xFF9D4EDD),
-    accent: Color(0xFF00D9A5),
-  ),
-  dark: YoCorePalette(...),
-);
-```
-
----
-
-## 📝 Typography
-
-```dart
-// Setup font
-YoTextTheme.setFont(
-  primary: YoFonts.poppins,    // Headlines
-  secondary: YoFonts.inter,    // Body
-  mono: YoFonts.spaceMono,     // Code
-);
-
-// Text styles via context
-context.yoDisplayLarge;
-context.yoHeadlineMedium;
-context.yoTitleLarge;
-context.yoBodyMedium;
-context.yoLabelSmall;
-context.yoCurrencyMedium;
-```
-
----
-
-## 🌑 Shadow System
-
-```dart
-YoBoxShadow.soft(context);       // Card/tile
-YoBoxShadow.elevated(context);   // Elevated
-YoBoxShadow.float(context);      // FAB/modal
-YoBoxShadow.neumorphic(context); // Neumorphic
-
-// Size shortcuts
-YoBoxShadow.sm(context);
-YoBoxShadow.md(context);
-YoBoxShadow.lg(context);
-
-// Semantic
-YoBoxShadow.success(context);
-YoBoxShadow.error(context);
-```
-
----
-
-## 📐 Responsive/Adaptive
-
-```dart
-// Device type
-context.isMobile;
-context.isTablet;
-context.isDesktop;
-
-// Adaptive spacing
-context.adaptiveSm;   // 4-8-12 (mobile/tablet/desktop)
-context.adaptiveMd;   // 16-20-24
-context.adaptiveLg;   // 24-32-40
-
-// Adaptive padding
-context.adaptivePagePadding;
-context.adaptiveCardPadding;
-
-// Conditional values
-YoAdaptive.value(context, mobile: 14, tablet: 16, desktop: 18);
-```
-
----
-
-## 🔘 Components
-
-### Basic Components
-
-```dart
-// Button variants
-YoButton.primary(text: 'Submit', onPressed: () {});
-YoButton.secondary(text: 'Cancel', onPressed: () {});
-YoButton.outline(text: 'Details', onPressed: () {});
-YoButton.ghost(text: 'Skip', onPressed: () {});
-
-// Button styles: modern, minimalist, pill, sharp, rounded
-YoButton.primary(text: 'Pill', onPressed: () {}, style: YoButtonStyle.pill);
-
-// Card variants
-YoCard(child: content);
-YoCard.filled(child: content);
-YoCard.elevated(child: content);
-YoCard.outlined(child: content);
-
-// FAB with speed dial
-YoFAB.speedDial(
-  icon: Icons.add,
-  actions: [
-    YoFABAction(icon: Icons.camera, label: 'Camera', onTap: () {}),
-  ],
-);
-
-// Spacing
-YoSpace.xs();  // 4px
-YoSpace.md();  // 16px
-YoSpace.adaptiveLg();  // Adaptive
-```
-
-### Display Components
-
-```dart
-// Avatar
-YoAvatar.image(imageUrl: '...', size: YoAvatarSize.lg);
-YoAvatar.text(text: 'John Doe');
-YoAvatar.icon(icon: Icons.person, showBadge: true);
-
-// Badge
-YoBadge(text: 'New', variant: YoBadgeVariant.success);
-
-// Rating
-YoRating(value: 4.5, onChanged: (v) {});
-
-// Expandable text
-YoExpandableText(text: 'Long text...', maxLines: 3);
-
-// Charts
-YoChart.line(data: [...], labels: [...]);
-YoChart.bar(data: [...], labels: [...]);
-YoChart.pie(data: [...], labels: [...]);
-```
-
-### Form Components
-
-```dart
-// TextFormField with styles
-YoTextFormField(
-  controller: controller,
-  labelText: 'Email',
-  inputStyle: YoInputStyle.outlined, // outlined, filled, underline, modern
-  inputType: YoInputType.email,
-);
-
-// Dropdown
-YoDropDown<String>(
-  label: 'Country',
-  value: selected,
-  items: [YoDropDownItem(value: 'id', label: 'Indonesia')],
-  onChanged: (v) {},
-);
-
-// OTP Field
-YoOtpField(length: 6, onCompleted: (pin) {});
-
-// Search
-YoSearchField(hintText: 'Search...', onChanged: (v) {});
-
-// Chip Input
-YoChipInput(chips: ['Flutter'], onChipsChanged: (chips) {});
-```
-
-### Feedback Components
-
-```dart
-// Toast
-YoToast.success(context: context, message: 'Success!');
-YoToast.error(context: context, message: 'Error occurred');
-
-// Dialog
-YoDialog.info(context: context, title: 'Info', message: 'Message');
-YoDialog.success(context: context, title: 'Success', message: 'Done!');
-
-// Confirm dialog
-final confirmed = await YoConfirmDialog.show(
-  context: context,
-  title: 'Delete?',
-  message: 'This cannot be undone.',
-);
-
-// Loading
-YoLoading(type: YoLoadingType.spinner);
-YoLoadingOverlay(isLoading: true, child: content);
-
-// Progress
-YoProgress(value: 0.65, showLabel: true);
-
-// Shimmer/Skeleton
-YoShimmer(child: Container());
-YoSkeletonListTile();
-YoSkeletonCard();
-```
-
-### Navigation Components
-
-```dart
-// Bottom Nav
-YoBottomNavBar(
-  currentIndex: index,
-  items: [
-    YoNavItem(icon: Icons.home, label: 'Home'),
-    YoNavItem(icon: Icons.person, label: 'Profile', badge: '3'),
-  ],
-  onTap: (i) {},
-);
-
-// Drawer
-YoDrawer(
-  header: YoDrawerHeader(title: 'App'),
-  items: [YoDrawerItem(icon: Icons.home, title: 'Home')],
-);
-
-// Stepper
-YoStepper(
-  currentStep: 0,
-  steps: [YoStep(title: 'Step 1', content: Widget())],
-  onStepContinue: () {},
-);
-
-// Pagination
-YoPagination(currentPage: 1, totalPages: 10, onPageChanged: (p) {});
-```
-
-### Picker Components
-
-```dart
-// Date pickers
-YoDatePicker(selectedDate: date, onDateChanged: (d) {});
-YoDateRangePicker(selectedRange: range, onRangeChanged: (r) {});
-YoTimePicker(selectedTime: time, onTimeChanged: (t) {});
-YoMonthPicker(selectedRange: month, onMonthChanged: (r) {});
-
-// Color picker
-YoColorPicker(selectedColor: color, onColorSelected: (c) {});
-
-// Icon picker
-YoIconPicker(selectedIcon: icon, onIconSelected: (i) {});
-
-// File/Image picker
-YoFilePicker(onFilesPicked: (files) {});
-YoImagePicker.showSourcePicker(context: context);
-```
-
----
-
-## 🛠 Helpers
-
-### YoCurrencyFormatter
-
-```dart
-// Currency formatting
-YoCurrencyFormatter.formatCurrency(1500000); // "Rp 1.500.000"
-YoCurrencyFormatter.formatCurrency(1500, locale: 'en_US'); // "$1,500"
-
-// Rupiah dengan satuan
-YoCurrencyFormatter.formatRupiahWithUnit(1560000); // "Rp 1.56 Juta"
-YoCurrencyFormatter.formatRupiahCompact(2500000);  // "Rp 2.5Jt"
-
-// Number formatting
-YoCurrencyFormatter.formatNumber(1000000);         // "1.000.000"
-YoCurrencyFormatter.formatCompactNumber(1500000);  // "1.5M"
-YoCurrencyFormatter.formatPercentage(0.85);        // "85%"
-
-// Large numbers
-YoCurrencyFormatter.formatVeryLargeNumber(1e18);   // "1 Quintiliun"
-YoCurrencyFormatter.formatLargeNumberWithSymbol(1500000); // "1.5M"
-```
-
-### YoDateFormatter
-
-```dart
-// Basic formatting
-YoDateFormatter.formatDate(date);                  // "21 Jan 2026"
-YoDateFormatter.formatDateTime(date);              // "21 Jan 2026 18:20"
-YoDateFormatter.formatTime(date);                  // "18:20"
-
-// Relative time
-YoDateFormatter.formatRelativeTime(date);          // "5 menit lalu"
-
-// Date helpers
-YoDateFormatter.isToday(date);
-YoDateFormatter.isYesterday(date);
-YoDateFormatter.isWeekend(date);
-
-// Manipulation
-YoDateFormatter.startOfMonth(date);
-YoDateFormatter.endOfMonth(date);
-YoDateFormatter.addDays(date, 7);
-YoDateFormatter.daysBetween(start, end);
-
-// Age
-YoDateFormatter.calculateAge(birthDate);           // 25
-YoDateFormatter.formatAge(birthDate);              // "25 tahun"
-
-// Duration
-YoDateFormatter.formatDuration(duration);          // "1 jam 30 menit"
-
-// Localization
-YoDateFormatter.texts = DateTexts.english;         // Switch to English
-```
-
-### YoStringFormatter
-
-```dart
-// Text formatting
-YoStringFormatter.titleCase('hello world');           // "Hello World"
-YoStringFormatter.camelCaseToTitle('helloWorld');     // "Hello World"
-
-// Phone/Address
-YoStringFormatter.formatPhoneNumber('08123456789');   // "0812-3456-789"
-YoStringFormatter.formatAddress('Jalan Merdeka');     // "Jl. Merdeka"
-
-// Names
-YoStringFormatter.getInitials('John Doe');            // "JD"
-YoStringFormatter.formatNameShort('John Michael');    // "John M."
-
-// Privacy
-YoStringFormatter.obscureEmail('user@mail.com');      // "us****@mail.com"
-YoStringFormatter.obscurePhoneNumber('08123456789');  // "0812****789"
-
-// Utilities
-YoStringFormatter.truncateWithEllipsis(text, maxLength: 30);
-YoStringFormatter.formatFileSize(1048576);            // "1 MB"
-YoStringFormatter.wordCount(text);
-```
-
-### YoIdGenerator
-
-```dart
-// Basic IDs
-YoIdGenerator.uuid();                          // "550e8400-e29b-41d4-a716-446655440000"
-YoIdGenerator.numericId(length: 8);            // "12345678"
-YoIdGenerator.alphanumericId(length: 12);      // "A1b2C3d4E5f6"
-
-// Prefixed IDs
-YoIdGenerator.userId();                        // "USR_8A2B4C6D"
-YoIdGenerator.orderId();                       // "ORD_20260121001"
-YoIdGenerator.transactionId();                 // "TRX_8A2B4C6D"
-YoIdGenerator.productId();                     // "PROD_8A2B4C6D"
-
-// Timestamp-based
-YoIdGenerator.timestampId();                   // "21012026182000"
-YoIdGenerator.timestampWithRandomId();         // "2601211820001234"
-
-// Hash-based
-YoIdGenerator.md5Id(input);
-YoIdGenerator.sha256Id(input);
-YoIdGenerator.shortHashId(input);              // 8 karakter
-
-// Custom format
-YoIdGenerator.licenseKeyId();                  // "A1B2-C3D4-E5F6-G7H8"
-YoIdGenerator.couponCode(prefix: 'SALE');      // "SALE8A2B4C6D"
-
-// Batch
-YoIdGenerator.batchGenerate(count: 10, prefix: 'INV');
-```
-
-### YoDeviceHelper
-
-```dart
-// Device info
-final info = await YoDeviceHelper.getDeviceInfo();
-// {platform: 'Android', model: 'Pixel 5', version: '13', ...}
-
-// Platform check
-YoDeviceHelper.getPlatformType();              // PlatformType.android
-YoDeviceHelper.isMobile;                       // true
-YoDeviceHelper.isDesktop;                      // false
-
-// Screen info
-YoDeviceHelper.isLandscape(context);
-YoDeviceHelper.getScreenSize(context);         // ScreenSize.small
-YoDeviceHelper.getPixelRatio(context);
-
-// Safe area
-YoDeviceHelper.getSafeAreaPadding(context);
-YoDeviceHelper.getStatusBarHeight(context);
-YoDeviceHelper.hasNotch(context);
-
-// Keyboard
-YoDeviceHelper.isKeyboardVisible(context);
-YoDeviceHelper.getKeyboardHeight(context);
-```
-
-### YoLogger
-
-```dart
-// Enable/disable
-YoLogger.enable();
-YoLogger.disable();
-YoLogger.setLevel(YoLogLevel.warning);
-
-// Logging
-YoLogger.debug('Debug message', tag: 'API');
-YoLogger.info('Info message');
-YoLogger.warning('Warning message');
-YoLogger.error('Error message', error: e, stackTrace: stack);
-YoLogger.critical('Critical error');
-```
-
-### YoConnectivity
-
-```dart
-// Initialize (call once in main)
-await YoConnectivity.initialize();
-
-// Check status
-YoConnectivity.isConnected;                    // true
-YoConnectivity.connectionName;                 // "WiFi"
-
-// Manual check
-await YoConnectivity.checkConnection();
-
-// Listen for changes
-YoConnectivity.addListener((isConnected) {
-  print('Connected: $isConnected');
-});
-
-// Ensure connection before API call
-await YoConnectivity.ensureConnection(() async {
-  return await api.fetchData();
-});
-
-// Cleanup
-YoConnectivity.dispose();
-```
-
----
-
-## 🎯 Context Extensions Summary
+### 3. Use Context Extensions
 
 ```dart
 // Colors
-context.primaryColor;
-context.successColor;
-context.gray500;
+Color primary = context.primaryColor;
+Color error = context.errorColor;
 
 // Typography
-context.yoBodyMedium;
-context.yoTitleLarge;
+TextStyle title = context.yoTitleLarge;
 
-// Spacing
-context.adaptiveMd;
-context.yoSpacingMd;
-
-// Device
-context.isMobile;
-context.width;
-context.yoSafeArea;
-context.yoKeyboardVisible;
-
-// Responsive values
-context.responsiveValue(phone: 14, tablet: 16, desktop: 18);
+// Responsive
+bool mobile = context.isMobile;
+double spacing = context.adaptiveMd;
+EdgeInsets padding = context.adaptivePagePadding;
 ```
 
 ---
 
-## 📋 Component Count
+## Documentation
 
-| Category | Count |
-|----------|-------|
-| Basic | 12 |
-| Display | 23 |
-| Feedback | 18 |
-| Form | 13 |
-| Layout | 3 |
-| Navigation | 8 |
-| Picker | 11 |
-| Utility | 3 |
-| **Total** | **91** |
+Dokumentasi YoUI dipisahkan menjadi beberapa kategori utama:
+
+### [Components Guide](./COMPONENTS.md)
+
+Katalog lengkap **80+ widget** siap pakai:
+
+| Category | Count | Examples |
+|----------|-------|----------|
+| Display | 23 | YoAvatar, YoChart, YoTimeline, YoKanban, YoCarousel |
+| Form | 12 | YoTextFormField, YoDropDown, YoOtpField, YoChipInput |
+| Feedback | 18 | YoToast, YoDialog, YoLoading, YoSkeleton, YoEmptyState |
+| Navigation | 8 | YoAppBar, YoBottomNav, YoSidebar, YoStepper, YoTabBar |
+| Picker | 11 | YoDatePicker, YoColorPicker, YoFilePicker, YoImagePicker |
+| Layout | 4 | YoGrid, YoMasonryGrid, YoSpace |
+| Utility | 4 | YoInfiniteScroll, YoResponsiveBuilder |
+
+### [Themes & Design System](./THEMES.md)
+
+Sistem desain lengkap:
+
+- **36+ Color Schemes** - Preset warna untuk berbagai industri
+- **51+ Google Fonts** - Font typography terintegrasi
+- **Adaptive Layout** - Responsive breakpoints & spacing
+- **30+ Shadow Presets** - YoBoxShadow untuk elevasi
+- **Context Extensions** - Shortcut untuk colors, typography, responsive
+
+### [Helpers & Utilities](./HELPERS.md)
+
+Utility untuk logika aplikasi:
+
+- **YoCurrencyFormatter** - Format Rupiah & currencies
+- **YoDateFormatter** - Format & manipulasi tanggal
+- **YoStringFormatter** - Manipulasi string
+- **YoIdGenerator** - Generate ID offline
+- **Text Input Formatters** - Format input (currency, phone, credit card)
+- **YoDeviceHelper** - Info perangkat
+- **YoConnectivity** - Monitor koneksi internet
+- **YoLogger** - Debug logging berwarna
 
 ---
 
-*YoUI Flutter Package v1.1.4 - Complete Component Library* 🎨
+## Package Structure
+
+```
+lib/src/
+├── colors/         # Color system & schemes (36+ presets)
+├── themes/         # Theme components & shadows
+├── fonts/          # Google Fonts integration (51+)
+├── layout/         # Responsive & adaptive spacing
+├── extensions/     # Context extensions (shortcuts)
+├── helpers/        # Formatters, generators, utilities
+│   ├── formatters/   # Currency, Date, String
+│   ├── generators/   # ID generators
+│   ├── devices/      # Device info
+│   ├── network/      # Connectivity
+│   └── development/  # Logger
+└── components/     # UI Widget collection (80+)
+    ├── basic/        # Button, Card, Scaffold
+    ├── display/      # Avatar, Chart, Timeline, Cards
+    ├── form/         # Input fields, Dropdown, OTP
+    ├── feedback/     # Toast, Dialog, Loading, Skeleton
+    ├── navigation/   # AppBar, BottomNav, Sidebar
+    ├── picker/       # Date, Color, File pickers
+    ├── layout/       # Grid, Space
+    └── utility/      # InfiniteScroll, ResponsiveBuilder
+```
+
+---
+
+## Feature Highlights
+
+### Theming
+
+```dart
+// 36+ professional color schemes
+YoTheme.lightTheme(context, YoColorScheme.techPurple);
+YoTheme.darkTheme(context, YoColorScheme.amoledBlack);
+
+// Custom palette
+setCustomPalette(light: lightPalette, dark: darkPalette);
+```
+
+### Responsive Design
+
+```dart
+// Adaptive values
+double spacing = context.adaptiveMd;          // 16/20/24
+EdgeInsets padding = context.adaptivePagePadding;
+int columns = context.adaptiveGridColumns;    // 2/3/4
+
+// Device checks
+if (context.isMobile) { ... }
+if (context.isDesktop) { ... }
+```
+
+### Typography
+
+```dart
+// 51+ Google Fonts
+YoTextTheme.setFont(primary: YoFonts.poppins);
+
+// Text styles
+Text('Title', style: context.yoTitleLarge);
+YoText.headlineMedium('Headline');
+```
+
+### Shadows
+
+```dart
+Container(
+  decoration: BoxDecoration(
+    boxShadow: YoBoxShadow.soft(context),
+  ),
+)
+```
+
+### Formatters
+
+```dart
+// Currency
+YoCurrencyFormatter.formatRupiahWithUnit(1500000);
+// "Rp 1.5 Juta"
+
+// Date
+YoDateFormatter.formatRelativeTime(date);
+// "5 menit lalu"
+
+// ID
+YoIdGenerator.orderId();
+// "ORD_20260126847"
+```
+
+---
+
+## Common Examples
+
+### Form with Validation
+
+```dart
+YoForm(
+  children: [
+    YoTextFormField(
+      labelText: 'Email',
+      inputType: YoInputType.email,
+      isRequired: true,
+    ),
+    YoTextFormField(
+      labelText: 'Password',
+      inputType: YoInputType.password,
+      showVisibilityToggle: true,
+    ),
+    YoDropDown<String>(
+      labelText: 'Role',
+      value: selectedRole,
+      items: [
+        YoDropDownItem(value: 'admin', label: 'Admin'),
+        YoDropDownItem(value: 'user', label: 'User'),
+      ],
+      onChanged: (v) => setState(() => selectedRole = v),
+    ),
+    YoButton(
+      text: 'Submit',
+      onPressed: () => submitForm(),
+    ),
+  ],
+)
+```
+
+### Product Grid
+
+```dart
+YoGrid.responsive(
+  context: context,
+  phoneColumns: 2,
+  tabletColumns: 3,
+  desktopColumns: 4,
+  children: products.map((p) => YoProductCard.grid(
+    imageUrl: p.imageUrl,
+    title: p.name,
+    price: p.price,
+    rating: p.rating,
+    onAddToCart: () => addToCart(p),
+  )).toList(),
+)
+```
+
+### Loading States
+
+```dart
+// Skeleton loading
+if (isLoading) {
+  return YoSkeletonCard(hasImage: true, hasTitle: true);
+}
+
+// Loading overlay
+YoLoadingOverlay(
+  isLoading: isSubmitting,
+  message: 'Saving...',
+  child: FormContent(),
+)
+
+// Toast notifications
+YoToast.success(context, 'Data saved!');
+YoToast.error(context, 'Failed to save');
+```
+
+### Date & Time Pickers
+
+```dart
+YoDatePicker(
+  labelText: 'Birth Date',
+  selectedDate: birthDate,
+  onDateChanged: (date) => setState(() => birthDate = date),
+)
+
+YoDateRangePicker(
+  labelText: 'Trip Dates',
+  selectedRange: tripDates,
+  onRangeChanged: (range) => setState(() => tripDates = range),
+)
+```
+
+---
+
+## Requirements
+
+- Flutter SDK >= 3.0.0
+- Dart >= 3.0.0
+
+## Dependencies
+
+- google_fonts
+- fl_chart
+- connectivity_plus
+- file_picker
+- image_picker
+- device_info_plus
+- crypto
+
+---
+
+## Version
+
+**YoUI Flutter Package v1.1.4**
+
+---
+
+*Build Beautiful Apps Faster*
