@@ -160,9 +160,8 @@ class _YoTextFormFieldState extends State<YoTextFormField>
               Text(
                 widget.labelText!,
                 style: widget.labelStyle ??
-                    TextStyle(
+                    YoTextTheme.labelLarge(context).copyWith(
                       color: _hasFocus ? focusedBorderColor : context.gray600,
-                      fontSize: 14,
                     ),
               ),
               if (widget.isRequired) ...[
@@ -199,8 +198,7 @@ class _YoTextFormFieldState extends State<YoTextFormField>
           onChanged: widget.onChanged,
           onFieldSubmitted: widget.onSubmitted,
           onTap: widget.onTap,
-          style: widget.textStyle ??
-              TextStyle(color: context.textColor, fontSize: 16),
+          style: widget.textStyle ?? YoTextTheme.bodyLarge(context),
           textAlign: widget.textAlign,
           expands: widget.expands,
           inputFormatters: _getInputFormatters(),
@@ -221,12 +219,14 @@ class _YoTextFormFieldState extends State<YoTextFormField>
             child: _errorText != null
                 ? Text(
                     _errorText!,
-                    style: TextStyle(color: errorBorderColor, fontSize: 12),
+                    style: YoTextTheme.bodySmall(context)
+                        .copyWith(color: errorBorderColor),
                   )
                 : widget.helperText != null
                     ? Text(
                         widget.helperText!,
-                        style: TextStyle(color: context.gray500, fontSize: 12),
+                        style: YoTextTheme.bodySmall(context)
+                            .copyWith(color: context.gray500),
                       )
                     : const SizedBox.shrink(),
           ),
@@ -235,11 +235,10 @@ class _YoTextFormFieldState extends State<YoTextFormField>
           const SizedBox(height: 4),
           Text(
             '${_controller.text.length}/${widget.maxLength}',
-            style: TextStyle(
+            style: YoTextTheme.bodySmall(context).copyWith(
               color: _controller.text.length == widget.maxLength
                   ? errorBorderColor
                   : context.gray500,
-              fontSize: 12,
             ),
           ),
         ],
@@ -322,8 +321,10 @@ class _YoTextFormFieldState extends State<YoTextFormField>
           width: widget.focusedBorderWidth,
         ),
       ),
-      labelStyle: widget.labelStyle ?? TextStyle(color: context.gray600),
-      hintStyle: widget.hintStyle ?? TextStyle(color: context.gray400),
+      labelStyle: widget.labelStyle ??
+          YoTextTheme.bodyMedium(context).copyWith(color: context.gray600),
+      hintStyle: widget.hintStyle ??
+          YoTextTheme.bodyMedium(context).copyWith(color: context.gray400),
       errorStyle: const TextStyle(height: 0, fontSize: 0),
     );
   }
@@ -342,8 +343,8 @@ class _YoTextFormFieldState extends State<YoTextFormField>
     ).copyWith(
       floatingLabelBehavior: FloatingLabelBehavior.always,
       labelStyle: (_hasFocus || _hasText)
-          ? TextStyle(color: focusedBorderColor, fontSize: 12)
-          : TextStyle(color: context.gray400, fontSize: 16),
+          ? YoTextTheme.bodySmall(context).copyWith(color: focusedBorderColor)
+          : YoTextTheme.bodyLarge(context).copyWith(color: context.gray400),
     );
   }
 
@@ -450,8 +451,10 @@ class _YoTextFormFieldState extends State<YoTextFormField>
           width: widget.focusedBorderWidth,
         ),
       ),
-      labelStyle: widget.labelStyle ?? TextStyle(color: context.gray600),
-      hintStyle: widget.hintStyle ?? TextStyle(color: context.gray400),
+      labelStyle: widget.labelStyle ??
+          YoTextTheme.bodyMedium(context).copyWith(color: context.gray600),
+      hintStyle: widget.hintStyle ??
+          YoTextTheme.bodyMedium(context).copyWith(color: context.gray400),
       errorStyle: const TextStyle(height: 0, fontSize: 0),
     );
   }
@@ -476,8 +479,10 @@ class _YoTextFormFieldState extends State<YoTextFormField>
       errorBorder: InputBorder.none,
       focusedErrorBorder: InputBorder.none,
       disabledBorder: InputBorder.none,
-      labelStyle: widget.labelStyle ?? TextStyle(color: context.gray600),
-      hintStyle: widget.hintStyle ?? TextStyle(color: context.gray400),
+      labelStyle: widget.labelStyle ??
+          YoTextTheme.bodyMedium(context).copyWith(color: context.gray600),
+      hintStyle: widget.hintStyle ??
+          YoTextTheme.bodyMedium(context).copyWith(color: context.gray400),
       errorStyle: const TextStyle(height: 0, fontSize: 0),
     );
   }
@@ -541,8 +546,10 @@ class _YoTextFormFieldState extends State<YoTextFormField>
           width: widget.enabledBorderWidth,
         ),
       ),
-      labelStyle: widget.labelStyle ?? TextStyle(color: context.gray600),
-      hintStyle: widget.hintStyle ?? TextStyle(color: context.gray400),
+      labelStyle: widget.labelStyle ??
+          YoTextTheme.bodyMedium(context).copyWith(color: context.gray600),
+      hintStyle: widget.hintStyle ??
+          YoTextTheme.bodyMedium(context).copyWith(color: context.gray400),
       errorStyle: const TextStyle(height: 0, fontSize: 0),
     );
   }
@@ -623,8 +630,10 @@ class _YoTextFormFieldState extends State<YoTextFormField>
           width: widget.focusedBorderWidth,
         ),
       ),
-      labelStyle: widget.labelStyle ?? TextStyle(color: context.gray600),
-      hintStyle: widget.hintStyle ?? TextStyle(color: context.gray400),
+      labelStyle: widget.labelStyle ??
+          YoTextTheme.bodyMedium(context).copyWith(color: context.gray600),
+      hintStyle: widget.hintStyle ??
+          YoTextTheme.bodyMedium(context).copyWith(color: context.gray400),
       errorStyle: const TextStyle(height: 0, fontSize: 0),
     );
   }
