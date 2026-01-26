@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.4] - 2026-01-26
+
+### Added
+- **YoAvatar** - New `customSize` parameter for custom pixel sizes
+  - Allows any custom pixel size instead of only preset `YoAvatarSize` enum
+  - Automatic text/icon/badge size scaling based on custom size
+  - Applied to all constructors: default, `.text()`, `.image()`, `.initials()`
+
+### Documentation
+- **Complete documentation rewrite** with comprehensive coverage:
+  - `COMPONENTS.md` (3,691 lines) - 80+ widgets with full parameters, types, defaults, and code examples
+  - `THEMES.md` (1,132 lines) - Color system, 36+ schemes, 51+ fonts, shadows, adaptive layout
+  - `HELPERS.md` (1,221 lines) - Formatters, generators, input formatters, connectivity, logger
+  - `guide.md` (354 lines) - Quick start overview with navigation links
+- Bilingual format (English titles + Indonesian descriptions)
+- Parameter tables for every widget with types and default values
+- Practical code examples for each component
+
+---
+
 ## [0.0.3] - 2026-01-10
 
 ### Added
