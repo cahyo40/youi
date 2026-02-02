@@ -1,15 +1,13 @@
-# YoUI Flutter Framework - AI Skill Guide
+# YoUI Flutter - Vibe Coding Cheatsheet
 
-> **Framework**: YoUI v1.1.4
-> **Purpose**: Advanced Flutter UI Framework for building beautiful, responsive, consistent apps
-> **Trigger**: Use when developing Flutter applications with YoUI package
+> 🚀 **Just describe what you want** - AI will pick the right components!
 
 ---
 
-## QUICK REFERENCE
+## 🎯 Quick Start
 
-### Installation
 ```yaml
+# pubspec.yaml
 dependencies:
   yo_ui:
     git:
@@ -17,161 +15,109 @@ dependencies:
       ref: main
 ```
 
-### Essential Setup (main.dart)
 ```dart
 import 'package:yo_ui/yo_ui.dart';
 
 void main() {
-  // Optional: Set custom fonts
-  YoTextTheme.setFont(
-    primary: YoFonts.poppins,    // Headlines & Titles
-    secondary: YoFonts.inter,    // Body & Labels
-    mono: YoFonts.spaceMono,     // Numbers/Code
-  );
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: YoTheme.lightTheme(context, YoColorScheme.techPurple),
-      darkTheme: YoTheme.darkTheme(context, YoColorScheme.techPurple),
-      themeMode: ThemeMode.system,
-      home: HomePage(),
-    );
-  }
+  YoTextTheme.setFont(primary: YoFonts.poppins, secondary: YoFonts.inter, mono: YoFonts.spaceMono);
+  runApp(MaterialApp(
+    theme: YoTheme.lightTheme(context, YoColorScheme.techPurple),
+    darkTheme: YoTheme.darkTheme(context, YoColorScheme.techPurple),
+    themeMode: ThemeMode.system,
+  ));
 }
 ```
 
 ---
 
-## CONTEXT EXTENSIONS (SHORTCUTS)
+## 🎨 Instant Styling (Context Extensions)
 
-### Colors
+### Colors - Just Use `context.`
+
 ```dart
-context.primaryColor      // Primary brand color
-context.secondaryColor    // Secondary color
-context.accentColor       // Accent color
-context.backgroundColor   // Background
-context.textColor         // Text color
-context.successColor      // Green success
-context.warningColor      // Orange warning
-context.errorColor        // Red error
-context.infoColor         // Blue info
-context.gray50...gray900  // Gray scale (10 levels)
+context.primaryColor      // Brand color
+context.successColor      // ✅ Green
+context.warningColor      // ⚠️ Orange  
+context.errorColor        // ❌ Red
+context.infoColor         // ℹ️ Blue
+context.gray500           // 🔘 Gray (50-900 available)
 context.cardColor         // Card background
-context.onPrimaryColor    // Text on primary
 ```
 
-### Typography
+### Typography - Always Adaptive
+
 ```dart
-context.yoDisplayLarge / yoDisplayMedium / yoDisplaySmall
-context.yoHeadlineLarge / yoHeadlineMedium / yoHeadlineSmall
-context.yoTitleLarge / yoTitleMedium / yoTitleSmall
-context.yoBodyLarge / yoBodyMedium / yoBodySmall
-context.yoLabelLarge / yoLabelMedium / yoLabelSmall
-context.yoCurrencyMedium  // Mono font for numbers
+context.yoHeadlineMedium  // Page titles
+context.yoTitleLarge      // Section headers
+context.yoBodyMedium      // Content text
+context.yoLabelSmall      // Captions
+context.yoCurrencyMedium  // Money (mono font)
 ```
 
-### Responsive
+### Responsive - Auto Detect
+
 ```dart
-context.isMobile          // true if mobile
-context.isTablet          // true if tablet
-context.isDesktop         // true if desktop
-context.adaptiveMd        // Adaptive spacing (16/20/24)
-context.adaptivePagePadding  // Adaptive page padding
-context.adaptiveGridColumns  // Grid columns (2/3/4)
+context.isMobile          // Phone?
+context.isTablet          // Tablet?
+context.isDesktop         // Desktop?
+context.adaptiveMd        // Spacing (16/20/24)
+context.adaptivePagePadding  // Page margins
 ```
 
 ---
 
-## PACKAGE STRUCTURE
+## 📦 Component Patterns
 
-```
-lib/src/
-├── colors/         # Color system & schemes (36+ presets)
-├── themes/         # Theme components & shadows
-├── fonts/          # Google Fonts integration (51+)
-├── layout/         # Responsive & adaptive spacing
-├── extensions/     # Context extensions (shortcuts)
-├── helpers/        # Formatters, generators, utilities
-└── components/     # UI Widget collection (80+)
-```
+### 🔥 Forms (Copy-Paste Ready)
 
----
-
-## RELATED SKILL FILES
-
-| File | Content |
-|------|---------|
-| `COMPONENTS.md` | 80+ UI widgets (Display, Form, Feedback, Navigation, Picker) |
-| `THEMES.md` | Color schemes, typography, adaptive layout, shadows |
-| `HELPERS.md` | Formatters (currency, date, string), ID generators, utilities |
-
----
-
-## COMMON PATTERNS
-
-### Form with Validation
 ```dart
-YoForm(
-  children: [
-    YoTextFormField(
-      labelText: 'Email',
-      inputType: YoInputType.email,
-      isRequired: true,
-    ),
-    YoTextFormField(
-      labelText: 'Password',
-      inputType: YoInputType.password,
-      showVisibilityToggle: true,
-    ),
-    YoDropDown<String>(
-      labelText: 'Role',
-      value: selectedRole,
-      items: [
-        YoDropDownItem(value: 'admin', label: 'Admin'),
-        YoDropDownItem(value: 'user', label: 'User'),
-      ],
-      onChanged: (v) => setState(() => selectedRole = v),
-    ),
-    YoButton(text: 'Submit', onPressed: () => submitForm()),
-  ],
-)
+YoForm(children: [
+  YoTextFormField(labelText: 'Email', inputType: YoInputType.email, isRequired: true),
+  YoTextFormField(labelText: 'Password', inputType: YoInputType.password, showVisibilityToggle: true),
+  YoDropDown<String>(
+    labelText: 'Category',
+    value: selected,
+    items: [YoDropDownItem(value: 'a', label: 'Option A')],
+    onChanged: (v) => setState(() => selected = v),
+  ),
+  YoButton(text: 'Submit', onPressed: submit),
+])
 ```
 
-### Product Grid
+### 🛒 Product Grid
+
 ```dart
 YoGrid.responsive(
   context: context,
-  phoneColumns: 2,
-  tabletColumns: 3,
-  desktopColumns: 4,
+  phoneColumns: 2, tabletColumns: 3, desktopColumns: 4,
   children: products.map((p) => YoProductCard.grid(
-    imageUrl: p.imageUrl,
-    title: p.name,
-    price: p.price,
-    rating: p.rating,
+    imageUrl: p.image, title: p.name, price: p.price, rating: p.rating,
     onAddToCart: () => addToCart(p),
   )).toList(),
 )
 ```
 
-### Loading States
+### 💬 Feedback
+
 ```dart
-// Skeleton
+YoToast.success(context, 'Saved!');
+YoToast.error(context, 'Failed');
+YoDialog.confirm(context, title: 'Delete?', onConfirm: () => delete());
+YoLoadingOverlay(isLoading: loading, child: content);
 YoSkeletonCard(hasImage: true, hasTitle: true);
-
-// Loading overlay
-YoLoadingOverlay(isLoading: isSubmitting, message: 'Saving...', child: FormContent());
-
-// Toast
-YoToast.success(context, 'Data saved!');
-YoToast.error(context, 'Failed to save');
 ```
 
-### Formatters
+### 📊 Data Display
+
+```dart
+YoDataTable(columns: [...], rows: [...], selectable: true);
+YoLineChart(title: 'Revenue', dataSets: [...], curved: true);
+YoPieChart.donut(centerText: '75%', data: [...]);
+YoTimeline(events: [YoTimelineEvent(title: 'Step 1', isCompleted: true)]);
+```
+
+### 🔢 Formatters (Instant Use)
+
 ```dart
 YoCurrencyFormatter.formatRupiahWithUnit(1500000);  // "Rp 1.5 Juta"
 YoDateFormatter.formatRelativeTime(date);           // "5 menit lalu"
@@ -180,11 +126,44 @@ YoIdGenerator.orderId();                            // "ORD_20260126847"
 
 ---
 
-## REQUIREMENTS
+## 🎨 36+ Color Schemes
 
-- Flutter SDK >= 3.0.0
-- Dart >= 3.0.0
+| Use Case | Scheme |
+|----------|--------|
+| Tech/SaaS | `YoColorScheme.techPurple` |
+| Finance | `YoColorScheme.defaultScheme` |
+| E-commerce | `YoColorScheme.retailClay` |
+| Healthcare | `YoColorScheme.oceanTeal` |
+| Education | `YoColorScheme.educationIndigo` |
+| Gaming | `YoColorScheme.gamingNeon` |
+| Luxury | `YoColorScheme.luxuryMinimal` |
+| Dark Mode | `YoColorScheme.amoledBlack` |
 
-## DEPENDENCIES
+---
 
-google_fonts, fl_chart, connectivity_plus, file_picker, image_picker, device_info_plus, crypto
+## 📁 Sub-Guides
+
+| File | What's Inside |
+|------|---------------|
+| `COMPONENTS.md` | 80+ UI widgets with examples |
+| `THEMES.md` | Colors, fonts, shadows, responsive |
+| `HELPERS.md` | Formatters, ID generators, device utils |
+
+---
+
+## ⚡ Vibe Coding Tips
+
+**Just tell AI what you need:**
+
+- "Login form with email and password" → Uses `YoTextFormField` + `YoButton`
+- "Product listing with add to cart" → Uses `YoProductCard.grid` + `YoGrid.responsive`
+- "Show loading while fetching" → Uses `YoLoadingOverlay` or `YoSkeletonList`
+- "Success notification" → Uses `YoToast.success()`
+- "Confirm before delete" → Uses `YoDialog.confirm()`
+
+**AI will automatically:**
+
+- Pick the right YoUI component
+- Use context extensions for theming
+- Apply responsive patterns
+- Format data with YoFormatters
