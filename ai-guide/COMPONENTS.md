@@ -10,14 +10,14 @@
 
 | Category | Widgets |
 |----------|---------|
-| **Basic** | YoScaffold, YoIconButton |
+| **Basic** | YoScaffold, YoButton, YoIconButton |
 | **Display** | YoAvatar, YoBadge, YoChip, YoRating, YoText, YoCarousel, YoTimeline, YoChart, YoDataTable, YoCalendar, YoKanbanBoard, YoChatBubble, YoComment, YoProductCard, YoArticleCard, YoProfileCard, YoDestinationCard, YoListTile |
 | **Form** | YoTextFormField, YoSearchField, YoDropDown, YoOtpField, YoChipInput, YoSlider, YoRangeSlider, YoCheckbox, YoRadio, YoSwitch, YoForm |
-| **Feedback** | YoToast, YoSnackBar, YoDialog, YoBottomSheet, YoLoading, YoSkeleton, YoEmptyState, YoProgressIndicator |
+| **Feedback** | YoToast, YoSnackBar, YoBanner, YoShimmer, YoDialog, YoBottomSheet, YoLoading, YoSkeleton, YoEmptyState, YoProgressIndicator |
 | **Navigation** | YoAppBar, YoBottomNav, YoSidebar, YoStepper, YoTabBar |
 | **Picker** | YoDatePicker, YoDateRangePicker, YoTimePicker, YoColorPicker, YoFilePicker, YoImagePicker |
 | **Layout** | YoGrid, YoMasonryGrid, YoSpace |
-| **Utility** | YoInfiniteScroll, YoResponsiveBuilder |
+| **Utility** | YoInfiniteScroll, YoResponsiveBuilder, YoAnimatedSwitch, YoAnimatedCrossSwitch |
 
 ---
 
@@ -30,6 +30,76 @@ YoScaffold(
   appBar: YoAppBar(title: 'Home'),
   body: Center(child: Text('Hello World')),
   floatingActionButton: FloatingActionButton(onPressed: () {}, child: Icon(Icons.add)),
+)
+```
+
+### YoButton
+
+**Constructors**: `YoButton()`, `.primary()`, `.secondary()`, `.outline()`, `.ghost()`, `.custom()`, `.modern()`, `.minimalist()`, `.pill()`, `.sharp()`
+
+| Parameter | Type | Description |
+| --------- | ---- | ----------- |
+| `text` | String | Button text (required) |
+| `onPressed` | VoidCallback? | Tap callback (required) |
+| `variant` | YoButtonVariant | primary/secondary/outline/ghost/custom |
+| `size` | YoButtonSize | small/medium/large |
+| `buttonStyle` | YoButtonStyle | modern/minimalist/pill/sharp/rounded |
+| `icon` | Widget? | Icon widget |
+| `iconPosition` | IconPosition | left/right |
+| `isLoading` | bool | Show loading indicator |
+| `expanded` | bool | Full width button |
+| `backgroundColor` | Color? | Custom background |
+| `textColor` | Color? | Custom text color |
+| `borderRadius` | double? | Custom border radius |
+
+**Enums**:
+
+```dart
+enum YoButtonVariant { primary, secondary, outline, ghost, custom }
+enum YoButtonSize { small, medium, large }
+enum YoButtonStyle { modern, minimalist, pill, sharp, rounded }
+enum IconPosition { left, right }
+```
+
+**Usage Examples**:
+
+```dart
+// Basic primary button
+YoButton.primary(text: 'Submit', onPressed: () => submit())
+
+// With icon
+YoButton.primary(
+  text: 'Add Item',
+  icon: Icon(Icons.add),
+  onPressed: () => addItem(),
+)
+
+// Outline style
+YoButton.outline(text: 'Cancel', onPressed: () => cancel())
+
+// Ghost/text button
+YoButton.ghost(text: 'Skip', onPressed: () => skip())
+
+// Modern with gradient
+YoButton.modern(text: 'Get Started', onPressed: () => navigate())
+
+// Pill shaped
+YoButton.pill(text: 'Subscribe', onPressed: () => subscribe())
+
+// Full width loading
+YoButton.primary(
+  text: 'Saving...',
+  onPressed: null,
+  isLoading: true,
+  expanded: true,
+)
+
+// Custom colors
+YoButton.custom(
+  text: 'Premium',
+  backgroundColor: Colors.amber,
+  textColor: Colors.black,
+  onPressed: () => showPremium(),
 )
 ```
 
@@ -600,6 +670,66 @@ YoSkeletonList(itemCount: 5)
 YoSkeletonText(lines: 3)
 ```
 
+### YoBanner
+
+**Types**: `info`, `warning`, `error`, `success`
+
+| Parameter | Type | Description |
+| --------- | ---- | ----------- |
+| `message` | String | Banner message (required) |
+| `type` | YoBannerType | info/warning/error/success |
+| `action` | Widget? | Action button/widget |
+| `dismissible` | bool | Can be dismissed (default: true) |
+| `onDismiss` | VoidCallback? | Dismiss callback |
+| `padding` | EdgeInsetsGeometry? | Custom padding |
+
+```dart
+// Info banner
+YoBanner(message: 'New update available', type: YoBannerType.info)
+
+// Warning with action
+YoBanner(
+  message: 'Session expiring soon',
+  type: YoBannerType.warning,
+  action: TextButton(onPressed: () => extend(), child: Text('Extend')),
+)
+
+// Error dismissible
+YoBanner(
+  message: 'Payment failed',
+  type: YoBannerType.error,
+  dismissible: true,
+  onDismiss: () => handleDismiss(),
+)
+```
+
+### YoShimmer
+
+**Constructors**: `YoShimmer()`, `.card()`, `.image()`, `.listTile()`
+
+| Parameter | Type | Description |
+| --------- | ---- | ----------- |
+| `child` | Widget | Content to show shimmer on |
+| `baseColor` | Color? | Base shimmer color |
+| `highlightColor` | Color? | Highlight shimmer color |
+| `duration` | Duration | Animation duration (default: 1500ms) |
+| `direction` | ShimmerDirection | leftToRight/rightToLeft/topToBottom/bottomToTop |
+| `enabled` | bool | Enable/disable shimmer (default: true) |
+
+```dart
+// Custom shimmer wrapper
+YoShimmer(child: Container(height: 100, color: Colors.white))
+
+// Preset for cards
+YoShimmer.card(height: 120, borderRadius: BorderRadius.circular(8))
+
+// Preset for images
+YoShimmer.image(height: 200, width: double.infinity)
+
+// Preset for list tiles
+YoShimmer.listTile()
+```
+
 ### YoEmptyState
 
 **Constructors**: `YoEmptyState()`, `.noData()`, `.noConnection()`, `.error()`, `.searchNotFound()`, `.custom()`
@@ -882,5 +1012,34 @@ YoResponsiveBuilder(
   mobile: MobileLayout(),
   tablet: TabletLayout(),
   desktop: DesktopLayout(),
+)
+```
+
+### YoAnimatedSwitch
+
+**Widgets**: `YoAnimatedSwitch`, `YoAnimatedCrossSwitch`
+
+| Parameter | Type | Description |
+| --------- | ---- | ----------- |
+| `condition` | bool | Condition to switch between widgets |
+| `trueChild` | Widget | Widget when condition is true |
+| `falseChild` | Widget | Widget when condition is false |
+| `duration` | Duration | Animation duration (default: 300ms) |
+| `curve` | Curve | Animation curve (default: easeInOut) |
+
+```dart
+// Animated switch between two widgets
+YoAnimatedSwitch(
+  condition: isLoggedIn,
+  trueChild: UserAvatar(),
+  falseChild: LoginButton(),
+)
+
+// Cross fade between widgets
+YoAnimatedCrossSwitch(
+  condition: showFirst,
+  firstChild: Widget1(),
+  secondChild: Widget2(),
+  duration: Duration(milliseconds: 400),
 )
 ```

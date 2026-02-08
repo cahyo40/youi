@@ -191,25 +191,23 @@ YoTheme.darkTheme(context, YoColorScheme.techPurple)
 | `startupVibrant` | Startup |
 | `luxuryMinimal` | Premium, Luxury |
 | `fitnessEnergy` | Fitness, Sports |
-| `gamingNeon` | Gaming, Esports |
 | `musicVibes` | Music, Streaming |
-| `artGallery` | Art, Museum |
 | `codingDark` | Dev Tools, IDE |
-| `fashionTrendy` | Fashion |
 | `kidsLearning` | Kids Apps |
 | `realEstatePro` | Real Estate |
 | `cryptoModern` | Cryptocurrency |
-| `healthcarePro` | Hospital, Clinic |
 | `newsMagazine` | News |
-| `outdoorCalm` | Outdoor, Adventure |
 | `scienceLab` | Research |
-| `communityWarm` | Community, Social |
 | `amoledBlack` | AMOLED Dark Mode |
 | `midnightBlue` | Dark Professional |
 | `carbonDark` | Dashboard Dark |
-| `neonCyberpunk` | Futuristic |
-| `minimalMono` | Focus Apps |
 | `posRetail` | Point of Sale |
+| `sportsDynamic` | Sports, Athletics |
+| `financeSecure` | Finance, Banking |
+| `legalPro` | Legal, Law Firm |
+| `automotiveSpeed` | Automotive, Dealership |
+| `petFriendly` | Pet Care, Veterinary |
+| `groceryFresh` | Grocery, Supermarket |
 | `custom` | User-defined |
 
 ### Custom Palette

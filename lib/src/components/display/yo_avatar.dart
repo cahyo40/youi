@@ -174,6 +174,7 @@ class YoAvatar extends StatelessWidget {
         iconColor = null;
 
   /// File image avatar (from device storage)
+  // ignore: prefer_const_constructors_in_immutables
   YoAvatar.file({
     super.key,
     required this.imageFile,

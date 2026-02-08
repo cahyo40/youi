@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../yo_ui.dart';
 
 enum YoColorScheme {
-  // CORE CATEGORIES - Diperbarui dengan warna yang lebih harmonis
+  // CORE CATEGORIES - Updated with harmonious colors
   defaultScheme, // Finance & Banking - Classic Blue
   techPurple, // Technology & SaaS - Modern Purple
   oceanTeal, // Healthcare & Medical - Clean Teal
@@ -22,27 +22,26 @@ enum YoColorScheme {
   startupVibrant, // Startup & Innovation - Energetic
   luxuryMinimal, // Luxury & Premium - Elegant
   fitnessEnergy, // Fitness & Sports - Motivational
-  gamingNeon, // Gaming & Esports - Neon Vibes
   musicVibes, // Music & Streaming - Creative
-  artGallery, // Art & Museum - Cultural
   // MODERN CATEGORIES
   codingDark, // Developer Tools - Focus Dark
-  fashionTrendy, // Fashion & Style - Trendy
   kidsLearning, // Kids Apps - Playful
   realEstatePro, // Real Estate - Trustworthy
   cryptoModern, // Cryptocurrency - Modern
-  healthcarePro, // Healthcare - Clean
   newsMagazine, // News & Media - Professional
-  outdoorCalm, // Outdoor - Natural
   scienceLab, // Science - Precise
-  communityWarm, // Community - Warm
-  // NEW CATEGORIES
+  // DARK THEMES
   amoledBlack, // Pure Black AMOLED - Battery Saving
   midnightBlue, // Midnight Blue - Dark Professional
   carbonDark, // Carbon Dark - Sleek & Modern
-  neonCyberpunk, // Cyberpunk Neon - Futuristic
-  minimalMono, // Minimal Mono - Ultra Clean
   posRetail, // POS & Retail - Business Focused
+  // NEW INDUSTRY SCHEMES
+  sportsDynamic, // Sports Teams & Stadiums - Dynamic
+  financeSecure, // Banking & Finance - Trust & Wealth
+  legalPro, // Legal & Law - Professional
+  automotiveSpeed, // Automotive & Racing - Speed
+  petFriendly, // Pet Care & Veterinary - Warm & Playful
+  groceryFresh, // Grocery & Food Delivery - Fresh & Natural
 
   custom,
 }
@@ -370,24 +369,6 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
     ),
   },
 
-  // 18. GAMING NEON - Gaming & Esports (Vibrant)
-  YoColorScheme.gamingNeon: {
-    Brightness.light: const YoCorePalette(
-      text: Color(0xFF1A1A2E),
-      background: Color(0xFF16213E),
-      primary: Color(0xFFFF006E),
-      secondary: Color(0xFF00F5FF),
-      accent: Color(0xFF53BF9D),
-    ),
-    Brightness.dark: const YoCorePalette(
-      text: Color(0xFFFFFFFF),
-      background: _pureBlack,
-      primary: Color(0xFFFF1A7A),
-      secondary: Color(0xFF1FF8DF),
-      accent: Color(0xFF00F5FF),
-    ),
-  },
-
   // 19. MUSIC VIBES - Music & Streaming (Creative)
   YoColorScheme.musicVibes: {
     Brightness.light: const YoCorePalette(
@@ -406,25 +387,7 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
     ),
   },
 
-  // 20. ART GALLERY - Art & Museum (Cultural)
-  YoColorScheme.artGallery: {
-    Brightness.light: const YoCorePalette(
-      text: Color(0xFF78350F),
-      background: Color(0xFFFFFBEB),
-      primary: Color(0xFFD97706),
-      secondary: Color(0xFF57534E),
-      accent: Color(0xFF059669),
-    ),
-    Brightness.dark: const YoCorePalette(
-      text: Color(0xFFFEF3C7),
-      background: _deepBlack,
-      primary: Color(0xFFF59E0B),
-      secondary: Color(0xFFA8A29E),
-      accent: Color(0xFF10B981),
-    ),
-  },
-
-  // 21. CODING DARK - Developer Tools (Focus)
+  // 20. CODING DARK - Developer Tools (Focus)
   YoColorScheme.codingDark: {
     Brightness.light: const YoCorePalette(
       text: Color(0xFF111827),
@@ -442,25 +405,7 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
     ),
   },
 
-  // 22. FASHION TRENDY - Fashion & Style (Trendy)
-  YoColorScheme.fashionTrendy: {
-    Brightness.light: const YoCorePalette(
-      text: Color(0xFF701A75),
-      background: Color(0xFFFDF4FF),
-      primary: Color(0xFFC026D3),
-      secondary: Color(0xFFDB2777),
-      accent: Color(0xFFF59E0B),
-    ),
-    Brightness.dark: const YoCorePalette(
-      text: Color(0xFFFAE8FF),
-      background: _pureBlack,
-      primary: Color(0xFFE879F9),
-      secondary: Color(0xFFF472B6),
-      accent: Color(0xFFFBBF24),
-    ),
-  },
-
-  // 23. KIDS LEARNING - Kids Apps (Playful)
+  // 21. KIDS LEARNING - Kids Apps (Playful)
   YoColorScheme.kidsLearning: {
     Brightness.light: const YoCorePalette(
       text: Color(0xFF701A75),
@@ -514,25 +459,7 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
     ),
   },
 
-  // 26. HEALTHCARE PRO - Healthcare (Clean)
-  YoColorScheme.healthcarePro: {
-    Brightness.light: const YoCorePalette(
-      text: Color(0xFF1F2937),
-      background: Color(0xFFF0FDF4),
-      primary: Color(0xFF059669),
-      secondary: Color(0xFF3B82F6),
-      accent: Color(0xFFDC2626),
-    ),
-    Brightness.dark: const YoCorePalette(
-      text: Color(0xFFF9FAFB),
-      background: _pureBlack,
-      primary: Color(0xFF10B981),
-      secondary: Color(0xFF60A5FA),
-      accent: Color(0xFFF87171),
-    ),
-  },
-
-  // 27. NEWS MAGAZINE - News & Media (Professional)
+  // 26. NEWS MAGAZINE - News & Media (Professional)
   YoColorScheme.newsMagazine: {
     Brightness.light: const YoCorePalette(
       text: Color(0xFF1F2937),
@@ -550,25 +477,7 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
     ),
   },
 
-  // 28. OUTDOOR CALM - Outdoor & Nature (Calm)
-  YoColorScheme.outdoorCalm: {
-    Brightness.light: const YoCorePalette(
-      text: Color(0xFF064E3B),
-      background: Color(0xFFF0FDF4),
-      primary: Color(0xFF059669),
-      secondary: Color(0xFF65A30D),
-      accent: Color(0xFFD97706),
-    ),
-    Brightness.dark: const YoCorePalette(
-      text: Color(0xFFECFDF5),
-      background: _pureBlack,
-      primary: Color(0xFF10B981),
-      secondary: Color(0xFF84CC16),
-      accent: Color(0xFFF59E0B),
-    ),
-  },
-
-  // 29. SCIENCE LAB - Science & Research (Precise)
+  // 27. SCIENCE LAB - Science & Research (Precise)
   YoColorScheme.scienceLab: {
     Brightness.light: const YoCorePalette(
       text: Color(0xFF1F2937),
@@ -586,27 +495,9 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
     ),
   },
 
-  // 30. COMMUNITY WARM - Community & Social (Warm)
-  YoColorScheme.communityWarm: {
-    Brightness.light: const YoCorePalette(
-      text: Color(0xFF78350F),
-      background: Color(0xFFFFFBEB),
-      primary: Color(0xFFD97706),
-      secondary: Color(0xFFB45309),
-      accent: Color(0xFF059669),
-    ),
-    Brightness.dark: const YoCorePalette(
-      text: Color(0xFFFEF3C7),
-      background: _deepBlack,
-      primary: Color(0xFFF59E0B),
-      secondary: Color(0xFFD97706),
-      accent: Color(0xFF10B981),
-    ),
-  },
+  // ============ DARK THEMES ============
 
-  // ============ NEW COLOR SCHEMES ============
-
-  // 31. AMOLED BLACK - Pure Black for AMOLED displays (Battery Saving)
+  // 28. AMOLED BLACK - Pure Black for AMOLED displays (Battery Saving)
   YoColorScheme.amoledBlack: {
     Brightness.light: const YoCorePalette(
       text: Color(0xFF1F2937),
@@ -660,43 +551,7 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
     ),
   },
 
-  // 34. NEON CYBERPUNK - Futuristic Cyberpunk (Gaming/Tech)
-  YoColorScheme.neonCyberpunk: {
-    Brightness.light: const YoCorePalette(
-      text: Color(0xFF0F0F23),
-      background: Color(0xFFE8E8F0),
-      primary: Color(0xFFFF00FF),
-      secondary: Color(0xFF00FFFF),
-      accent: Color(0xFFFFFF00),
-    ),
-    Brightness.dark: const YoCorePalette(
-      text: Color(0xFFE8E8F0),
-      background: _pureBlack,
-      primary: Color(0xFFFF00FF),
-      secondary: Color(0xFF00FFFF),
-      accent: Color(0xFF39FF14),
-    ),
-  },
-
-  // 35. MINIMAL MONO - Ultra Minimal Monochrome (Focus Apps)
-  YoColorScheme.minimalMono: {
-    Brightness.light: const YoCorePalette(
-      text: Color(0xFF171717),
-      background: Color(0xFFFFFFFF),
-      primary: Color(0xFF262626),
-      secondary: Color(0xFF737373),
-      accent: Color(0xFF171717),
-    ),
-    Brightness.dark: const YoCorePalette(
-      text: Color(0xFFF5F5F5),
-      background: _pureBlack,
-      primary: Color(0xFFE5E5E5),
-      secondary: Color(0xFFA3A3A3),
-      accent: Color(0xFFFFFFFF),
-    ),
-  },
-
-  // 36. POS RETAIL - Business POS System (Retail Focus)
+  // 31. POS RETAIL - Business POS System (Retail Focus)
   YoColorScheme.posRetail: {
     Brightness.light: const YoCorePalette(
       text: Color(0xFF1F2937),
@@ -711,6 +566,116 @@ final Map<YoColorScheme, Map<Brightness, YoCorePalette>> kYoPalettes = {
       primary: Color(0xFF6366F1),
       secondary: Color(0xFF10B981),
       accent: Color(0xFFEF4444),
+    ),
+  },
+
+  // ============ NEW INDUSTRY SCHEMES ============
+
+  // 32. SPORTS DYNAMIC - Sports Teams & Stadiums (Dynamic)
+  YoColorScheme.sportsDynamic: {
+    Brightness.light: const YoCorePalette(
+      text: Color(0xFF1E3A8A),
+      background: Color(0xFFF8FAFC),
+      primary: Color(0xFF2563EB),
+      secondary: Color(0xFF1D4ED8),
+      accent: Color(0xFFEF4444),
+    ),
+    Brightness.dark: const YoCorePalette(
+      text: Color(0xFFE0E7FF),
+      background: _pureBlack,
+      primary: Color(0xFF3B82F6),
+      secondary: Color(0xFF60A5FA),
+      accent: Color(0xFFF87171),
+    ),
+  },
+
+  // 33. FINANCE SECURE - Banking & Finance (Trust & Wealth)
+  YoColorScheme.financeSecure: {
+    Brightness.light: const YoCorePalette(
+      text: Color(0xFF115E59),
+      background: Color(0xFFF0FDFA),
+      primary: Color(0xFF0D9488),
+      secondary: Color(0xFF14B8A6),
+      accent: Color(0xFFF59E0B),
+    ),
+    Brightness.dark: const YoCorePalette(
+      text: Color(0xFFCCFBF1),
+      background: _pureBlack,
+      primary: Color(0xFF14B8A6),
+      secondary: Color(0xFF2DD4BF),
+      accent: Color(0xFFFBBF24),
+    ),
+  },
+
+  // 34. LEGAL PRO - Legal & Law (Professional)
+  YoColorScheme.legalPro: {
+    Brightness.light: const YoCorePalette(
+      text: Color(0xFF1E3A5F),
+      background: Color(0xFFF8FAFC),
+      primary: Color(0xFF1E3A5F),
+      secondary: Color(0xFF334155),
+      accent: Color(0xFFCA8A04),
+    ),
+    Brightness.dark: const YoCorePalette(
+      text: Color(0xFFE2E8F0),
+      background: _pureBlack,
+      primary: Color(0xFF475569),
+      secondary: Color(0xFF64748B),
+      accent: Color(0xFFEAB308),
+    ),
+  },
+
+  // 35. AUTOMOTIVE SPEED - Automotive & Racing (Speed)
+  YoColorScheme.automotiveSpeed: {
+    Brightness.light: const YoCorePalette(
+      text: Color(0xFF18181B),
+      background: Color(0xFFFAFAFA),
+      primary: Color(0xFFDC2626),
+      secondary: Color(0xFF27272A),
+      accent: Color(0xFFF59E0B),
+    ),
+    Brightness.dark: const YoCorePalette(
+      text: Color(0xFFFAFAFA),
+      background: _pureBlack,
+      primary: Color(0xFFEF4444),
+      secondary: Color(0xFF52525B),
+      accent: Color(0xFFFBBF24),
+    ),
+  },
+
+  // 36. PET FRIENDLY - Pet Care & Veterinary (Warm & Playful)
+  YoColorScheme.petFriendly: {
+    Brightness.light: const YoCorePalette(
+      text: Color(0xFF065F46),
+      background: Color(0xFFF0FDF4),
+      primary: Color(0xFF10B981),
+      secondary: Color(0xFF34D399),
+      accent: Color(0xFFF472B6),
+    ),
+    Brightness.dark: const YoCorePalette(
+      text: Color(0xFFECFDF5),
+      background: _pureBlack,
+      primary: Color(0xFF34D399),
+      secondary: Color(0xFF6EE7B7),
+      accent: Color(0xFFF9A8D4),
+    ),
+  },
+
+  // 37. GROCERY FRESH - Grocery & Food Delivery (Fresh & Natural)
+  YoColorScheme.groceryFresh: {
+    Brightness.light: const YoCorePalette(
+      text: Color(0xFF166534),
+      background: Color(0xFFF7FEE7),
+      primary: Color(0xFF22C55E),
+      secondary: Color(0xFF4ADE80),
+      accent: Color(0xFFFB923C),
+    ),
+    Brightness.dark: const YoCorePalette(
+      text: Color(0xFFDCFCE7),
+      background: _pureBlack,
+      primary: Color(0xFF4ADE80),
+      secondary: Color(0xFF86EFAC),
+      accent: Color(0xFFFDBA74),
     ),
   },
 
