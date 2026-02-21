@@ -110,7 +110,11 @@ class _YoRatingState extends State<YoRating> {
             duration: widget.animate
                 ? Duration(milliseconds: 200)
                 : Duration.zero,
-            transform: Matrix4.identity()..scale(_getScaleFactor(position)),
+            transform: Matrix4.diagonal3Values(
+              _getScaleFactor(position),
+              _getScaleFactor(position),
+              1.0,
+            ),
             child: _buildIcon(isActive, isHalf, iconSize),
           ),
         ),

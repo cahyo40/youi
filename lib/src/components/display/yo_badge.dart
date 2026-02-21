@@ -145,7 +145,7 @@ class YoBadge extends StatelessWidget {
         color: effectiveBackgroundColor,
         borderRadius: borderRadius,
         border: variant == YoBadgeVariant.outline
-            ? Border.all(color: effectiveTextColor.withOpacity(0.3), width: 1)
+            ? Border.all(color: effectiveTextColor.withAlpha(77), width: 1)
             : null,
       ),
       child: _buildContent(textStyle, effectiveDotColor),
@@ -233,7 +233,7 @@ class YoBadge extends StatelessWidget {
       case YoBadgeVariant.primary:
         return colorScheme.primary;
       case YoBadgeVariant.secondary:
-        return colorScheme.surfaceVariant;
+        return colorScheme.surfaceContainerHighest;
       case YoBadgeVariant.success:
         return colorScheme
             .primaryContainer; // Adjust based on your color system

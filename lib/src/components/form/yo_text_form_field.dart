@@ -413,7 +413,7 @@ class _YoTextFormFieldState extends State<YoTextFormField>
       suffixIcon: _buildSuffixIcon(),
       filled: true,
       fillColor: widget.fillColor ??
-          (_hasFocus ? focusedBorderColor.withOpacity(0.05) : context.gray100),
+          (_hasFocus ? focusedBorderColor.withAlpha(13) : context.gray100),
       contentPadding: widget.contentPadding ??
           const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
       border: OutlineInputBorder(
@@ -542,7 +542,7 @@ class _YoTextFormFieldState extends State<YoTextFormField>
       disabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(widget.borderRadius),
         borderSide: BorderSide(
-          color: borderColor.withOpacity(0.3),
+          color: borderColor.withAlpha(77),
           width: widget.enabledBorderWidth,
         ),
       ),

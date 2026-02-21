@@ -26,7 +26,7 @@ class YoSwitch extends StatelessWidget {
     Widget switchWidget = Switch(
       value: value,
       onChanged: enabled ? onChanged : null,
-      activeColor: effectiveActiveColor,
+      activeThumbColor: effectiveActiveColor,
       inactiveTrackColor: inactiveColor ?? context.gray400,
     );
 
@@ -87,7 +87,7 @@ class YoSwitchListTile extends StatelessWidget {
             )
           : null,
       secondary: secondary,
-      activeColor: activeColor ?? context.primaryColor,
+      activeThumbColor: activeColor ?? context.primaryColor,
       controlAffinity: ListTileControlAffinity.leading,
     );
   }

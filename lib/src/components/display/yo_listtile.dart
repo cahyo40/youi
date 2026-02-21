@@ -88,8 +88,8 @@ class YoListTile extends StatelessWidget {
       enabled: enabled,
       selected: selected,
       selectedColor: selectedColor ?? context.primaryColor,
-      selectedTileColor: (selectedColor ?? context.primaryColor).withOpacity(
-        0.1,
+      selectedTileColor: (selectedColor ?? context.primaryColor).withAlpha(
+        26,
       ),
       tileColor: tileColor,
       contentPadding:
@@ -167,7 +167,7 @@ class YoListTileWithAvatar extends StatelessWidget {
                 )
               : null),
       onTap: onTap,
-      tileColor: hasUnread ? context.primaryColor.withOpacity(0.05) : null,
+      tileColor: hasUnread ? context.primaryColor.withAlpha(13) : null,
     );
   }
 }
@@ -197,7 +197,7 @@ class YoListTileWithSwitch extends StatelessWidget {
       trailing: Switch(
         value: value,
         onChanged: onChanged,
-        activeColor: context.primaryColor,
+        activeThumbColor: context.primaryColor,
       ),
       onTap: () => onChanged(!value),
     );

@@ -554,11 +554,11 @@ class YoIcons {
         name: 'money',
         category: YoIconCategory.card),
     YoIconData(
-        icon: FontAwesomeIcons.donate,
+        icon: FontAwesomeIcons.handHoldingDollar,
         name: 'donate',
         category: YoIconCategory.card),
     YoIconData(
-        icon: FontAwesomeIcons.handHoldingUsd,
+        icon: FontAwesomeIcons.handHoldingDollar,
         name: 'payment',
         category: YoIconCategory.card),
     YoIconData(
@@ -1192,11 +1192,11 @@ class YoIcons {
         name: 'storage',
         category: YoIconCategory.subscription),
     YoIconData(
-        icon: FontAwesomeIcons.cogs,
+        icon: FontAwesomeIcons.gears,
         name: 'software',
         category: YoIconCategory.subscription),
     YoIconData(
-        icon: FontAwesomeIcons.mobileAlt,
+        icon: FontAwesomeIcons.mobileScreenButton,
         name: 'mobile_app',
         category: YoIconCategory.subscription),
     YoIconData(
@@ -1208,11 +1208,11 @@ class YoIcons {
         name: 'email_service',
         category: YoIconCategory.subscription),
     YoIconData(
-        icon: FontAwesomeIcons.calendarAlt,
+        icon: FontAwesomeIcons.calendarDays,
         name: 'calendar',
         category: YoIconCategory.subscription),
     YoIconData(
-        icon: FontAwesomeIcons.photoVideo,
+        icon: FontAwesomeIcons.photoFilm,
         name: 'media',
         category: YoIconCategory.subscription),
     YoIconData(
@@ -1228,7 +1228,7 @@ class YoIcons {
         name: 'food',
         category: YoIconCategory.subscription),
     YoIconData(
-        icon: FontAwesomeIcons.shoppingBag,
+        icon: FontAwesomeIcons.bagShopping,
         name: 'shopping',
         category: YoIconCategory.subscription),
 

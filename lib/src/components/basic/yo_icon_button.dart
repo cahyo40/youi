@@ -189,8 +189,8 @@ class YoButtonIcon extends StatelessWidget {
         return ElevatedButton.styleFrom(
           backgroundColor: colorScheme.primary,
           foregroundColor: colorScheme.onPrimary,
-          disabledBackgroundColor: colorScheme.onSurface.withOpacity(0.12),
-          disabledForegroundColor: colorScheme.onSurface.withOpacity(0.38),
+          disabledBackgroundColor: colorScheme.onSurface.withAlpha(31),
+          disabledForegroundColor: colorScheme.onSurface.withAlpha(97),
           elevation: 0,
           shadowColor: Colors.transparent,
           shape: _getShape(),
@@ -204,13 +204,13 @@ class YoButtonIcon extends StatelessWidget {
           }),
           backgroundColor: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.disabled)) {
-              return colorScheme.onSurface.withOpacity(0.12);
+              return colorScheme.onSurface.withAlpha(31);
             }
             if (states.contains(WidgetState.pressed)) {
-              return colorScheme.primary.withOpacity(0.8);
+              return colorScheme.primary.withAlpha(204);
             }
             if (states.contains(WidgetState.hovered)) {
-              return colorScheme.primary.withOpacity(0.9);
+              return colorScheme.primary.withAlpha(230);
             }
             return colorScheme.primary;
           }),
@@ -218,10 +218,10 @@ class YoButtonIcon extends StatelessWidget {
 
       case YoIconButtonVariant.secondary:
         return ElevatedButton.styleFrom(
-          backgroundColor: colorScheme.surfaceVariant,
-          foregroundColor: colorScheme.onSurfaceVariant,
-          disabledBackgroundColor: colorScheme.onSurface.withOpacity(0.12),
-          disabledForegroundColor: colorScheme.onSurface.withOpacity(0.38),
+          backgroundColor: colorScheme.surfaceContainerHighest,
+          foregroundColor: colorScheme.onSurface,
+          disabledBackgroundColor: colorScheme.onSurface.withAlpha(31),
+          disabledForegroundColor: colorScheme.onSurface.withAlpha(97),
           elevation: 0,
           shadowColor: Colors.transparent,
           shape: _getShape(),
@@ -235,15 +235,15 @@ class YoButtonIcon extends StatelessWidget {
           }),
           backgroundColor: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.disabled)) {
-              return colorScheme.onSurface.withOpacity(0.12);
+              return colorScheme.onSurface.withAlpha(31);
             }
             if (states.contains(WidgetState.pressed)) {
-              return colorScheme.surfaceVariant.withOpacity(0.8);
+              return colorScheme.surfaceContainerHighest.withAlpha(204);
             }
             if (states.contains(WidgetState.hovered)) {
-              return colorScheme.surfaceVariant.withOpacity(0.9);
+              return colorScheme.surfaceContainerHighest.withAlpha(230);
             }
-            return colorScheme.surfaceVariant;
+            return colorScheme.surfaceContainerHighest;
           }),
         );
 
@@ -252,11 +252,11 @@ class YoButtonIcon extends StatelessWidget {
           backgroundColor: Colors.transparent,
           foregroundColor: colorScheme.primary,
           disabledBackgroundColor: Colors.transparent,
-          disabledForegroundColor: colorScheme.onSurface.withOpacity(0.38),
+          disabledForegroundColor: colorScheme.onSurface.withAlpha(97),
           side: BorderSide(
             color: onPressed != null
                 ? colorScheme.outline
-                : colorScheme.onSurface.withOpacity(0.38),
+                : colorScheme.onSurface.withAlpha(97),
             width: 1,
           ),
           elevation: 0,
@@ -272,10 +272,10 @@ class YoButtonIcon extends StatelessWidget {
           }),
           backgroundColor: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.hovered)) {
-              return colorScheme.primary.withOpacity(0.08);
+              return colorScheme.primary.withAlpha(20);
             }
             if (states.contains(WidgetState.pressed)) {
-              return colorScheme.primary.withOpacity(0.12);
+              return colorScheme.primary.withAlpha(31);
             }
             return Colors.transparent;
           }),
@@ -286,7 +286,7 @@ class YoButtonIcon extends StatelessWidget {
           backgroundColor: Colors.transparent,
           foregroundColor: colorScheme.primary,
           disabledBackgroundColor: Colors.transparent,
-          disabledForegroundColor: colorScheme.onSurface.withOpacity(0.38),
+          disabledForegroundColor: colorScheme.onSurface.withAlpha(97),
           elevation: 0,
           shadowColor: Colors.transparent,
           shape: _getShape(),
@@ -300,10 +300,10 @@ class YoButtonIcon extends StatelessWidget {
           }),
           backgroundColor: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.hovered)) {
-              return colorScheme.primary.withOpacity(0.08);
+              return colorScheme.primary.withAlpha(20);
             }
             if (states.contains(WidgetState.pressed)) {
-              return colorScheme.primary.withOpacity(0.12);
+              return colorScheme.primary.withAlpha(31);
             }
             return Colors.transparent;
           }),
@@ -314,8 +314,8 @@ class YoButtonIcon extends StatelessWidget {
         return ElevatedButton.styleFrom(
           backgroundColor: bgColor,
           foregroundColor: _getCustomIconColor(context, bgColor),
-          disabledBackgroundColor: bgColor.withOpacity(0.32),
-          disabledForegroundColor: colorScheme.onSurface.withOpacity(0.38),
+          disabledBackgroundColor: bgColor.withAlpha(82),
+          disabledForegroundColor: colorScheme.onSurface.withAlpha(97),
           elevation: 0,
           shadowColor: Colors.transparent,
           shape: _getShape(),
@@ -329,13 +329,13 @@ class YoButtonIcon extends StatelessWidget {
           }),
           backgroundColor: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.disabled)) {
-              return bgColor.withOpacity(0.32);
+              return bgColor.withAlpha(82);
             }
             if (states.contains(WidgetState.pressed)) {
-              return bgColor.withOpacity(0.8);
+              return bgColor.withAlpha(204);
             }
             if (states.contains(WidgetState.hovered)) {
-              return bgColor.withOpacity(0.9);
+              return bgColor.withAlpha(230);
             }
             return bgColor;
           }),

@@ -915,7 +915,7 @@ class _YoColorPickerState extends State<YoColorPicker> {
                   itemBuilder: (context, index) {
                     final colorData = _filteredColors[index];
                     final isSelected =
-                        _currentColor.value == colorData.color.value;
+                        _currentColor.toARGB32() == colorData.color.toARGB32();
                     return Tooltip(
                       message: colorData.name,
                       child: InkWell(
@@ -976,7 +976,7 @@ class _YoColorPickerState extends State<YoColorPicker> {
     _currentColor = widget.selectedColor ?? const Color(0xFF2196F3);
     _hexController = TextEditingController(text: _colorToHex(_currentColor));
     _updateHSVFromColor(_currentColor);
-    _opacity = _currentColor.alpha / 255;
+    _opacity = (_currentColor.a * 255).round() / 255;
     _updateFilteredColors();
   }
 
@@ -1098,8 +1098,8 @@ extension _YoColorExtension on Color {
   /// Convert color to hex string (e.g., "#FF2196F3")
   String toHex({bool withAlpha = true}) {
     if (withAlpha) {
-      return '#${value.toRadixString(16).padLeft(8, '0').toUpperCase()}';
+      return '#${toARGB32().toRadixString(16).padLeft(8, '0').toUpperCase()}';
     }
-    return '#${(value & 0xFFFFFF).toRadixString(16).padLeft(6, '0').toUpperCase()}';
+    return '#${(toARGB32() & 0xFFFFFF).toRadixString(16).padLeft(6, '0').toUpperCase()}';
   }
 }

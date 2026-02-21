@@ -89,7 +89,7 @@ class YoSliderWithValue extends StatelessWidget {
                 vertical: context.yoSpacingXs,
               ),
               decoration: BoxDecoration(
-                color: context.primaryColor.withOpacity(0.1),
+                color: context.primaryColor.withAlpha(26),
                 borderRadius: BorderRadius.circular(6),
               ),
               child: YoText.bodyMedium(

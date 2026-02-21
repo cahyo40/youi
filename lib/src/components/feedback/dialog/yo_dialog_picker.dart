@@ -168,7 +168,6 @@ abstract final class YoDialogPicker {
                 surface: context.backgroundColor,
                 onSurface: context.textColor,
               ),
-        dialogBackgroundColor: context.backgroundColor,
       ),
       child: child!,
     );

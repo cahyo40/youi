@@ -126,7 +126,7 @@ class YoGridItem extends StatelessWidget {
         border = null,
         shadow = [
           BoxShadow(
-            color: context.gray300.withOpacity(0.3),
+            color: context.gray300.withAlpha(77),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
